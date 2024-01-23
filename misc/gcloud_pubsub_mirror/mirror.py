@@ -9,6 +9,7 @@ import base64
 import json
 import os
 import sys
+import time
 
 from concurrent import futures
 from functools import partial
@@ -28,6 +29,9 @@ def subscribe_callback(message: pubsub_v1.subscriber.message.Message) -> None:
   messages_processed += 1
   if messages_processed % 100 == 0:
     print(f'{messages_processed} messages processed')
+  if messages_processed % 500 == 0:
+    # Every 500 messages, give it a bit to catch up
+    time.sleep(3)
   message.ack()
 
 def get_publish_callback():
