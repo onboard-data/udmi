@@ -14,6 +14,7 @@ class ExecutionConfiguration:
     self.feed_name = None
     self.reflect_region = None
     self.site_model = None
+    self.src_file = None
     self.registry_suffix = None
     self.shard_count = None
     self.shard_index = None
@@ -22,6 +23,7 @@ class ExecutionConfiguration:
     self.reflector_endpoint = None
     self.device_endpoint = None
     self.project_id = None
+    self.user_name = None
     self.udmi_namespace = None
     self.bridge_host = None
     self.key_file = None
@@ -29,11 +31,16 @@ class ExecutionConfiguration:
     self.log_level = None
     self.min_stage = None
     self.udmi_version = None
+    self.udmi_commit = None
+    self.udmi_ref = None
+    self.udmi_timever = None
+    self.enforce_version = None
     self.udmi_root = None
     self.update_to = None
     self.alt_project = None
     self.alt_registry = None
     self.block_unknown = None
+    self.sequences = None
 
   @staticmethod
   def from_dict(source):
@@ -47,6 +54,7 @@ class ExecutionConfiguration:
     result.feed_name = source.get('feed_name')
     result.reflect_region = source.get('reflect_region')
     result.site_model = source.get('site_model')
+    result.src_file = source.get('src_file')
     result.registry_suffix = source.get('registry_suffix')
     result.shard_count = source.get('shard_count')
     result.shard_index = source.get('shard_index')
@@ -55,6 +63,7 @@ class ExecutionConfiguration:
     result.reflector_endpoint = EndpointConfiguration.from_dict(source.get('reflector_endpoint'))
     result.device_endpoint = EndpointConfiguration.from_dict(source.get('device_endpoint'))
     result.project_id = source.get('project_id')
+    result.user_name = source.get('user_name')
     result.udmi_namespace = source.get('udmi_namespace')
     result.bridge_host = source.get('bridge_host')
     result.key_file = source.get('key_file')
@@ -62,11 +71,16 @@ class ExecutionConfiguration:
     result.log_level = source.get('log_level')
     result.min_stage = source.get('min_stage')
     result.udmi_version = source.get('udmi_version')
+    result.udmi_commit = source.get('udmi_commit')
+    result.udmi_ref = source.get('udmi_ref')
+    result.udmi_timever = source.get('udmi_timever')
+    result.enforce_version = source.get('enforce_version')
     result.udmi_root = source.get('udmi_root')
     result.update_to = source.get('update_to')
     result.alt_project = source.get('alt_project')
     result.alt_registry = source.get('alt_registry')
     result.block_unknown = source.get('block_unknown')
+    result.sequences = source.get('sequences')
     return result
 
   @staticmethod
@@ -101,6 +115,8 @@ class ExecutionConfiguration:
       result['reflect_region'] = self.reflect_region # 5
     if self.site_model:
       result['site_model'] = self.site_model # 5
+    if self.src_file:
+      result['src_file'] = self.src_file # 5
     if self.registry_suffix:
       result['registry_suffix'] = self.registry_suffix # 5
     if self.shard_count:
@@ -117,6 +133,8 @@ class ExecutionConfiguration:
       result['device_endpoint'] = self.device_endpoint.to_dict() # 4
     if self.project_id:
       result['project_id'] = self.project_id # 5
+    if self.user_name:
+      result['user_name'] = self.user_name # 5
     if self.udmi_namespace:
       result['udmi_namespace'] = self.udmi_namespace # 5
     if self.bridge_host:
@@ -131,6 +149,14 @@ class ExecutionConfiguration:
       result['min_stage'] = self.min_stage # 5
     if self.udmi_version:
       result['udmi_version'] = self.udmi_version # 5
+    if self.udmi_commit:
+      result['udmi_commit'] = self.udmi_commit # 5
+    if self.udmi_ref:
+      result['udmi_ref'] = self.udmi_ref # 5
+    if self.udmi_timever:
+      result['udmi_timever'] = self.udmi_timever # 5
+    if self.enforce_version:
+      result['enforce_version'] = self.enforce_version # 5
     if self.udmi_root:
       result['udmi_root'] = self.udmi_root # 5
     if self.update_to:
@@ -141,4 +167,6 @@ class ExecutionConfiguration:
       result['alt_registry'] = self.alt_registry # 5
     if self.block_unknown:
       result['block_unknown'] = self.block_unknown # 5
+    if self.sequences:
+      result['sequences'] = self.sequences # 1
     return result

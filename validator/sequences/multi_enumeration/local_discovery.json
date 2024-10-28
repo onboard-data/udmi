@@ -1,7 +1,7 @@
 {
-  "enumerate" : {
-    "families" : true,
-    "uniqs" : true,
-    "features" : true
+  "depths" : {
+    "families" : "entries",
+    "refs" : "entries",
+    "features" : "entries"
   }
 }

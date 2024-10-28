@@ -135,40 +135,6 @@
         </div>
     </div>
 </div>
-<div class="accordion" id="accordiondescription">
-    <div class="card">
-        <div class="card-header" id="headingdescription">
-            <h2 class="mb-0">
-                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#description"
-                        aria-expanded="" aria-controls="description" onclick="setAnchor('#description')"><span class="property-name">description</span></button>
-            </h2>
-        </div>
-
-        <div id="description"
-             class="collapse property-definition-div" aria-labelledby="headingdescription"
-             data-parent="#accordiondescription">
-            <div class="card-body pl-5">
-
-    <div class="breadcrumbs">root
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#description" onclick="anchorLink('description')">description</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="description"><p>Generic human-readable text describing the device</p>
-</span>
-            
-
-            
-            
-
-            
-            </div>
-        </div>
-    </div>
-</div>
 <div class="accordion" id="accordionhash">
     <div class="card">
         <div class="card-header" id="headinghash">
@@ -193,40 +159,6 @@
     <a href="#hash" onclick="anchorLink('hash')">hash</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
 <span class="description"><p>Automatically generated field that contains the hash of file contents.</p>
 </span><span class="pattern-value" id="hash_pattern">Must match regular expression: <code>^[0-9a-z]{8}$</code></span>
-            
-
-            
-            
-
-            
-            </div>
-        </div>
-    </div>
-</div>
-<div class="accordion" id="accordiondevice_version">
-    <div class="card">
-        <div class="card-header" id="headingdevice_version">
-            <h2 class="mb-0">
-                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#device_version"
-                        aria-expanded="" aria-controls="device_version" onclick="setAnchor('#device_version')"><span class="property-name">device_version</span></button>
-            </h2>
-        </div>
-
-        <div id="device_version"
-             class="collapse property-definition-div" aria-labelledby="headingdevice_version"
-             data-parent="#accordiondevice_version">
-            <div class="card-body pl-5">
-
-    <div class="breadcrumbs">root
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#device_version" onclick="anchorLink('device_version')">device_version</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="description"><p>Version of schema supported by the device</p>
-</span>
             
 
             
@@ -269,6 +201,50 @@
             
 
             
+<div class="accordion" id="accordioncloud_connection_type">
+    <div class="card">
+        <div class="card-header" id="headingcloud_connection_type">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_connection_type"
+                        aria-expanded="" aria-controls="cloud_connection_type" onclick="setAnchor('#cloud_connection_type')"><span class="property-name">connection_type</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_connection_type"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_connection_type"
+             data-parent="#accordioncloud_connection_type">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_connection_type" onclick="anchorLink('cloud_connection_type')">connection_type</a></div><span class="badge badge-dark value-type">Type: enum (of string)</span><br/>
+<span class="description"><p>Connection type for connecting to cloud</p>
+</span><div class="enum-value" id="cloud_connection_type_enum">
+                <h4>Must be one of:</h4>
+                <ul class="list-group"><li class="list-group-item enum-item">"GATEWAY"</li><li class="list-group-item enum-item">"DIRECT"</li><li class="list-group-item enum-item">"PROXIED"</li></ul>
+                </div>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
 <div class="accordion" id="accordioncloud_auth_type">
     <div class="card">
         <div class="card-header" id="headingcloud_auth_type">
@@ -398,6 +374,97 @@
         </div>
     </div>
 </div>
+<div class="accordion" id="accordioncloud_config">
+    <div class="card">
+        <div class="card-header" id="headingcloud_config">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_config"
+                        aria-expanded="" aria-controls="cloud_config" onclick="setAnchor('#cloud_config')"><span class="property-name">config</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_config"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_config"
+             data-parent="#accordioncloud_config">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_config" onclick="anchorLink('cloud_config')">config</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="description"><p>Information specific to how the device communicates with the cloud.</p>
+</span>
+
+     <span class="badge badge-info no-additional">No Additional Properties</span>
+            
+
+            
+            
+
+            
+<div class="accordion" id="accordioncloud_config_static_file">
+    <div class="card">
+        <div class="card-header" id="headingcloud_config_static_file">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_config_static_file"
+                        aria-expanded="" aria-controls="cloud_config_static_file" onclick="setAnchor('#cloud_config_static_file')"><span class="property-name">static_file</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_config_static_file"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_config_static_file"
+             data-parent="#accordioncloud_config_static_file">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_config" onclick="anchorLink('cloud_config')">config</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_config_static_file" onclick="anchorLink('cloud_config_static_file')">static_file</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Config file to use. Within the <code>config</code> directory in the device's metadata directory</p>
+</span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="accordion" id="accordioncloud_blocked">
     <div class="card">
         <div class="card-header" id="headingcloud_blocked">
@@ -427,6 +494,206 @@
             />
         </svg>
     <a href="#cloud_blocked" onclick="anchorLink('cloud_blocked')">blocked</a></div><span class="badge badge-dark value-type">Type: boolean</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_detail">
+    <div class="card">
+        <div class="card-header" id="headingcloud_detail">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_detail"
+                        aria-expanded="" aria-controls="cloud_detail" onclick="setAnchor('#cloud_detail')"><span class="property-name">detail</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_detail"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_detail"
+             data-parent="#accordioncloud_detail">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_detail" onclick="anchorLink('cloud_detail')">detail</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_updated_time">
+    <div class="card">
+        <div class="card-header" id="headingcloud_updated_time">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_updated_time"
+                        aria-expanded="" aria-controls="cloud_updated_time" onclick="setAnchor('#cloud_updated_time')"><span class="property-name">updated_time</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_updated_time"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_updated_time"
+             data-parent="#accordioncloud_updated_time">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_updated_time" onclick="anchorLink('cloud_updated_time')">updated_time</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_last_state_time">
+    <div class="card">
+        <div class="card-header" id="headingcloud_last_state_time">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_last_state_time"
+                        aria-expanded="" aria-controls="cloud_last_state_time" onclick="setAnchor('#cloud_last_state_time')"><span class="property-name">last_state_time</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_last_state_time"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_last_state_time"
+             data-parent="#accordioncloud_last_state_time">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_last_state_time" onclick="anchorLink('cloud_last_state_time')">last_state_time</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_last_config_time">
+    <div class="card">
+        <div class="card-header" id="headingcloud_last_config_time">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_last_config_time"
+                        aria-expanded="" aria-controls="cloud_last_config_time" onclick="setAnchor('#cloud_last_config_time')"><span class="property-name">last_config_time</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_last_config_time"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_last_config_time"
+             data-parent="#accordioncloud_last_config_time">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_last_config_time" onclick="anchorLink('cloud_last_config_time')">last_config_time</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_last_error_time">
+    <div class="card">
+        <div class="card-header" id="headingcloud_last_error_time">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_last_error_time"
+                        aria-expanded="" aria-controls="cloud_last_error_time" onclick="setAnchor('#cloud_last_error_time')"><span class="property-name">last_error_time</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_last_error_time"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_last_error_time"
+             data-parent="#accordioncloud_last_error_time">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_last_error_time" onclick="anchorLink('cloud_last_error_time')">last_error_time</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
 
             
 
@@ -509,8 +776,49 @@
     <a href="#cloud_operation" onclick="anchorLink('cloud_operation')">operation</a></div><span class="badge badge-dark value-type">Type: enum (of string)</span><br/>
 <div class="enum-value" id="cloud_operation_enum">
                 <h4>Must be one of:</h4>
-                <ul class="list-group"><li class="list-group-item enum-item">"FETCH"</li><li class="list-group-item enum-item">"CREATE"</li><li class="list-group-item enum-item">"UPDATE"</li><li class="list-group-item enum-item">"DELETE"</li><li class="list-group-item enum-item">"BIND"</li><li class="list-group-item enum-item">"BLOCK"</li></ul>
+                <ul class="list-group"><li class="list-group-item enum-item">"ERROR"</li><li class="list-group-item enum-item">"FETCH"</li><li class="list-group-item enum-item">"CREATE"</li><li class="list-group-item enum-item">"UPDATE"</li><li class="list-group-item enum-item">"DELETE"</li><li class="list-group-item enum-item">"MODIFY"</li><li class="list-group-item enum-item">"BIND"</li><li class="list-group-item enum-item">"ALLOW"</li><li class="list-group-item enum-item">"BLOCK"</li></ul>
                 </div>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordioncloud_metadata_str">
+    <div class="card">
+        <div class="card-header" id="headingcloud_metadata_str">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#cloud_metadata_str"
+                        aria-expanded="" aria-controls="cloud_metadata_str" onclick="setAnchor('#cloud_metadata_str')"><span class="property-name">metadata_str</span></button>
+            </h2>
+        </div>
+
+        <div id="cloud_metadata_str"
+             class="collapse property-definition-div" aria-labelledby="headingcloud_metadata_str"
+             data-parent="#accordioncloud_metadata_str">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud" onclick="anchorLink('cloud')">cloud</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#cloud_metadata_str" onclick="anchorLink('cloud_metadata_str')">metadata_str</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Strigified version of the metadata object, used for internal backend processing</p>
+</span>
             
 
             
@@ -650,6 +958,226 @@
             
 
             
+<div class="accordion" id="accordionsystem_description">
+    <div class="card">
+        <div class="card-header" id="headingsystem_description">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_description"
+                        aria-expanded="" aria-controls="system_description" onclick="setAnchor('#system_description')"><span class="property-name">description</span></button>
+            </h2>
+        </div>
+
+        <div id="system_description"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_description"
+             data-parent="#accordionsystem_description">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_description" onclick="anchorLink('system_description')">description</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Generic human-readable text describing the device</p>
+</span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_device_version">
+    <div class="card">
+        <div class="card-header" id="headingsystem_device_version">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_device_version"
+                        aria-expanded="" aria-controls="system_device_version" onclick="setAnchor('#system_device_version')"><span class="property-name">device_version</span></button>
+            </h2>
+        </div>
+
+        <div id="system_device_version"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_device_version"
+             data-parent="#accordionsystem_device_version">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_device_version" onclick="anchorLink('system_device_version')">device_version</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Version of schema supported by the device</p>
+</span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Example:</div>
+<br/><div id="system_device_version_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;1.5.0&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_zone">
+    <div class="card">
+        <div class="card-header" id="headingsystem_zone">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_zone"
+                        aria-expanded="" aria-controls="system_zone" onclick="setAnchor('#system_zone')"><span class="property-name">zone</span></button>
+            </h2>
+        </div>
+
+        <div id="system_zone"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_zone"
+             data-parent="#accordionsystem_zone">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_zone" onclick="anchorLink('system_zone')">zone</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Aggregation of spaces, partial spaces or other zones that the device is serving</p>
+</span><span class="pattern-value" id="system_zone_pattern">Must match regular expression: <code>^[-_a-zA-Z0-9]+$</code></span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="system_zone_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;Zone1&quot;</span>
+</pre></div>
+</div><div id="system_zone_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;Kitchen_101&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_tags">
+    <div class="card">
+        <div class="card-header" id="headingsystem_tags">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_tags"
+                        aria-expanded="" aria-controls="system_tags" onclick="setAnchor('#system_tags')"><span class="property-name">tags</span></button>
+            </h2>
+        </div>
+
+        <div id="system_tags"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_tags"
+             data-parent="#accordionsystem_tags">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_tags" onclick="anchorLink('system_tags')">tags</a></div><span class="badge badge-dark value-type">Type: array</span><br/>
+<span class="description"><p>Tags associated with the device</p>
+</span>
+            
+
+            
+            
+
+            <p><span class="badge badge-light restriction unique-items-restriction" id="system_tags_uniqueItems">All items must be unique</span></p><h4>Each item of this array must be:</h4>
+    <div class="card">
+        <div class="card-body items-definition" id="system_tags_items">
+            
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_tags" onclick="anchorLink('system_tags')">tags</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_tags_items" onclick="anchorLink('system_tags_items')">tags items</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="pattern-value" id="system_tags_items_pattern">Must match regular expression: <code>^[a-z0-9]+$</code></span>
+            
+
+            
+            
+
+            
+        </div>
+    </div><br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="system_tags_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;lighting&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div><div id="system_tags_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;energy&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;building&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="accordion" id="accordionsystem_location">
     <div class="card">
         <div class="card-header" id="headingsystem_location">
@@ -679,7 +1207,7 @@
             />
         </svg>
     <a href="#system_location" onclick="anchorLink('system_location')">location</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
-<span class="description"><p>Properties the expected physical location of the device.</p>
+<span class="description"><p>Properties of the expected physical location of the device</p>
 </span> <span class="badge badge-info no-additional">No Additional Properties</span>
             
 
@@ -723,8 +1251,8 @@
             />
         </svg>
     <a href="#system_location_site" onclick="anchorLink('system_location_site')">site</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="description"><p>The site name according to the site model in which a device is installed in</p>
-</span><span class="pattern-value" id="system_location_site_pattern">Must match regular expression: <code>^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]{2,9}$</code></span>
+<span class="description"><p>The site name according to the site model in which the device is installed in</p>
+</span><span class="pattern-value" id="system_location_site_pattern">Must match regular expression: <code>^[A-Z]{2}-[A-Z]{3,4}-[A-Z0-9]{2,9}$</code></span>
             
 
             
@@ -733,6 +1261,60 @@
             <br/>
 <div class="badge badge-secondary">Example:</div>
 <br/><div id="system_location_site_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;US-SFO-XYY&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_panel">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_panel">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_panel"
+                        aria-expanded="" aria-controls="system_location_panel" onclick="setAnchor('#system_location_panel')"><span class="property-name">panel</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_panel"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_panel"
+             data-parent="#accordionsystem_location_panel">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_panel" onclick="anchorLink('system_location_panel')">panel</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>The reference of the panel where the device is installed in</p>
+</span><span class="pattern-value" id="system_location_panel_pattern">Must match regular expression: <code>^[-_a-zA-Z0-9]+$</code></span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="system_location_panel_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;Panel123&quot;</span>
+</pre></div>
+</div><div id="system_location_panel_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;CTRP-567&quot;</span>
 </pre></div>
 </div>
             </div>
@@ -776,6 +1358,161 @@
         </svg>
     <a href="#system_location_section" onclick="anchorLink('system_location_section')">section</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
 <span class="pattern-value" id="system_location_section_pattern">Must match regular expression: <code>^[A-Z0-9-]+$</code></span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_room">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_room">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_room"
+                        aria-expanded="" aria-controls="system_location_room" onclick="setAnchor('#system_location_room')"><span class="property-name">room</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_room"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_room"
+             data-parent="#accordionsystem_location_room">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_room" onclick="anchorLink('system_location_room')">room</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="pattern-value" id="system_location_room_pattern">Must match regular expression: <code>^[-_a-zA-Z0-9]+$</code></span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_floor">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_floor">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_floor"
+                        aria-expanded="" aria-controls="system_location_floor" onclick="setAnchor('#system_location_floor')"><span class="property-name">floor</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_floor"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_floor"
+             data-parent="#accordionsystem_location_floor">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_floor" onclick="anchorLink('system_location_floor')">floor</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Name of floor level</p>
+</span><span class="pattern-value" id="system_location_floor_pattern">Must match regular expression: <code>^[A-Z0-9-]+$</code></span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="system_location_floor_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;1&quot;</span>
+</pre></div>
+</div><div id="system_location_floor_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;1A&quot;</span>
+</pre></div>
+</div><div id="system_location_floor_ex3" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;G&quot;</span>
+</pre></div>
+</div><div id="system_location_floor_ex4" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;B1M&quot;</span>
+</pre></div>
+</div><div id="system_location_floor_ex5" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;RF&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_floor_seq">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_floor_seq">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_floor_seq"
+                        aria-expanded="" aria-controls="system_location_floor_seq" onclick="setAnchor('#system_location_floor_seq')"><span class="property-name">floor_seq</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_floor_seq"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_floor_seq"
+             data-parent="#accordionsystem_location_floor_seq">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_floor_seq" onclick="anchorLink('system_location_floor_seq')">floor_seq</a></div><span class="badge badge-dark value-type">Type: integer</span><br/>
+<span class="description"><p>Sequential integer representation for a floor, primarily for comparisons when non integer floors are used, e.g. 1 and 1M</p>
+</span>
             
 
             
@@ -997,6 +1734,265 @@
             </div>
         </div>
     </div>
+</div>
+<div class="accordion" id="accordionsystem_location_coordinates">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_coordinates">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_coordinates"
+                        aria-expanded="" aria-controls="system_location_coordinates" onclick="setAnchor('#system_location_coordinates')"><span class="property-name">coordinates</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_coordinates"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_coordinates"
+             data-parent="#accordionsystem_location_coordinates">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates" onclick="anchorLink('system_location_coordinates')">coordinates</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+ <span class="badge badge-info no-additional">No Additional Properties</span>
+            
+
+            
+            
+
+            
+<div class="accordion" id="accordionsystem_location_coordinates_lat">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_coordinates_lat">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_coordinates_lat"
+                        aria-expanded="" aria-controls="system_location_coordinates_lat" onclick="setAnchor('#system_location_coordinates_lat')"><span class="property-name">lat</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_coordinates_lat"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_coordinates_lat"
+             data-parent="#accordionsystem_location_coordinates_lat">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates" onclick="anchorLink('system_location_coordinates')">coordinates</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates_lat" onclick="anchorLink('system_location_coordinates_lat')">lat</a></div><span class="badge badge-dark value-type">Type: number</span><br/>
+<span class="description"><p>The <code>latitude</code> coordinate of the device in the WGS84 coordinate system</p>
+</span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_coordinates_long">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_coordinates_long">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_coordinates_long"
+                        aria-expanded="" aria-controls="system_location_coordinates_long" onclick="setAnchor('#system_location_coordinates_long')"><span class="property-name">long</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_coordinates_long"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_coordinates_long"
+             data-parent="#accordionsystem_location_coordinates_long">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates" onclick="anchorLink('system_location_coordinates')">coordinates</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates_long" onclick="anchorLink('system_location_coordinates_long')">long</a></div><span class="badge badge-dark value-type">Type: number</span><br/>
+<span class="description"><p>The <code>longitude</code> coordinate of the device in the WGS84 coordinate system</p>
+</span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_location_coordinates_alt_m">
+    <div class="card">
+        <div class="card-header" id="headingsystem_location_coordinates_alt_m">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_location_coordinates_alt_m"
+                        aria-expanded="" aria-controls="system_location_coordinates_alt_m" onclick="setAnchor('#system_location_coordinates_alt_m')"><span class="property-name">alt_m</span></button>
+            </h2>
+        </div>
+
+        <div id="system_location_coordinates_alt_m"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_location_coordinates_alt_m"
+             data-parent="#accordionsystem_location_coordinates_alt_m">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location" onclick="anchorLink('system_location')">location</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates" onclick="anchorLink('system_location_coordinates')">coordinates</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_location_coordinates_alt_m" onclick="anchorLink('system_location_coordinates_alt_m')">alt_m</a></div><span class="badge badge-dark value-type">Type: number</span><br/>
+<span class="description"><p>The <code>altitude</code> coordinate of the device in meters</p>
+</span>
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionsystem_serial_no">
+    <div class="card">
+        <div class="card-header" id="headingsystem_serial_no">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_serial_no"
+                        aria-expanded="" aria-controls="system_serial_no" onclick="setAnchor('#system_serial_no')"><span class="property-name">serial_no</span></button>
+            </h2>
+        </div>
+
+        <div id="system_serial_no"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_serial_no"
+             data-parent="#accordionsystem_serial_no">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_serial_no" onclick="anchorLink('system_serial_no')">serial_no</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>The serial number of the physical device</p>
+</span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="system_serial_no_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;A1B2C3D4&quot;</span>
+</pre></div>
+</div><div id="system_serial_no_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;00001&quot;</span>
+</pre></div>
 </div>
             </div>
         </div>
@@ -1541,7 +2537,7 @@
             />
         </svg>
     <a href="#system_physical_tag_asset_site" onclick="anchorLink('system_physical_tag_asset_site')">site</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="pattern-value" id="system_physical_tag_asset_site_pattern">Must match regular expression: <code>^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]{2,9}$</code></span>
+<span class="pattern-value" id="system_physical_tag_asset_site_pattern">Must match regular expression: <code>^[A-Z]{2}-[A-Z]{3,4}-[A-Z0-9]{2,9}$</code></span>
             
 
             
@@ -1595,7 +2591,7 @@
             />
         </svg>
     <a href="#system_physical_tag_asset_name" onclick="anchorLink('system_physical_tag_asset_name')">name</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="pattern-value" id="system_physical_tag_asset_name_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[0-9]{1,6}$</code></span>
+<span class="pattern-value" id="system_physical_tag_asset_name_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[1-9][0-9]*$</code></span>
             
 
             
@@ -1614,18 +2610,18 @@
         </div>
     </div>
 </div>
-<div class="accordion" id="accordionsystem_aux">
+<div class="accordion" id="accordionsystem_adjunct">
     <div class="card">
-        <div class="card-header" id="headingsystem_aux">
+        <div class="card-header" id="headingsystem_adjunct">
             <h2 class="mb-0">
-                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_aux"
-                        aria-expanded="" aria-controls="system_aux" onclick="setAnchor('#system_aux')"><span class="property-name">aux</span></button>
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_adjunct"
+                        aria-expanded="" aria-controls="system_adjunct" onclick="setAnchor('#system_adjunct')"><span class="property-name">adjunct</span></button>
             </h2>
         </div>
 
-        <div id="system_aux"
-             class="collapse property-definition-div" aria-labelledby="headingsystem_aux"
-             data-parent="#accordionsystem_aux">
+        <div id="system_adjunct"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_adjunct"
+             data-parent="#accordionsystem_adjunct">
             <div class="card-body pl-5">
 
     <div class="breadcrumbs">root
@@ -1642,7 +2638,7 @@
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#system_aux" onclick="anchorLink('system_aux')">aux</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+    <a href="#system_adjunct" onclick="anchorLink('system_adjunct')">adjunct</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
  <span class="badge badge-info no-additional">No Additional Properties</span>
             
 
@@ -1650,18 +2646,18 @@
             
 
             
-<div class="accordion" id="accordionsystem_aux_suffix">
+<div class="accordion" id="accordionsystem_adjunct_suffix">
     <div class="card">
-        <div class="card-header" id="headingsystem_aux_suffix">
+        <div class="card-header" id="headingsystem_adjunct_suffix">
             <h2 class="mb-0">
-                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_aux_suffix"
-                        aria-expanded="" aria-controls="system_aux_suffix" onclick="setAnchor('#system_aux_suffix')"><span class="property-name">suffix</span></button>
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_adjunct_suffix"
+                        aria-expanded="" aria-controls="system_adjunct_suffix" onclick="setAnchor('#system_adjunct_suffix')"><span class="property-name">suffix</span></button>
             </h2>
         </div>
 
-        <div id="system_aux_suffix"
-             class="collapse property-definition-div" aria-labelledby="headingsystem_aux_suffix"
-             data-parent="#accordionsystem_aux_suffix">
+        <div id="system_adjunct_suffix"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_adjunct_suffix"
+             data-parent="#accordionsystem_adjunct_suffix">
             <div class="card-body pl-5">
 
     <div class="breadcrumbs">root
@@ -1678,15 +2674,15 @@
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#system_aux" onclick="anchorLink('system_aux')">aux</a>
+    <a href="#system_adjunct" onclick="anchorLink('system_adjunct')">adjunct</a>
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path
                 fill-rule="evenodd"
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#system_aux_suffix" onclick="anchorLink('system_aux_suffix')">suffix</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="pattern-value" id="system_aux_suffix_pattern">Must match regular expression: <code>^[a-zA-Z0-9-]+$</code></span>
+    <a href="#system_adjunct_suffix" onclick="anchorLink('system_adjunct_suffix')">suffix</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="pattern-value" id="system_adjunct_suffix_pattern">Must match regular expression: <code>^[a-zA-Z0-9-]+$</code></span>
             
 
             
@@ -1742,6 +2738,47 @@
         </div>
     </div>
 </div>
+<div class="accordion" id="accordionsystem_metrics_rate_sec">
+    <div class="card">
+        <div class="card-header" id="headingsystem_metrics_rate_sec">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#system_metrics_rate_sec"
+                        aria-expanded="" aria-controls="system_metrics_rate_sec" onclick="setAnchor('#system_metrics_rate_sec')"><span class="property-name">metrics_rate_sec</span></button>
+            </h2>
+        </div>
+
+        <div id="system_metrics_rate_sec"
+             class="collapse property-definition-div" aria-labelledby="headingsystem_metrics_rate_sec"
+             data-parent="#accordionsystem_metrics_rate_sec">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system" onclick="anchorLink('system')">system</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#system_metrics_rate_sec" onclick="anchorLink('system_metrics_rate_sec')">metrics_rate_sec</a></div><span class="badge badge-dark value-type">Type: integer</span><br/>
+<span class="description"><p>The rate at which the system should send system event updates. 0 indicates no updates.</p>
+</span>
+            
+
+            
+            <p><span class="badge badge-light restriction numeric-restriction" id="system_metrics_rate_sec_number">Value must be greater or equal to <code>0</code> and lesser or equal to <code>86400</code></span></p>
+
+            
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </div>
@@ -1771,92 +2808,7 @@
 <span class="description"><p><a href="../../docs/specs/gateway.md">Gateway Documentation</a></p>
 </span>
 
-     <span class="badge badge-info no-additional">No Additional Properties</span><div class="one-of-value" id="gateway_oneOf"><h2 class="handle">
-  <label>One of</label>
-</h2><ul class="nav nav-tabs" id="tabsgateway_oneOf_oneOf" role="tablist"><li class="nav-item">
-            <a class="nav-link active oneOf-option"
-               id="gateway_oneOf_i0" data-toggle="tab" href="#tab-pane_gateway_oneOf_i0" role="tab"
-               onclick="setAnchor('#gateway_oneOf_i0')"
-            >Option 1</a>
-        </li><li class="nav-item">
-            <a class="nav-link oneOf-option"
-               id="gateway_oneOf_i1" data-toggle="tab" href="#tab-pane_gateway_oneOf_i1" role="tab"
-               onclick="setAnchor('#gateway_oneOf_i1')"
-            >Option 2</a>
-        </li></ul>
-<div class="tab-content card"><div class="tab-pane fade card-body active show"
-             id="tab-pane_gateway_oneOf_i0" role="tabpanel">
-            
-
-    <div class="breadcrumbs">root
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway" onclick="anchorLink('gateway')">gateway</a>
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway_oneOf" onclick="anchorLink('gateway_oneOf')">oneOf</a>
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway_oneOf_i0" onclick="anchorLink('gateway_oneOf_i0')">item 0</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
-
-            <div class="enum-value">
-    <h4>The following properties are required:</h4>
-    <ul class="list-group"><li class="list-group-item required-property">gateway_id</li></ul>
-    </div>
-
-            
-            
-
-            
-        </div><div class="tab-pane fade card-body "
-             id="tab-pane_gateway_oneOf_i1" role="tabpanel">
-            
-
-    <div class="breadcrumbs">root
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway" onclick="anchorLink('gateway')">gateway</a>
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway_oneOf" onclick="anchorLink('gateway_oneOf')">oneOf</a>
-        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fill-rule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-            />
-        </svg>
-    <a href="#gateway_oneOf_i1" onclick="anchorLink('gateway_oneOf_i1')">item 1</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
-
-            <div class="enum-value">
-    <h4>The following properties are required:</h4>
-    <ul class="list-group"><li class="list-group-item required-property">proxy_ids</li></ul>
-    </div>
-
-            
-            
-
-            
-        </div></div></div>
+     <span class="badge badge-info no-additional">No Additional Properties</span>
             
 
             
@@ -1893,7 +2845,7 @@
         </svg>
     <a href="#gateway_gateway_id" onclick="anchorLink('gateway_gateway_id')">gateway_id</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
 <span class="description"><p>The device ID of the gateway the device is bound to</p>
-</span><span class="pattern-value" id="gateway_gateway_id_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[0-9]{1,6}$</code></span>
+</span><span class="pattern-value" id="gateway_gateway_id_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[1-9][0-9]*$</code></span>
             
 
             
@@ -1908,18 +2860,18 @@
         </div>
     </div>
 </div>
-<div class="accordion" id="accordiongateway_family">
+<div class="accordion" id="accordiongateway_target">
     <div class="card">
-        <div class="card-header" id="headinggateway_family">
+        <div class="card-header" id="headinggateway_target">
             <h2 class="mb-0">
-                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#gateway_family"
-                        aria-expanded="" aria-controls="gateway_family" onclick="setAnchor('#gateway_family')"><span class="property-name">family</span></button>
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#gateway_target"
+                        aria-expanded="" aria-controls="gateway_target" onclick="setAnchor('#gateway_target')"><span class="property-name">target</span></button>
             </h2>
         </div>
 
-        <div id="gateway_family"
-             class="collapse property-definition-div" aria-labelledby="headinggateway_family"
-             data-parent="#accordiongateway_family">
+        <div id="gateway_target"
+             class="collapse property-definition-div" aria-labelledby="headinggateway_target"
+             data-parent="#accordiongateway_target">
             <div class="card-body pl-5">
 
     <div class="breadcrumbs">root
@@ -1936,15 +2888,116 @@
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#gateway_family" onclick="anchorLink('gateway_family')">family</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="description"><p>Protocol family used for connecting to the proxy device</p>
+    <a href="#gateway_target" onclick="anchorLink('gateway_target')">target</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="description"><p>The type of network</p>
+</span>
+
+     <span class="badge badge-info no-additional">No Additional Properties</span>
+            
+
+            
+            
+
+            
+<div class="accordion" id="accordiongateway_target_addr">
+    <div class="card">
+        <div class="card-header" id="headinggateway_target_addr">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#gateway_target_addr"
+                        aria-expanded="" aria-controls="gateway_target_addr" onclick="setAnchor('#gateway_target_addr')"><span class="property-name">addr</span></button>
+            </h2>
+        </div>
+
+        <div id="gateway_target_addr"
+             class="collapse property-definition-div" aria-labelledby="headinggateway_target_addr"
+             data-parent="#accordiongateway_target_addr">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway" onclick="anchorLink('gateway')">gateway</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway_target" onclick="anchorLink('gateway_target')">target</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway_target_addr" onclick="anchorLink('gateway_target_addr')">addr</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>The address of a device on the fieldbus/local network</p>
 </span>
             
 
             
             
 
+            <br/>
+<div class="badge badge-secondary">Example:</div>
+<br/><div id="gateway_target_addr_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;0x414889&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordiongateway_target_family">
+    <div class="card">
+        <div class="card-header" id="headinggateway_target_family">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#gateway_target_family"
+                        aria-expanded="" aria-controls="gateway_target_family" onclick="setAnchor('#gateway_target_family')"><span class="property-name">family</span></button>
+            </h2>
+        </div>
+
+        <div id="gateway_target_family"
+             class="collapse property-definition-div" aria-labelledby="headinggateway_target_family"
+             data-parent="#accordiongateway_target_family">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway" onclick="anchorLink('gateway')">gateway</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway_target" onclick="anchorLink('gateway_target')">target</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#gateway_target_family" onclick="anchorLink('gateway_target_family')">family</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
             
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </div>
@@ -2012,7 +3065,7 @@
             />
         </svg>
     <a href="#gateway_proxy_ids_items" onclick="anchorLink('gateway_proxy_ids_items')">proxy_ids items</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="pattern-value" id="gateway_proxy_ids_items_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[0-9]{1,6}$</code></span>
+<span class="pattern-value" id="gateway_proxy_ids_items_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[1-9][0-9]*$</code></span>
             
 
             
@@ -2197,6 +3250,157 @@
             
 
             
+<div class="accordion" id="accordionlocalnet_parent">
+    <div class="card">
+        <div class="card-header" id="headinglocalnet_parent">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#localnet_parent"
+                        aria-expanded="" aria-controls="localnet_parent" onclick="setAnchor('#localnet_parent')"><span class="property-name">parent</span></button>
+            </h2>
+        </div>
+
+        <div id="localnet_parent"
+             class="collapse property-definition-div" aria-labelledby="headinglocalnet_parent"
+             data-parent="#accordionlocalnet_parent">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet" onclick="anchorLink('localnet')">localnet</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_parent" onclick="anchorLink('localnet_parent')">parent</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="description"><p>Parent device to which the device is physically connected</p>
+</span> <span class="badge badge-info no-additional">No Additional Properties</span>
+            
+
+            
+            
+
+            
+<div class="accordion" id="accordionlocalnet_parent_target">
+    <div class="card">
+        <div class="card-header" id="headinglocalnet_parent_target">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#localnet_parent_target"
+                        aria-expanded="" aria-controls="localnet_parent_target" onclick="setAnchor('#localnet_parent_target')"><span class="property-name">target</span></button>
+            </h2>
+        </div>
+
+        <div id="localnet_parent_target"
+             class="collapse property-definition-div" aria-labelledby="headinglocalnet_parent_target"
+             data-parent="#accordionlocalnet_parent_target">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet" onclick="anchorLink('localnet')">localnet</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_parent" onclick="anchorLink('localnet_parent')">parent</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_parent_target" onclick="anchorLink('localnet_parent_target')">target</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>ID of the parent device to which the device is physically connected</p>
+</span><span class="pattern-value" id="localnet_parent_target_pattern">Must match regular expression: <code>^[A-Z]{2,6}-[1-9][0-9]*$</code></span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="localnet_parent_target_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;DDC-1&quot;</span>
+</pre></div>
+</div><div id="localnet_parent_target_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;CGW-2&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionlocalnet_parent_family">
+    <div class="card">
+        <div class="card-header" id="headinglocalnet_parent_family">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#localnet_parent_family"
+                        aria-expanded="" aria-controls="localnet_parent_family" onclick="setAnchor('#localnet_parent_family')"><span class="property-name">family</span></button>
+            </h2>
+        </div>
+
+        <div id="localnet_parent_family"
+             class="collapse property-definition-div" aria-labelledby="headinglocalnet_parent_family"
+             data-parent="#accordionlocalnet_parent_family">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet" onclick="anchorLink('localnet')">localnet</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_parent" onclick="anchorLink('localnet_parent')">parent</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_parent_family" onclick="anchorLink('localnet_parent_family')">family</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+<span class="description"><p>Connection family/protocol of the parent device to which the device is physically connected</p>
+</span>
+            
+
+            
+            
+
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="localnet_parent_family_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;bacnet_mstp&quot;</span>
+</pre></div>
+</div><div id="localnet_parent_family_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;modbus_tcp&quot;</span>
+</pre></div>
+</div><div id="localnet_parent_family_ex3" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;mqtt&quot;</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="accordion" id="accordionlocalnet_families">
     <div class="card">
         <div class="card-header" id="headinglocalnet_families">
@@ -2232,7 +3436,17 @@
             
             
 
-            
+            <br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="localnet_families_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;bacnet&quot;</span>
+</pre></div>
+</div><div id="localnet_families_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;modbus&quot;</span>
+</pre></div>
+</div><div id="localnet_families_ex3" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;ethernet&quot;</span>
+</pre></div>
+</div><div id="localnet_families_ex4" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;ipv4&quot;</span>
+</pre></div>
+</div>
 <div class="accordion" id="accordionlocalnet_families_pattern1">
     <div class="card">
         <div class="card-header" id="headinglocalnet_families_pattern1">
@@ -2283,19 +3497,13 @@
             
             
 
-            <br/>
-<div class="badge badge-secondary">Examples:</div>
-<br/><div id="localnet_families_pattern1_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;bacnet&quot;</span>
-</pre></div>
-</div><div id="localnet_families_pattern1_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;modbus&quot;</span>
-</pre></div>
-</div>
+            
 <div class="accordion" id="accordionlocalnet_families_pattern1_addr">
     <div class="card">
         <div class="card-header" id="headinglocalnet_families_pattern1_addr">
             <h2 class="mb-0">
                 <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#localnet_families_pattern1_addr"
-                        aria-expanded="" aria-controls="localnet_families_pattern1_addr" onclick="setAnchor('#localnet_families_pattern1_addr')"><span class="property-name">addr</span> <span class="badge badge-warning required-property">Required</span></button>
+                        aria-expanded="" aria-controls="localnet_families_pattern1_addr" onclick="setAnchor('#localnet_families_pattern1_addr')"><span class="property-name">addr</span></button>
             </h2>
         </div>
 
@@ -2333,7 +3541,7 @@
             />
         </svg>
     <a href="#localnet_families_pattern1_addr" onclick="anchorLink('localnet_families_pattern1_addr')">addr</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
-<span class="description"><p>The address of a device on the local network</p>
+<span class="description"><p>The address of a device on the fieldbus/local network</p>
 </span>
             
 
@@ -2345,6 +3553,60 @@
 <br/><div id="localnet_families_pattern1_addr_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="s2">&quot;0x414889&quot;</span>
 </pre></div>
 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionlocalnet_families_pattern1_family">
+    <div class="card">
+        <div class="card-header" id="headinglocalnet_families_pattern1_family">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#localnet_families_pattern1_family"
+                        aria-expanded="" aria-controls="localnet_families_pattern1_family" onclick="setAnchor('#localnet_families_pattern1_family')"><span class="property-name">family</span></button>
+            </h2>
+        </div>
+
+        <div id="localnet_families_pattern1_family"
+             class="collapse property-definition-div" aria-labelledby="headinglocalnet_families_pattern1_family"
+             data-parent="#accordionlocalnet_families_pattern1_family">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet" onclick="anchorLink('localnet')">localnet</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_families" onclick="anchorLink('localnet_families')">families</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_families_pattern1" onclick="anchorLink('localnet_families_pattern1')">Family Localnet Model</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#localnet_families_pattern1_family" onclick="anchorLink('localnet_families_pattern1_family')">family</a></div><span class="badge badge-dark value-type">Type: string</span><br/>
+
+            
+
+            
+            
+
+            
             </div>
         </div>
     </div>
@@ -2706,8 +3968,8 @@
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#features_pattern1" onclick="anchorLink('features_pattern1')">enumeration_feature.json</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
-<span class="description"><p>Object representation for for a single feature enumeration</p>
+    <a href="#features_pattern1" onclick="anchorLink('features_pattern1')">discovery_feature.json</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="description"><p>Object representation for for a single feature</p>
 </span>
 
      <span class="badge badge-info no-additional">No Additional Properties</span>
@@ -2745,7 +4007,7 @@
                 d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
             />
         </svg>
-    <a href="#features_pattern1" onclick="anchorLink('features_pattern1')">Feature Enumeration</a>
+    <a href="#features_pattern1" onclick="anchorLink('features_pattern1')">Feature Discovery</a>
         <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path
                 fill-rule="evenodd"
@@ -3304,6 +4566,121 @@
         </div>
     </div>
 </div>
+<div class="accordion" id="accordionpointset_points_pattern1_tags">
+    <div class="card">
+        <div class="card-header" id="headingpointset_points_pattern1_tags">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#pointset_points_pattern1_tags"
+                        aria-expanded="" aria-controls="pointset_points_pattern1_tags" onclick="setAnchor('#pointset_points_pattern1_tags')"><span class="property-name">tags</span></button>
+            </h2>
+        </div>
+
+        <div id="pointset_points_pattern1_tags"
+             class="collapse property-definition-div" aria-labelledby="headingpointset_points_pattern1_tags"
+             data-parent="#accordionpointset_points_pattern1_tags">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset" onclick="anchorLink('pointset')">pointset</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points" onclick="anchorLink('pointset_points')">points</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points_pattern1" onclick="anchorLink('pointset_points_pattern1')">Point Pointset Model</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points_pattern1_tags" onclick="anchorLink('pointset_points_pattern1_tags')">tags</a></div><span class="badge badge-dark value-type">Type: array</span><br/>
+<span class="description"><p>Tags assosciated with the point</p>
+</span>
+            
+
+            
+            
+
+            <p><span class="badge badge-light restriction unique-items-restriction" id="pointset_points_pattern1_tags_uniqueItems">All items must be unique</span></p><h4>Each item of this array must be:</h4>
+    <div class="card">
+        <div class="card-body items-definition" id="pointset_points_pattern1_tags_items">
+            
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset" onclick="anchorLink('pointset')">pointset</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points" onclick="anchorLink('pointset_points')">points</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points_pattern1" onclick="anchorLink('pointset_points_pattern1')">Point Pointset Model</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points_pattern1_tags" onclick="anchorLink('pointset_points_pattern1_tags')">tags</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_points_pattern1_tags_items" onclick="anchorLink('pointset_points_pattern1_tags_items')">tags items</a></div><span class="badge badge-dark value-type">Type: object</span><br/>
+<span class="pattern-value" id="pointset_points_pattern1_tags_items_pattern">Must match regular expression: <code>^[a-z0-9]+$</code></span>
+            
+
+            
+            
+
+            
+        </div>
+    </div><br/>
+<div class="badge badge-secondary">Examples:</div>
+<br/><div id="pointset_points_pattern1_tags_ex1" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;lighting&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div><div id="pointset_points_pattern1_tags_ex2" class="jumbotron examples"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;energy&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;hvac&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </div>
@@ -3341,6 +4718,46 @@
             />
         </svg>
     <a href="#pointset_exclude_units_from_config" onclick="anchorLink('pointset_exclude_units_from_config')">exclude_units_from_config</a></div><span class="badge badge-dark value-type">Type: boolean</span><br/>
+
+            
+
+            
+            
+
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionpointset_exclude_points_from_config">
+    <div class="card">
+        <div class="card-header" id="headingpointset_exclude_points_from_config">
+            <h2 class="mb-0">
+                <button class="btn btn-link property-name-button" type="button" data-toggle="collapse" data-target="#pointset_exclude_points_from_config"
+                        aria-expanded="" aria-controls="pointset_exclude_points_from_config" onclick="setAnchor('#pointset_exclude_points_from_config')"><span class="property-name">exclude_points_from_config</span></button>
+            </h2>
+        </div>
+
+        <div id="pointset_exclude_points_from_config"
+             class="collapse property-definition-div" aria-labelledby="headingpointset_exclude_points_from_config"
+             data-parent="#accordionpointset_exclude_points_from_config">
+            <div class="card-body pl-5">
+
+    <div class="breadcrumbs">root
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset" onclick="anchorLink('pointset')">pointset</a>
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+            />
+        </svg>
+    <a href="#pointset_exclude_points_from_config" onclick="anchorLink('pointset_exclude_points_from_config')">exclude_points_from_config</a></div><span class="badge badge-dark value-type">Type: boolean</span><br/>
 
             
 

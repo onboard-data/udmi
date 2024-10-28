@@ -13,6 +13,7 @@ class PubberOptions:
     self.noLastConfig = None
     self.badCategory = None
     self.badVersion = None
+    self.badAddr = None
     self.noProxy = None
     self.extraDevice = None
     self.barfConfig = None
@@ -27,9 +28,12 @@ class PubberOptions:
     self.skewClock = None
     self.noPointState = None
     self.noState = None
+    self.noFolder = None
+    self.badLevel = None
     self.spamState = None
     self.tweakState = None
     self.badState = None
+    self.baseState = None
     self.dupeState = None
     self.noLog = None
     self.featureEnableSwap = None
@@ -51,6 +55,7 @@ class PubberOptions:
     result.noLastConfig = source.get('noLastConfig')
     result.badCategory = source.get('badCategory')
     result.badVersion = source.get('badVersion')
+    result.badAddr = source.get('badAddr')
     result.noProxy = source.get('noProxy')
     result.extraDevice = source.get('extraDevice')
     result.barfConfig = source.get('barfConfig')
@@ -65,9 +70,12 @@ class PubberOptions:
     result.skewClock = source.get('skewClock')
     result.noPointState = source.get('noPointState')
     result.noState = source.get('noState')
+    result.noFolder = source.get('noFolder')
+    result.badLevel = source.get('badLevel')
     result.spamState = source.get('spamState')
     result.tweakState = source.get('tweakState')
     result.badState = source.get('badState')
+    result.baseState = source.get('baseState')
     result.dupeState = source.get('dupeState')
     result.noLog = source.get('noLog')
     result.featureEnableSwap = source.get('featureEnableSwap')
@@ -111,6 +119,8 @@ class PubberOptions:
       result['badCategory'] = self.badCategory # 5
     if self.badVersion:
       result['badVersion'] = self.badVersion # 5
+    if self.badAddr:
+      result['badAddr'] = self.badAddr # 5
     if self.noProxy:
       result['noProxy'] = self.noProxy # 5
     if self.extraDevice:
@@ -139,12 +149,18 @@ class PubberOptions:
       result['noPointState'] = self.noPointState # 5
     if self.noState:
       result['noState'] = self.noState # 5
+    if self.noFolder:
+      result['noFolder'] = self.noFolder # 5
+    if self.badLevel:
+      result['badLevel'] = self.badLevel # 5
     if self.spamState:
       result['spamState'] = self.spamState # 5
     if self.tweakState:
       result['tweakState'] = self.tweakState # 5
     if self.badState:
       result['badState'] = self.badState # 5
+    if self.baseState:
+      result['baseState'] = self.baseState # 5
     if self.dupeState:
       result['dupeState'] = self.dupeState # 5
     if self.noLog:

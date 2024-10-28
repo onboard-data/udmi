@@ -3,7 +3,6 @@ package com.google.udmi.util;
 import static com.google.udmi.util.Common.UPGRADED_FROM;
 import static com.google.udmi.util.Common.VERSION_KEY;
 import static com.google.udmi.util.GeneralUtils.OBJECT_MAPPER_RAW;
-import static com.google.udmi.util.GeneralUtils.friendlyStackTrace;
 import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
 import static com.google.udmi.util.MessageDowngrader.convertVersion;
 
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import udmi.util.SchemaVersion;
 
 /**
  * Container class for upgrading UDMI messages from older versions.
@@ -26,6 +26,7 @@ public class MessageUpgrader {
   public static final String STATE_SYSTEM_SCHEMA = "state_system";
   public static final String METADATA_SCHEMA = "metadata";
   private static final String TARGET_FORMAT = "%d.%d.%d";
+  private static final String RAW_GIT_VERSION = "git";
   private final ObjectNode message;
   private final JsonNode original;
   private final String schemaName;
@@ -38,15 +39,21 @@ public class MessageUpgrader {
    * Create basic container for message upgrading.
    *
    * @param schemaName schema name to work with
-   * @param message    message to be upgraded
+   * @param message message to be upgraded
    */
   public MessageUpgrader(String schemaName, JsonNode message) {
+    if (!(message instanceof ObjectNode)) {
+      String text = message.asText();
+      throw new RuntimeException("Target upgrade message is not an object: " + text.substring(0,
+          Math.min(text.length(), 20)));
+    }
+
     this.message = (ObjectNode) message;
     this.schemaName = schemaName;
     this.original = message.deepCopy();
 
     JsonNode version = message.get(VERSION_KEY);
-    originalVersion = convertVersion(version);
+    originalVersion = (version == null ? "1" : convertVersion(version.asText()));
 
     try {
       String[] components = originalVersion.split("-", 2);
@@ -54,12 +61,18 @@ public class MessageUpgrader {
       if (parts.length >= 4) {
         throw new IllegalArgumentException("More than 3 version components");
       }
+
+      if (RAW_GIT_VERSION.equals(parts[0])) {
+        major = 0;
+        return;
+      }
+
       try {
         major = Integer.parseInt(parts[0]);
         minor = parts.length >= 2 ? Integer.parseInt(parts[1]) : -1;
         patch = parts.length >= 3 ? Integer.parseInt(parts[2]) : -1;
       } catch (NumberFormatException e) {
-        throw new RuntimeException("Bad version string number format");
+        throw new RuntimeException("Bad message version string " + components[0]);
       }
     } catch (Exception e) {
       throw new RuntimeException("While parsing version string " + originalVersion, e);
@@ -87,15 +100,14 @@ public class MessageUpgrader {
    * @param forceUpgrade true to force a complete upgrade pass irrespective of original version
    */
   public Object upgrade(boolean forceUpgrade) {
-    try {
-      return upgradeRaw(forceUpgrade);
-    } catch (Exception e) {
-      message.put(UPGRADED_FROM, friendlyStackTrace(e));
-      return message;
-    }
+    return upgradeRaw(forceUpgrade);
   }
 
   private Object upgradeRaw(boolean forceUpgrade) {
+    if (major == 0) {
+      return message;
+    }
+
     if (major != 1) {
       throw new IllegalArgumentException("Starting major version " + major);
     }
@@ -115,7 +127,7 @@ public class MessageUpgrader {
 
     if (minor == 3 && patch < 14) {
       JsonNode before = message.deepCopy();
-      upgrade_1_3_14();
+      upgradeTo_1_3_14();
       upgraded |= !before.equals(message);
       patch = 14;
     }
@@ -127,9 +139,25 @@ public class MessageUpgrader {
 
     if (minor == 4 && patch < 1) {
       JsonNode before = message.deepCopy();
-      upgrade_1_4_1();
+      upgradeTo_1_4_1();
       upgraded |= !before.equals(message);
       patch = 1;
+    }
+
+    if (minor < 5) {
+      JsonNode before = message.deepCopy();
+      upgradeTo_1_5_0();
+      upgraded |= !before.equals(message);
+      patch = 0;
+      minor = 5;
+    }
+
+    if (minor == 5 && patch == 0) {
+      JsonNode before = message.deepCopy();
+      upgradeTo_1_5_1();
+      upgraded |= !before.equals(message);
+      patch = 1;
+      minor = 5;
     }
 
     if (upgraded && message.get(VERSION_KEY) != null) {
@@ -137,32 +165,38 @@ public class MessageUpgrader {
       message.put(VERSION_KEY, String.format(TARGET_FORMAT, major, minor, patch));
     }
 
+    // Even if the message was not modified, it is now conformant to the current version
+    // of UDMI, so update the version property if it exists
+    if (message.has(VERSION_KEY)) {
+      message.put(VERSION_KEY, SchemaVersion.CURRENT.key());
+    }
+
     return message;
   }
 
-  private void upgrade_1_3_14() {
+  private void upgradeTo_1_3_14() {
     if (STATE_SCHEMA.equals(schemaName)) {
-      upgrade_1_3_14_state();
+      upgradeTo_1_3_14_state();
     }
     if (STATE_SYSTEM_SCHEMA.equals(schemaName)) {
-      upgrade_1_3_14_state_system(message);
+      upgradeTo_1_3_14_state_system(message);
     }
     if (METADATA_SCHEMA.equals(schemaName)) {
-      upgrade_1_3_14_metadata();
+      upgradeTo_1_3_14_metadata();
     }
   }
 
-  private void upgrade_1_3_14_state() {
-    ifNotNullThen((ObjectNode) message.get("system"), this::upgrade_1_3_14_state_system);
+  private void upgradeTo_1_3_14_state() {
+    ifNotNullThen((ObjectNode) message.get("system"), this::upgradeTo_1_3_14_state_system);
   }
 
-  private void upgrade_1_3_14_state_system(ObjectNode system) {
+  private void upgradeTo_1_3_14_state_system(ObjectNode system) {
     upgradeMakeModel(system);
     upgradeFirmware(system);
     upgradeStatuses(system);
   }
 
-  private void upgrade_1_3_14_metadata() {
+  private void upgradeTo_1_3_14_metadata() {
     ObjectNode localnet = (ObjectNode) message.get("localnet");
     if (localnet == null) {
       return;
@@ -173,20 +207,106 @@ public class MessageUpgrader {
     }
   }
 
-  private void upgrade_1_4_1() {
+  private void upgradeTo_1_4_1() {
     if (STATE_SCHEMA.equals(schemaName)) {
-      upgrade_1_4_1_state();
+      upgradeTo_1_4_1_state();
     }
     if (STATE_SYSTEM_SCHEMA.equals(schemaName)) {
-      upgrade_1_4_1_state_system(message);
+      upgradeTo_1_4_1_state_system(message);
+    }
+    if (METADATA_SCHEMA.equals(schemaName)) {
+      upgradeTo_1_4_1_metadata();
     }
   }
 
-  private void upgrade_1_4_1_state() {
-    ifNotNullThen((ObjectNode) message.get("system"), this::upgrade_1_4_1_state_system);
+  private void upgradeTo_1_5_1() {
+    if (METADATA_SCHEMA.equals(schemaName)) {
+      upgradeTo_1_5_1_metadata();
+    }
   }
 
-  private void upgrade_1_4_1_state_system(ObjectNode system) {
+  private void upgradeTo_1_5_1_metadata() {
+    JsonNode tags = message.remove("tags");
+    if (tags == null) {
+      return;
+    }
+
+    if (!message.has("system")) {
+      message.put("system", new ObjectNode(NODE_FACTORY));
+    }
+
+    ObjectNode system = (ObjectNode) message.get("system");
+    system.put("tags", tags);
+  }
+
+  private void upgradeTo_1_5_0() {
+    if (STATE_SCHEMA.equals(schemaName)) {
+      upgradeTo_1_5_0_state();
+    }
+  }
+
+  private void upgradeTo_1_5_0_state() {
+    ObjectNode gateway = (ObjectNode) message.get("gateway");
+    if (gateway != null && gateway.has("devices")) {
+      gateway.remove("devices");
+    }
+  }
+
+  private void upgradeTo_1_4_1_metadata() {
+    JsonNode localnet = message.get("localnet");
+    if (localnet == null || !localnet.has("families")) {
+      return;
+    }
+    ObjectNode localnetFamilies = (ObjectNode) localnet.get("families");
+
+    // Rewrite `id` into `addr`
+    Iterator<String> families = localnetFamilies.fieldNames();
+    families.forEachRemaining(item -> {
+      ObjectNode family = (ObjectNode) localnetFamilies.get(item);
+      if (!family.has("addr")) {
+        TextNode id = (TextNode) family.remove("id");
+        family.put("addr", id);
+      }
+    });
+
+    if (!message.has("gateway")) {
+      message.put("gateway", new ObjectNode(NODE_FACTORY));
+    }
+
+    ObjectNode gateway = (ObjectNode) message.get("gateway");
+    // If gateway already has "target" set (for whatever reason) - don't stomp the changes
+    if (gateway.has("target")) {
+      return;
+    }
+
+    // Gateways at this time would be configured using the values in the `localnet` block.
+    // Gateway configuration now lives in the `gateway.target` property. At the time it is only known
+    // that gateways which use the localnet value use either "vendor" or "bacnet"
+    ObjectNode gatewayTarget = new ObjectNode(NODE_FACTORY);
+    gateway.put("target", gatewayTarget);
+
+    final String targetFamily;
+    if (gateway.has("family")) {
+      targetFamily = gateway.remove("family").asText();
+    } else if (localnetFamilies.has("bacnet")) {
+      // Prioritise "bacnet" over any other value
+      targetFamily = "bacnet";
+    } else if (localnetFamilies.has("vendor")) {
+      targetFamily = "vendor";
+    } else {
+      targetFamily = null;
+    }
+
+    if (targetFamily != null) {
+      gatewayTarget.put("family", targetFamily);
+    }
+  }
+
+  private void upgradeTo_1_4_1_state() {
+    ifNotNullThen((ObjectNode) message.get("system"), this::upgradeTo_1_4_1_state_system);
+  }
+
+  private void upgradeTo_1_4_1_state_system(ObjectNode system) {
     if (system.has("operation")) {
       return;
     }

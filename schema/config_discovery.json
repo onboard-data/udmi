@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Discovery Config",
   "description": "Configuration for [discovery](../docs/specs/discovery.md)",
   "type": "object",
@@ -11,23 +11,27 @@
       "type": "string",
       "format": "date-time"
     },
-    "enumerate": {
+    "depths": {
+      "description": "Indicates which discovery sub-categories to activate",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "families": {
-          "type": "boolean"
+          "$ref": "file:common.json#/definitions/depth"
         },
-        "uniqs": {
-          "type": "boolean"
+        "devices": {
+          "$ref": "file:common.json#/definitions/depth"
+        },
+        "refs": {
+          "$ref": "file:common.json#/definitions/depth"
         },
         "features": {
-          "type": "boolean"
+          "$ref": "file:common.json#/definitions/depth"
         }
       }
     },
     "families": {
-      "description": "Address family config for a scan. Not included for device enumeration messages.",
+      "description": "Address family config for a scan.",
       "existingJavaType": "java.util.HashMap<String, FamilyDiscoveryConfig>",
       "additionalProperties": false,
       "patternProperties": {

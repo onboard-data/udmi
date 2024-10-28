@@ -1,15 +1,10 @@
 {
-  "blobset" : {
-    "blobs" : { }
-  },
   "localnet" : {
     "families" : {
-      "ether" : {
-        "addr" : "00:50:b6:ed:5f:77"
-      },
-      "ipv4" : {
-        "addr" : "192.168.2.1"
-      }
+      "ether" : { },
+      "ipv4" : { },
+      "ipv6" : { },
+      "vendor" : { }
     }
   },
   "pointset" : {
@@ -32,12 +27,14 @@
     "metrics_rate_sec" : 10,
     "min_loglevel" : 200,
     "operation" : {
-      "last_start" : "2023-12-18T11:45:26Z"
+      "last_start" : "2024-10-09T00:13:40Z"
     },
     "testing" : {
-      "sequence_name" : "family_ether_addr"
+      "config_base" : 25,
+      "sequence_name" : "family_ether_addr",
+      "transaction_id" : "RC:2128e5.0029"
     }
   },
-  "timestamp" : "2023-12-18T11:46:10Z",
-  "version" : "1.4.2-67-g3decfc99"
+  "timestamp" : "2024-10-09T00:15:09Z",
+  "version" : "git-a719207"
 }

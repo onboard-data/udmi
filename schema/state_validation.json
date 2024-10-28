@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Validation State",
   "description": "Validation state summary",
   "type": "object",
@@ -91,10 +91,10 @@
     "devices": {
       "type": "object",
       "additionalProperties": false,
-      "existingJavaType": "java.util.Map<String, DeviceValidationEvent>",
+      "existingJavaType": "java.util.Map<String, DeviceValidationEvents>",
       "patternProperties": {
-        "^[A-Z]{2,6}-[0-9]{1,6}$": {
-          "$ref": "file:event_validation_device.json"
+        "^[A-Z]{2,6}-[1-9][0-9]*$": {
+          "$ref": "file:events_validation_device.json"
         }
       }
     }

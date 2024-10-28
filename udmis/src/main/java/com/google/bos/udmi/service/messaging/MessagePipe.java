@@ -62,4 +62,18 @@ public interface MessagePipe {
    * Shutdown an active pipe so that it no longer processes received messages.
    */
   void shutdown();
+
+  /**
+   * Atomically extract a count/sum of message statistics.
+   */
+  Map<String, PipeStats> extractStats();
+
+  /**
+   * Simple class to hold pipe statistics values.
+   */
+  class PipeStats {
+    public int count;
+    public double latency;
+    public double size;
+  }
 }

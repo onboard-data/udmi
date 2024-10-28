@@ -4,22 +4,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.daq.mqtt.registrar.Registrar.DEVICE_ERRORS_MAP;
 import static com.google.daq.mqtt.registrar.Registrar.ENVELOPE_SCHEMA_JSON;
-import static com.google.daq.mqtt.registrar.Registrar.GENERATED_CONFIG_JSON;
-import static com.google.daq.mqtt.registrar.Registrar.METADATA_JSON;
 import static com.google.daq.mqtt.registrar.Registrar.METADATA_SCHEMA_JSON;
-import static com.google.daq.mqtt.registrar.Registrar.NORMALIZED_JSON;
-import static com.google.udmi.util.Common.VERSION_KEY;
+import static com.google.daq.mqtt.util.ConfigManager.configFrom;
+import static com.google.udmi.util.Common.DEVICE_ID_ALLOWABLE;
+import static com.google.udmi.util.Common.POINT_NAME_ALLOWABLE;
+import static com.google.udmi.util.GeneralUtils.CSV_JOINER;
 import static com.google.udmi.util.GeneralUtils.OBJECT_MAPPER_STRICT;
+import static com.google.udmi.util.GeneralUtils.catchToNull;
 import static com.google.udmi.util.GeneralUtils.compressJsonString;
 import static com.google.udmi.util.GeneralUtils.ifNotNullGet;
+import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
+import static com.google.udmi.util.GeneralUtils.ifTrueThen;
 import static com.google.udmi.util.GeneralUtils.isTrue;
 import static com.google.udmi.util.GeneralUtils.writeString;
 import static com.google.udmi.util.JsonUtil.OBJECT_MAPPER;
-import static com.google.udmi.util.JsonUtil.asMap;
-import static com.google.udmi.util.MessageUpgrader.METADATA_SCHEMA;
+import static com.google.udmi.util.JsonUtil.unquoteJson;
+import static com.google.udmi.util.SiteModel.METADATA_JSON;
+import static com.google.udmi.util.SiteModel.NORMALIZED_JSON;
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.LogLevel;
@@ -32,14 +36,15 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.daq.mqtt.util.CloudDeviceSettings;
 import com.google.daq.mqtt.util.CloudIotManager;
+import com.google.daq.mqtt.util.ConfigManager;
+import com.google.daq.mqtt.util.DeviceExceptionManager;
 import com.google.daq.mqtt.util.ExceptionMap;
 import com.google.daq.mqtt.util.ExceptionMap.ErrorTree;
+import com.google.daq.mqtt.util.ValidationError;
 import com.google.daq.mqtt.util.ValidationException;
 import com.google.daq.mqtt.validator.Validator;
-import com.google.udmi.util.GeneralUtils;
 import com.google.udmi.util.JsonUtil;
 import com.google.udmi.util.MessageDowngrader;
-import com.google.udmi.util.MessageUpgrader;
 import com.google.udmi.util.SiteModel;
 import com.google.udmi.util.SiteModel.MetadataException;
 import java.io.File;
@@ -65,21 +70,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
+import udmi.schema.CloudModel;
 import udmi.schema.CloudModel.Auth_type;
 import udmi.schema.Config;
 import udmi.schema.Credential;
 import udmi.schema.Envelope;
 import udmi.schema.Envelope.SubFolder;
 import udmi.schema.Envelope.SubType;
-import udmi.schema.GatewayConfig;
-import udmi.schema.LocalnetConfig;
 import udmi.schema.Metadata;
-import udmi.schema.Operation;
-import udmi.schema.PointPointsetConfig;
 import udmi.schema.PointPointsetModel;
-import udmi.schema.PointsetConfig;
-import udmi.schema.SystemConfig;
 
 class LocalDevice {
 
@@ -88,7 +89,6 @@ class LocalDevice {
   public static final String EXCEPTION_VALIDATING = "Validating";
   public static final String EXCEPTION_CONVERTING = "Converting";
   public static final String EXCEPTION_LOADING = "Loading";
-  public static final String EXCEPTION_READING = "Reading";
   public static final String EXCEPTION_WRITING = "Writing";
   public static final String EXCEPTION_FILES = "Files";
   public static final String EXCEPTION_REGISTERING = "Registering";
@@ -102,12 +102,16 @@ class LocalDevice {
   private static final String RSA_CERT_PEM = "rsa_cert.pem";
   private static final String RSA_PRIVATE_PEM = "rsa_private.pem";
   private static final String RSA_PRIVATE_PKCS8 = "rsa_private.pkcs8";
+  private static final String RSA_PRIVATE_CRT = "rsa_private.crt";
+  private static final String RSA_PRIVATE_CSR = "rsa_private.csr";
   private static final String ES_PUBLIC_PEM = "ec_public.pem";
   private static final String ES2_PUBLIC_PEM = "ec2_public.pem";
   private static final String ES3_PUBLIC_PEM = "ec3_public.pem";
   private static final String ES_CERT_PEM = "ec_cert.pem";
   private static final String ES_PRIVATE_PEM = "ec_private.pem";
   private static final String ES_PRIVATE_PKCS8 = "ec_private.pkcs8";
+  private static final String EC_PRIVATE_CRT = "ec_private.crt";
+  private static final String EC_PRIVATE_CSR = "ec_private.csr";
   private static final String RSA_AUTH_TYPE = Auth_type.RS_256.toString();
   private static final String RSA_CERT_TYPE = Auth_type.RS_256_X_509.toString();
   private static final String ES_AUTH_TYPE = Auth_type.ES_256.toString();
@@ -119,7 +123,8 @@ class LocalDevice {
           ES_AUTH_TYPE, ES_PRIVATE_PKCS8,
           ES_CERT_TYPE, ES_PRIVATE_PKCS8);
   private static final String SAMPLES_DIR = "samples";
-  private static final String AUX_DIR = "aux";
+  private static final String ADJUNCT_DIR = "adjunct";
+  private static final String CONFIG_DIR = "config";
   private static final String OUT_DIR = "out";
   private static final String EXPECTED_DIR = "expected";
   private static final String EXCEPTION_LOG_FILE = "exceptions.txt";
@@ -146,14 +151,20 @@ class LocalDevice {
           ES_CERT_TYPE, ES_CERT_PEM);
   private static final Set<String> OPTIONAL_FILES =
       ImmutableSet.of(
+          RSA_PRIVATE_CRT,
+          RSA_PRIVATE_CSR,
           RSA2_PUBLIC_PEM,
           RSA3_PUBLIC_PEM,
+          EC_PRIVATE_CRT,
+          EC_PRIVATE_CSR,
           ES2_PUBLIC_PEM,
           ES3_PUBLIC_PEM,
           SAMPLES_DIR,
-          AUX_DIR,
+          ADJUNCT_DIR,
           EXPECTED_DIR,
+          CONFIG_DIR,
           OUT_DIR);
+  private static final String GENERATED_CONFIG_JSON = ConfigManager.GENERATED_CONFIG_JSON;
   private static final Set<String> OUT_FILES = ImmutableSet.of(
       GENERATED_CONFIG_JSON, DEVICE_ERRORS_MAP, NORMALIZED_JSON, EXCEPTION_LOG_FILE);
   private static final Set<String> ALL_KEY_FILES =
@@ -165,56 +176,54 @@ class LocalDevice {
           ES2_PUBLIC_PEM,
           ES3_PUBLIC_PEM);
   private static final Set<String> ALL_CERT_FILES = ImmutableSet.of(RSA_CERT_PEM, ES_CERT_PEM);
-  private static final String ERROR_FORMAT_INDENT = "  ";
   private static final int MAX_JSON_LENGTH = 32767;
-  private static final String UDMI_VERSION = "1.4.2";
   private final String deviceId;
   private final Map<String, JsonSchema> schemas;
-  private final File siteDir;
   private final File deviceDir;
   private final File outDir;
-  private final Metadata metadata;
+  private Metadata metadata;
   private final ExceptionMap exceptionMap;
   private final String generation;
   private final List<Credential> deviceCredentials = new ArrayList<>();
-  private final Map<String, Object> siteMetadata;
   private final boolean validateMetadata;
+  private ConfigManager config;
+  private final DeviceExceptionManager exceptionManager;
+  private final SiteModel siteModel;
 
   private String deviceNumId;
 
   private CloudDeviceSettings settings;
-  private JsonNode baseVersion;
+  private String baseVersion;
+  private Date lastActive;
+  private boolean blocked;
 
   LocalDevice(
-      File siteDir, File devicesDir, String deviceId, Map<String, JsonSchema> schemas,
-      String generation, Metadata siteMetadata, boolean validateMetadata) {
+      SiteModel siteModel, String deviceId, Map<String, JsonSchema> schemas,
+      String generation, boolean validateMetadata) {
     try {
       this.deviceId = deviceId;
       this.schemas = schemas;
       this.generation = generation;
-      this.siteDir = siteDir;
+      this.siteModel = siteModel;
       this.validateMetadata = validateMetadata;
-      this.siteMetadata = siteMetadata == null ? null : JsonUtil.asMap(siteMetadata);
+      if (!DEVICE_ID_ALLOWABLE.matcher(deviceId).matches()) {
+        throw new ValidationError(format("Device id does not match allowable pattern %s",
+            DEVICE_ID_ALLOWABLE.pattern()));
+      }
       exceptionMap = new ExceptionMap("Exceptions for " + deviceId);
-      deviceDir = new File(devicesDir, deviceId);
+      deviceDir = siteModel.getDeviceDir(deviceId);
       outDir = new File(deviceDir, OUT_DIR);
-      prepareOutDir();
+      exceptionManager = new DeviceExceptionManager(new File(siteModel.getSitePath()));
       metadata = readMetadata();
     } catch (Exception e) {
       throw new RuntimeException("While loading local device " + deviceId, e);
     }
   }
 
-  LocalDevice(
-      File siteDir, File devicesDir, String deviceId, Map<String, JsonSchema> schemas,
-      String generation, Metadata siteMetadata) {
-    this(siteDir, devicesDir, deviceId, schemas, generation, siteMetadata, false);
-  }
-
-  LocalDevice(
-      File siteDir, File devicesDir, String deviceId, Map<String, JsonSchema> schemas,
-      String generation) {
-    this(siteDir, devicesDir, deviceId, schemas, generation, null);
+  public void initialize() {
+    prepareOutDir();
+    ifTrueThen(validateMetadata && metadata != null, this::validateMetadata);
+    config = configFrom(metadata, deviceId, siteModel);
   }
 
   public static void parseMetadataValidateProcessingReport(ProcessingReport report)
@@ -230,18 +239,14 @@ class LocalDevice {
     }
   }
 
-  static boolean deviceExists(File devicesDir, String deviceName) {
-    return new File(new File(devicesDir, deviceName), METADATA_JSON).isFile();
-  }
-
   private void prepareOutDir() {
     if (!outDir.exists()) {
-      outDir.mkdir();
+      outDir.mkdirs();
     }
     new File(outDir, EXCEPTION_LOG_FILE).delete();
   }
 
-  public void validateExpected() {
+  public void validateExpectedFiles() {
     ExceptionMap exceptionMap = new ExceptionMap("expected files");
 
     String[] files = deviceDir.list();
@@ -269,58 +274,45 @@ class LocalDevice {
     exceptionMap.throwIfNotEmpty();
   }
 
-  private Metadata readMetadataWithValidation(boolean validate) {
-    final JsonNode instance;
+  private void validateMetadata() {
     try {
-      Metadata loadedMetadata = SiteModel.loadDeviceMetadata(siteDir.getPath(), deviceId,
-          LocalDevice.class);
-      if (loadedMetadata instanceof MetadataException metadataException) {
+      extraValidation(metadata);  // Do this first so it will always be called.
+      JsonNode metadataObject = JsonUtil.convertTo(JsonNode.class, metadata);
+      ProcessingReport report = schemas.get(METADATA_SCHEMA_JSON).validate(metadataObject);
+      parseMetadataValidateProcessingReport(report);
+    } catch (ProcessingException | ValidationException e) {
+      exceptionMap.put(EXCEPTION_VALIDATING, e);
+    }
+  }
+
+  private void extraValidation(Metadata metadataObject) {
+    HashMap<String, PointPointsetModel> points = catchToNull(() -> metadataObject.pointset.points);
+    Set<String> pointNameErrors = ifNotNullGet(points, p -> p.keySet().stream()
+        .filter(key -> !POINT_NAME_ALLOWABLE.matcher(key).matches()).collect(Collectors.toSet()));
+    if (pointNameErrors != null && !pointNameErrors.isEmpty()) {
+      throw new ValidationError(format("Found point names not matching allowed pattern %s: %s",
+          POINT_NAME_ALLOWABLE.pattern(), CSV_JOINER.join(pointNameErrors)));
+    }
+  }
+
+  private Metadata readMetadata() {
+    try {
+      Metadata deviceMetadata = siteModel.loadDeviceMetadata(deviceId);
+      if (deviceMetadata instanceof MetadataException metadataException) {
         throw new RuntimeException("Loading " + metadataException.file.getAbsolutePath(),
             metadataException.exception);
       }
-      instance = JsonUtil.convertTo(JsonNode.class, loadedMetadata);
-      baseVersion = instance.get(VERSION_KEY);
-      new MessageUpgrader(METADATA_SCHEMA, instance).upgrade(false);
+      baseVersion = (deviceMetadata.upgraded_from == null
+          ? deviceMetadata.version : deviceMetadata.upgraded_from);
+
+      List<String> proxyIds = catchToNull(() -> deviceMetadata.gateway.proxy_ids);
+      ifNotNullThen(proxyIds,
+          ids -> ifTrueThen(ids.isEmpty(), () -> deviceMetadata.gateway.proxy_ids = null));
+      return deviceMetadata;
     } catch (Exception exception) {
       exceptionMap.put(EXCEPTION_LOADING, exception);
       return null;
     }
-
-    JsonNode mergedMetadata = getMergedMetadata(instance);
-
-    try {
-      ProcessingReport report = schemas.get(METADATA_SCHEMA_JSON).validate(mergedMetadata);
-      if (validate) {
-        parseMetadataValidateProcessingReport(report);
-      }
-    } catch (ProcessingException | ValidationException e) {
-      exceptionMap.put(EXCEPTION_VALIDATING, e);
-    }
-    return JsonUtil.convertTo(Metadata.class, mergedMetadata);
-  }
-
-  JsonNode getMergedMetadata(JsonNode instance) {
-    try {
-      String intermediary = JsonUtil.stringify(instance);
-      if (siteMetadata == null) {
-        return instance;
-      } else {
-        Map<String, Object> mergedMetadata = GeneralUtils.deepCopy(siteMetadata);
-        GeneralUtils.mergeObject(mergedMetadata, asMap(intermediary));
-        return JsonUtil.convertTo(JsonNode.class, mergedMetadata);
-      }
-    } catch (Exception e) {
-      exceptionMap.put(EXCEPTION_READING, e);
-    }
-    return null;
-  }
-
-  private Metadata readMetadata() {
-    Metadata deviceMetadata = readMetadataWithValidation(validateMetadata);
-    if (deviceMetadata instanceof MetadataException metadataException) {
-      exceptionMap.put(EXCEPTION_CONVERTING, metadataException.exception);
-    }
-    return deviceMetadata;
   }
 
   private Metadata readNormalized() {
@@ -370,7 +362,7 @@ class LocalDevice {
       if (metadata == null) {
         return;
       }
-      if (hasGateway() && hasAuthType()) {
+      if (isProxied() && hasAuthType()) {
         throw new RuntimeException("Proxied devices should not have cloud.auth_type defined");
       }
       if (!isDirectConnect()) {
@@ -452,18 +444,15 @@ class LocalDevice {
   }
 
   boolean isGateway() {
-    return metadata != null
-        && metadata.gateway != null
-        && metadata.gateway.proxy_ids != null
-        && !metadata.gateway.proxy_ids.isEmpty();
+    return config != null && config.isGateway();
   }
 
-  boolean hasGateway() {
-    return metadata != null && metadata.gateway != null && metadata.gateway.gateway_id != null;
+  boolean isProxied() {
+    return config != null && config.isProxied();
   }
 
   boolean isDirectConnect() {
-    return isGateway() || !hasGateway();
+    return isGateway() || !isProxied();
   }
 
   CloudDeviceSettings getSettings() {
@@ -479,17 +468,29 @@ class LocalDevice {
       if (metadata == null) {
         return;
       }
-
-      settings.updated = getUpdatedTimestamp();
+      settings.updated = config.getUpdatedTimestamp();
       settings.metadata = deviceMetadataString();
       settings.deviceNumId = ifNotNullGet(metadata.cloud, cloud -> cloud.num_id);
-      settings.proxyDevices = getProxyDevicesList();
+      settings.proxyDevices = config.getProxyDevicesList();
       settings.keyAlgorithm = getAuthType();
       settings.keyBytes = getKeyBytes();
       settings.config = deviceConfigString();
     } catch (Exception e) {
       captureError(EXCEPTION_INITIALIZING, e);
     }
+  }
+
+  public void updateModel(CloudModel device) {
+    setDeviceNumId(checkNotNull(device.num_id, "missing deviceNumId for " + deviceId));
+    setLastActive(device.last_event_time);
+  }
+
+  public String getLastActive() {
+    return JsonUtil.isoConvert(lastActive);
+  }
+
+  private void setLastActive(Date lastEventTime) {
+    this.lastActive = lastEventTime;
   }
 
   public byte[] getKeyBytes() {
@@ -516,89 +517,20 @@ class LocalDevice {
     }
   }
 
-  private List<String> getProxyDevicesList() {
-    return isGateway() ? metadata.gateway.proxy_ids : null;
-  }
-
-  private String getUpdatedTimestamp() {
-    return getTimestampString(metadata.timestamp);
-  }
-
-  private String getTimestampString(Date timestamp) {
-    try {
-      String quotedString = OBJECT_MAPPER_STRICT.writeValueAsString(timestamp);
-      return quotedString.substring(1, quotedString.length() - 1);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("While generating updated timestamp", e);
-    }
-  }
-
   private String deviceConfigString() {
     try {
-      JsonNode configJson = OBJECT_MAPPER_STRICT.valueToTree(deviceConfigObject());
-      new MessageDowngrader("config", configJson).downgrade(baseVersion);
+      Object fromValue = config.deviceConfigJson();
+      if (fromValue instanceof String stringValue) {
+        return stringValue;
+      }
+      JsonNode configJson = OBJECT_MAPPER_STRICT.valueToTree(fromValue);
+      if (config.shouldBeDowngraded()) {
+        new MessageDowngrader("config", configJson).downgrade(baseVersion);
+      }
       return compressJsonString(configJson, MAX_JSON_LENGTH);
     } catch (Exception e) {
       throw new RuntimeException("While converting device config", e);
     }
-  }
-
-  public Config deviceConfigObject() {
-    Config config = new Config();
-    config.timestamp = metadata.timestamp;
-    config.version = UDMI_VERSION;
-    config.system = new SystemConfig();
-    config.system.operation = new Operation();
-    if (isGateway()) {
-      config.gateway = new GatewayConfig();
-      config.gateway.proxy_ids = getProxyDevicesList();
-    }
-    if (metadata.pointset != null) {
-      config.pointset = getDevicePointsetConfig();
-    }
-    if (metadata.localnet != null) {
-      config.localnet = getDeviceLocalnetConfig();
-    }
-    // Copy selected MetadataSystem properties into device config.
-    if (metadata.system.min_loglevel != null) {
-      config.system.min_loglevel = metadata.system.min_loglevel;
-    }
-    return config;
-  }
-
-  private LocalnetConfig getDeviceLocalnetConfig() {
-    LocalnetConfig localnetConfig = new LocalnetConfig();
-    localnetConfig.families = metadata.localnet.families;
-    return localnetConfig;
-  }
-
-  private PointsetConfig getDevicePointsetConfig() {
-    PointsetConfig pointsetConfig = new PointsetConfig();
-    pointsetConfig.points = new HashMap<>();
-    boolean excludeUnits = isTrue(metadata.pointset.exclude_units_from_config);
-    metadata.pointset.points.forEach(
-        (metadataKey, value) ->
-            pointsetConfig.points.computeIfAbsent(
-                metadataKey, configKey -> configFromMetadata(value, excludeUnits)));
-
-    // Copy selected MetadataPointset properties into PointsetConfig.
-    if (metadata.pointset.sample_limit_sec != null) {
-      pointsetConfig.sample_limit_sec = metadata.pointset.sample_limit_sec;
-    }
-    if (metadata.pointset.sample_rate_sec != null) {
-      pointsetConfig.sample_rate_sec = metadata.pointset.sample_rate_sec;
-    }
-    return pointsetConfig;
-  }
-
-  PointPointsetConfig configFromMetadata(PointPointsetModel metadata, boolean excludeUnits) {
-    PointPointsetConfig pointConfig = new PointPointsetConfig();
-    pointConfig.units = excludeUnits ? null : metadata.units;
-    pointConfig.ref = metadata.ref;
-    if (Boolean.TRUE.equals(metadata.writable)) {
-      pointConfig.set_value = metadata.baseline_value;
-    }
-    return pointConfig;
   }
 
   private String deviceMetadataString() {
@@ -616,7 +548,7 @@ class LocalDevice {
       envelope.deviceId = deviceId;
       envelope.deviceRegistryId = registryId;
       envelope.subFolder = SubFolder.POINTSET;
-      envelope.subType = SubType.EVENT;
+      envelope.subType = SubType.EVENTS;
       // Don't use actual project id because it should be abstracted away.
       envelope.projectId = fakeProjectId();
       envelope.deviceNumId = makeNumId(envelope);
@@ -674,12 +606,13 @@ class LocalDevice {
     return Integer.toString(hash < 0 ? -hash : hash);
   }
 
-  public void writeErrors(List<Pattern> ignoreErrors) {
+  public void writeErrors() {
+    List<Pattern> ignoreErrors = exceptionManager.forDevice(getDeviceId());
     File errorsFile = new File(outDir, DEVICE_ERRORS_MAP);
     ErrorTree errorTree = getErrorTree(ignoreErrors);
     if (errorTree != null) {
       try (PrintStream printStream = new PrintStream(Files.newOutputStream(errorsFile.toPath()))) {
-        System.err.println("Updating " + errorsFile);
+        System.err.println("Updating errors " + errorsFile);
         errorTree.write(printStream);
       } catch (Exception e) {
         throw new RuntimeException("While writing " + errorsFile.getAbsolutePath(), e);
@@ -699,7 +632,7 @@ class LocalDevice {
   }
 
   String getNormalizedTimestamp() {
-    return getTimestampString(metadata.timestamp);
+    return JsonUtil.getTimestampString(metadata.timestamp);
   }
 
   void writeNormalized() {
@@ -729,14 +662,19 @@ class LocalDevice {
     }
   }
 
+  /**
+   * Write device config to the generated_config.json file
+   */
   public void writeConfigFile() {
-    String config = getSettings().config;
+    File configFile = new File(outDir, GENERATED_CONFIG_JSON);
+    configFile.delete();
+
+    String config = unquoteJson(getSettings().config);
+
     if (config != null) {
-      File configFile = new File(outDir, GENERATED_CONFIG_JSON);
       try (OutputStream outputStream = Files.newOutputStream(configFile.toPath())) {
         outputStream.write(config.getBytes());
       } catch (Exception e) {
-        e.printStackTrace();
         throw new RuntimeException("While writing " + configFile.getAbsolutePath(), e);
       }
     }
@@ -747,13 +685,30 @@ class LocalDevice {
   }
 
   public String getDeviceNumId() {
-    return checkNotNull(deviceNumId, "deviceNumId not set");
+    return checkNotNull(getDeviceNumIdRaw(), "deviceNumId not set");
   }
 
   public void setDeviceNumId(String numId) {
     checkState(deviceNumId == null || deviceNumId.equals(numId),
         format("deviceNumId %s != %s", numId, deviceNumId));
     deviceNumId = numId;
+  }
+
+  public String getDeviceNumIdRaw() {
+    return deviceNumId;
+  }
+
+  public DeviceStatus getStatus() {
+    if (blocked) {
+      return DeviceStatus.BLOCKED;
+    }
+    if (metadata == null) {
+      return DeviceStatus.INVALID;
+    }
+    if (getTreeChildren().isEmpty()) {
+      return DeviceStatus.CLEAN;
+    }
+    return DeviceStatus.ERRORS;
   }
 
   public void captureError(String exceptionType, Exception exception) {
@@ -803,7 +758,8 @@ class LocalDevice {
     samplesMap.throwIfNotEmpty();
   }
 
-  public Set<Entry<String, ErrorTree>> getTreeChildren(List<Pattern> ignoreErrors) {
+  public Set<Entry<String, ErrorTree>> getTreeChildren() {
+    List<Pattern> ignoreErrors = exceptionManager.forDevice(getDeviceId());
     ErrorTree errorTree = getErrorTree(ignoreErrors);
     if (errorTree != null && errorTree.children != null) {
       return errorTree.children.entrySet();
@@ -815,4 +771,22 @@ class LocalDevice {
     return metadata;
   }
 
+  public Config deviceConfigObject() {
+    return config.deviceConfig();
+  }
+
+  public void setBlocked(boolean blocked) {
+    this.blocked = blocked;
+  }
+
+  public LocalDevice duplicate(String newId) {
+    return new LocalDevice(siteModel, newId, schemas, generation, validateMetadata);
+  }
+
+  public enum DeviceStatus {
+    CLEAN,
+    ERRORS,
+    INVALID,
+    BLOCKED
+  }
 }

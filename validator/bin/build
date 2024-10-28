@@ -4,6 +4,9 @@ while [[ $# -gt 0 ]]; do
   if [[ "$1" == "check" ]]; then
     check=check
     shift
+  elif [[ "$1" == "debug" ]]; then
+    check="check -i"
+    shift
   elif [[ "$1" == "covg" ]]; then
     covg=jacocoTestReport
     shift
@@ -13,27 +16,35 @@ while [[ $# -gt 0 ]]; do
 done
 
 ROOT=$(dirname $0)/..
-BASE=..
+UDMI_ROOT=..
 cd $ROOT
 
 jarfile=build/libs/validator-1.0-SNAPSHOT-all.jar
 
-newest=$(ls -rt `find src/ $BASE/gencode/java -type f` | tail -n 1)
+newest=$(ls -rt `find src/ $UDMI_ROOT/gencode/java -type f` | tail -n 1)
 if [[ -z $check && -z $covg && -f $jarfile && $jarfile -nt $newest ]]; then
     echo $jarfile up-to-date, skipping build.
     exit 0
 fi
 
+echo Cleaning $ROOT/build/
+rm -rf build/
+mkdir build/
+
+echo Mirroring udmi files...
+cp -a ../bin build/udmi_bin/
+cp -a ../etc build/udmi_etc/
+cp -a ../schema build/schema/
+
 if [[ -n $check ]]; then
-    rm -rf $BASE/sites/udmi_site_model/devices/XXX-*
-    $BASE/bin/clone_model
+    (cd $UDMI_ROOT/sites/udmi_site_model/devices; rm -rf XXX-* ACME-*)
+    $UDMI_ROOT/bin/clone_model
 fi
 
 echo Java version $(java --version)
 
 echo Building validator in $PWD
 
-rm -rf build
 ./gradlew shadow $check $covg $*
 
 ls -l $jarfile

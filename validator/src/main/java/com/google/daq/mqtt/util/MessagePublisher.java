@@ -3,7 +3,7 @@ package com.google.daq.mqtt.util;
 import static com.google.udmi.util.Common.getNamespacePrefix;
 import static java.util.Optional.ofNullable;
 import static udmi.schema.IotAccess.IotProvider.IMPLICIT;
-import static udmi.schema.IotAccess.IotProvider.PUBSUB;
+import static udmi.schema.IotAccess.IotProvider.JWT;
 
 import com.google.bos.iot.core.proxy.MqttPublisher;
 import com.google.daq.mqtt.validator.Validator.MessageBundle;
@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import udmi.schema.Credential;
 import udmi.schema.ExecutionConfiguration;
-import udmi.schema.IotAccess;
+import udmi.schema.IotAccess.IotProvider;
 import udmi.schema.SetupUdmiConfig;
 
 /**
@@ -33,14 +33,16 @@ public interface MessagePublisher {
    */
   static MessagePublisher from(ExecutionConfiguration iotConfig,
       BiConsumer<String, String> messageHandler, Consumer<Throwable> errorHandler) {
-    IotAccess.IotProvider iotProvider = ofNullable(iotConfig.iot_provider).orElse(IMPLICIT);
+    IotProvider iotProvider = ofNullable(iotConfig.iot_provider).orElse(JWT);
     if (iotConfig.reflector_endpoint != null && iotProvider != IMPLICIT) {
       iotConfig.reflector_endpoint = null;
     }
-    if (PUBSUB == iotConfig.iot_provider) {
-      return PubSubReflector.from(iotConfig, messageHandler, errorHandler);
-    }
-    return MqttPublisher.from(iotConfig, messageHandler, errorHandler);
+    return switch (iotProvider) {
+      case GREF -> PubSubReflector.from(iotConfig, messageHandler, errorHandler);
+      case MQTT, JWT, GBOS -> MqttPublisher.from(iotConfig, messageHandler, errorHandler);
+      case PUBSUB -> PubSubClient.from(iotConfig, messageHandler, errorHandler);
+      default -> throw new RuntimeException("Unsupported iot provider " + iotProvider);
+    };
   }
 
   String publish(String deviceId, String topic, String data);
@@ -48,6 +50,8 @@ public interface MessagePublisher {
   void close();
 
   String getSubscriptionId();
+
+  void activate();
 
   boolean isActive();
 
@@ -70,6 +74,10 @@ public interface MessagePublisher {
     throw new RuntimeException("getCredential not implemented");
   }
 
+  default String getSessionPrefix() {
+    throw new RuntimeException("session prefix not implemented for " + getClass().getSimpleName());
+  }
+
   /**
    * Speed of a query -- how long to wait before a timeout.
    */
@@ -77,7 +85,8 @@ public interface MessagePublisher {
     QUICK(1),
     SHORT(15),
     LONG(30),
-    ETERNITY(90);
+    SLOW(90),
+    ETERNITY(600);
 
     private final int seconds;
 

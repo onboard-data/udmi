@@ -3,7 +3,6 @@ package udmi.schema;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,13 +18,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "name",
     "provider",
     "project_id",
+    "profile_sec",
     "options"
 })
-@Generated("jsonschema2pojo")
 public class IotAccess {
 
+    @JsonProperty("name")
+    public String name;
     /**
      * Iot Provider
      * <p>
@@ -36,15 +38,19 @@ public class IotAccess {
     public IotAccess.IotProvider provider;
     @JsonProperty("project_id")
     public String project_id;
+    @JsonProperty("profile_sec")
+    public Integer profile_sec;
     @JsonProperty("options")
     public String options;
 
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
         result = ((result* 31)+((this.options == null)? 0 :this.options.hashCode()));
         result = ((result* 31)+((this.provider == null)? 0 :this.provider.hashCode()));
         result = ((result* 31)+((this.project_id == null)? 0 :this.project_id.hashCode()));
+        result = ((result* 31)+((this.profile_sec == null)? 0 :this.profile_sec.hashCode()));
         return result;
     }
 
@@ -57,7 +63,7 @@ public class IotAccess {
             return false;
         }
         IotAccess rhs = ((IotAccess) other);
-        return ((((this.options == rhs.options)||((this.options!= null)&&this.options.equals(rhs.options)))&&((this.provider == rhs.provider)||((this.provider!= null)&&this.provider.equals(rhs.provider))))&&((this.project_id == rhs.project_id)||((this.project_id!= null)&&this.project_id.equals(rhs.project_id))));
+        return ((((((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.options == rhs.options)||((this.options!= null)&&this.options.equals(rhs.options))))&&((this.provider == rhs.provider)||((this.provider!= null)&&this.provider.equals(rhs.provider))))&&((this.project_id == rhs.project_id)||((this.project_id!= null)&&this.project_id.equals(rhs.project_id))))&&((this.profile_sec == rhs.profile_sec)||((this.profile_sec!= null)&&this.profile_sec.equals(rhs.profile_sec))));
     }
 
 
@@ -67,18 +73,17 @@ public class IotAccess {
      * 
      * 
      */
-    @Generated("jsonschema2pojo")
     public enum IotProvider {
 
         LOCAL("local"),
         DYNAMIC("dynamic"),
         IMPLICIT("implicit"),
         PUBSUB("pubsub"),
-        JWT("jwt"),
-        GCP_NATIVE("gcp_native"),
-        GCP("gcp"),
+        MQTT("mqtt"),
         GBOS("gbos"),
-        CLEARBLADE_NATIVE("clearblade_native"),
+        GREF("gref"),
+        ETCD("etcd"),
+        JWT("jwt"),
         CLEARBLADE("clearblade");
         private final String value;
         private final static Map<String, IotAccess.IotProvider> CONSTANTS = new HashMap<String, IotAccess.IotProvider>();

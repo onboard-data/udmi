@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Gateway Model",
   "description": "[Gateway Documentation](../docs/specs/gateway.md)",
   "type": "object",
@@ -9,25 +9,20 @@
     "gateway_id": {
       "description": "The device ID of the gateway the device is bound to",
       "type": "string",
-      "pattern": "^[A-Z]{2,6}-[0-9]{1,6}$",
+      "pattern": "^[A-Z]{2,6}-[1-9][0-9]*$",
       "examples": ["GAT-100"]
     },
-    "family": {
-      "description": "Protocol family used for connecting to the proxy device",
-      "type": "string"
+    "target": {
+      "$ref": "file:model_localnet_family.json"
     },
     "proxy_ids": {
       "description": "An array of all the device IDs which are bound to the device",
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^[A-Z]{2,6}-[0-9]{1,6}$"
+        "pattern": "^[A-Z]{2,6}-[1-9][0-9]*$"
       },
       "examples": [["AHU-22"]]
     }
-  },
-  "oneOf": [
-    { "required": ["gateway_id"] },
-    { "required": ["proxy_ids"] }
-  ]
+  }
 }

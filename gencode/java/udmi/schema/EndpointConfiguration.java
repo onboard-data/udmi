@@ -4,7 +4,6 @@ package udmi.schema;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,23 +20,40 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "name",
     "protocol",
     "transport",
     "hostname",
+    "payload",
     "error",
     "port",
     "config_sync_sec",
     "client_id",
-    "msg_prefix",
+    "topic_prefix",
     "recv_id",
     "send_id",
-    "distributor",
+    "side_id",
+    "gatewayId",
+    "deviceId",
+    "enabled",
+    "noConfigAck",
+    "capacity",
+    "publish_delay_sec",
+    "periodic_sec",
+    "keyBytes",
+    "algorithm",
     "auth_provider",
     "generation"
 })
-@Generated("jsonschema2pojo")
 public class EndpointConfiguration {
 
+    /**
+     * Friendly name for this flow (debugging and diagnostics)
+     * 
+     */
+    @JsonProperty("name")
+    @JsonPropertyDescription("Friendly name for this flow (debugging and diagnostics)")
+    public String name;
     /**
      * 
      * (Required)
@@ -55,6 +71,13 @@ public class EndpointConfiguration {
     @JsonProperty("hostname")
     public String hostname;
     /**
+     * Simple payload template for simple injection use cases
+     * 
+     */
+    @JsonProperty("payload")
+    @JsonPropertyDescription("Simple payload template for simple injection use cases")
+    public String payload;
+    /**
      * Error message container for capturing errors during parsing/handling
      * 
      */
@@ -62,7 +85,7 @@ public class EndpointConfiguration {
     @JsonPropertyDescription("Error message container for capturing errors during parsing/handling")
     public String error;
     @JsonProperty("port")
-    public Integer port = 8883;
+    public Integer port;
     /**
      * Delay waiting for config message on start, 0 for default, <0 to disable
      * 
@@ -78,12 +101,12 @@ public class EndpointConfiguration {
     @JsonProperty("client_id")
     public String client_id;
     /**
-     * Prefix for message topics/addresses
+     * Prefix for message topics
      * 
      */
-    @JsonProperty("msg_prefix")
-    @JsonPropertyDescription("Prefix for message topics/addresses")
-    public String msg_prefix;
+    @JsonProperty("topic_prefix")
+    @JsonPropertyDescription("Prefix for message topics")
+    public String topic_prefix;
     /**
      * Id for the receiving message channel
      * 
@@ -99,12 +122,55 @@ public class EndpointConfiguration {
     @JsonPropertyDescription("Id for the sending messages channel")
     public String send_id;
     /**
-     * processor designation for a distributor channel
+     * Id for a side-car message channel
      * 
      */
-    @JsonProperty("distributor")
-    @JsonPropertyDescription("processor designation for a distributor channel")
-    public String distributor;
+    @JsonProperty("side_id")
+    @JsonPropertyDescription("Id for a side-car message channel")
+    public String side_id;
+    @JsonProperty("gatewayId")
+    public String gatewayId;
+    @JsonProperty("deviceId")
+    public String deviceId;
+    /**
+     * Indicator if this endpoint should be active (null or non-empty)
+     * 
+     */
+    @JsonProperty("enabled")
+    @JsonPropertyDescription("Indicator if this endpoint should be active (null or non-empty)")
+    public String enabled;
+    /**
+     * True if config messages should not be acked (lower QOS)
+     * 
+     */
+    @JsonProperty("noConfigAck")
+    @JsonPropertyDescription("True if config messages should not be acked (lower QOS)")
+    public Boolean noConfigAck;
+    /**
+     * Queue capacity for limiting pipes
+     * 
+     */
+    @JsonProperty("capacity")
+    @JsonPropertyDescription("Queue capacity for limiting pipes")
+    public Integer capacity;
+    /**
+     * Artifical publish delay for testing
+     * 
+     */
+    @JsonProperty("publish_delay_sec")
+    @JsonPropertyDescription("Artifical publish delay for testing")
+    public Integer publish_delay_sec;
+    /**
+     * Rate for periodic task execution
+     * 
+     */
+    @JsonProperty("periodic_sec")
+    @JsonPropertyDescription("Rate for periodic task execution")
+    public Integer periodic_sec;
+    @JsonProperty("keyBytes")
+    public Object keyBytes;
+    @JsonProperty("algorithm")
+    public String algorithm;
     @JsonProperty("auth_provider")
     public Auth_provider auth_provider;
     /**
@@ -118,18 +184,29 @@ public class EndpointConfiguration {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.generation == null)? 0 :this.generation.hashCode()));
-        result = ((result* 31)+((this.transport == null)? 0 :this.transport.hashCode()));
+        result = ((result* 31)+((this.keyBytes == null)? 0 :this.keyBytes.hashCode()));
+        result = ((result* 31)+((this.side_id == null)? 0 :this.side_id.hashCode()));
         result = ((result* 31)+((this.error == null)? 0 :this.error.hashCode()));
-        result = ((result* 31)+((this.config_sync_sec == null)? 0 :this.config_sync_sec.hashCode()));
-        result = ((result* 31)+((this.distributor == null)? 0 :this.distributor.hashCode()));
+        result = ((result* 31)+((this.deviceId == null)? 0 :this.deviceId.hashCode()));
         result = ((result* 31)+((this.client_id == null)? 0 :this.client_id.hashCode()));
-        result = ((result* 31)+((this.msg_prefix == null)? 0 :this.msg_prefix.hashCode()));
-        result = ((result* 31)+((this.send_id == null)? 0 :this.send_id.hashCode()));
+        result = ((result* 31)+((this.enabled == null)? 0 :this.enabled.hashCode()));
+        result = ((result* 31)+((this.capacity == null)? 0 :this.capacity.hashCode()));
         result = ((result* 31)+((this.protocol == null)? 0 :this.protocol.hashCode()));
         result = ((result* 31)+((this.hostname == null)? 0 :this.hostname.hashCode()));
-        result = ((result* 31)+((this.port == null)? 0 :this.port.hashCode()));
+        result = ((result* 31)+((this.payload == null)? 0 :this.payload.hashCode()));
+        result = ((result* 31)+((this.topic_prefix == null)? 0 :this.topic_prefix.hashCode()));
         result = ((result* 31)+((this.recv_id == null)? 0 :this.recv_id.hashCode()));
+        result = ((result* 31)+((this.algorithm == null)? 0 :this.algorithm.hashCode()));
+        result = ((result* 31)+((this.generation == null)? 0 :this.generation.hashCode()));
+        result = ((result* 31)+((this.transport == null)? 0 :this.transport.hashCode()));
+        result = ((result* 31)+((this.publish_delay_sec == null)? 0 :this.publish_delay_sec.hashCode()));
+        result = ((result* 31)+((this.config_sync_sec == null)? 0 :this.config_sync_sec.hashCode()));
+        result = ((result* 31)+((this.send_id == null)? 0 :this.send_id.hashCode()));
+        result = ((result* 31)+((this.port == null)? 0 :this.port.hashCode()));
+        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
+        result = ((result* 31)+((this.periodic_sec == null)? 0 :this.periodic_sec.hashCode()));
+        result = ((result* 31)+((this.noConfigAck == null)? 0 :this.noConfigAck.hashCode()));
+        result = ((result* 31)+((this.gatewayId == null)? 0 :this.gatewayId.hashCode()));
         result = ((result* 31)+((this.auth_provider == null)? 0 :this.auth_provider.hashCode()));
         return result;
     }
@@ -143,10 +220,9 @@ public class EndpointConfiguration {
             return false;
         }
         EndpointConfiguration rhs = ((EndpointConfiguration) other);
-        return ((((((((((((((this.generation == rhs.generation)||((this.generation!= null)&&this.generation.equals(rhs.generation)))&&((this.transport == rhs.transport)||((this.transport!= null)&&this.transport.equals(rhs.transport))))&&((this.error == rhs.error)||((this.error!= null)&&this.error.equals(rhs.error))))&&((this.config_sync_sec == rhs.config_sync_sec)||((this.config_sync_sec!= null)&&this.config_sync_sec.equals(rhs.config_sync_sec))))&&((this.distributor == rhs.distributor)||((this.distributor!= null)&&this.distributor.equals(rhs.distributor))))&&((this.client_id == rhs.client_id)||((this.client_id!= null)&&this.client_id.equals(rhs.client_id))))&&((this.msg_prefix == rhs.msg_prefix)||((this.msg_prefix!= null)&&this.msg_prefix.equals(rhs.msg_prefix))))&&((this.send_id == rhs.send_id)||((this.send_id!= null)&&this.send_id.equals(rhs.send_id))))&&((this.protocol == rhs.protocol)||((this.protocol!= null)&&this.protocol.equals(rhs.protocol))))&&((this.hostname == rhs.hostname)||((this.hostname!= null)&&this.hostname.equals(rhs.hostname))))&&((this.port == rhs.port)||((this.port!= null)&&this.port.equals(rhs.port))))&&((this.recv_id == rhs.recv_id)||((this.recv_id!= null)&&this.recv_id.equals(rhs.recv_id))))&&((this.auth_provider == rhs.auth_provider)||((this.auth_provider!= null)&&this.auth_provider.equals(rhs.auth_provider))));
+        return (((((((((((((((((((((((((this.keyBytes == rhs.keyBytes)||((this.keyBytes!= null)&&this.keyBytes.equals(rhs.keyBytes)))&&((this.side_id == rhs.side_id)||((this.side_id!= null)&&this.side_id.equals(rhs.side_id))))&&((this.error == rhs.error)||((this.error!= null)&&this.error.equals(rhs.error))))&&((this.deviceId == rhs.deviceId)||((this.deviceId!= null)&&this.deviceId.equals(rhs.deviceId))))&&((this.client_id == rhs.client_id)||((this.client_id!= null)&&this.client_id.equals(rhs.client_id))))&&((this.enabled == rhs.enabled)||((this.enabled!= null)&&this.enabled.equals(rhs.enabled))))&&((this.capacity == rhs.capacity)||((this.capacity!= null)&&this.capacity.equals(rhs.capacity))))&&((this.protocol == rhs.protocol)||((this.protocol!= null)&&this.protocol.equals(rhs.protocol))))&&((this.hostname == rhs.hostname)||((this.hostname!= null)&&this.hostname.equals(rhs.hostname))))&&((this.payload == rhs.payload)||((this.payload!= null)&&this.payload.equals(rhs.payload))))&&((this.topic_prefix == rhs.topic_prefix)||((this.topic_prefix!= null)&&this.topic_prefix.equals(rhs.topic_prefix))))&&((this.recv_id == rhs.recv_id)||((this.recv_id!= null)&&this.recv_id.equals(rhs.recv_id))))&&((this.algorithm == rhs.algorithm)||((this.algorithm!= null)&&this.algorithm.equals(rhs.algorithm))))&&((this.generation == rhs.generation)||((this.generation!= null)&&this.generation.equals(rhs.generation))))&&((this.transport == rhs.transport)||((this.transport!= null)&&this.transport.equals(rhs.transport))))&&((this.publish_delay_sec == rhs.publish_delay_sec)||((this.publish_delay_sec!= null)&&this.publish_delay_sec.equals(rhs.publish_delay_sec))))&&((this.config_sync_sec == rhs.config_sync_sec)||((this.config_sync_sec!= null)&&this.config_sync_sec.equals(rhs.config_sync_sec))))&&((this.send_id == rhs.send_id)||((this.send_id!= null)&&this.send_id.equals(rhs.send_id))))&&((this.port == rhs.port)||((this.port!= null)&&this.port.equals(rhs.port))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.periodic_sec == rhs.periodic_sec)||((this.periodic_sec!= null)&&this.periodic_sec.equals(rhs.periodic_sec))))&&((this.noConfigAck == rhs.noConfigAck)||((this.noConfigAck!= null)&&this.noConfigAck.equals(rhs.noConfigAck))))&&((this.gatewayId == rhs.gatewayId)||((this.gatewayId!= null)&&this.gatewayId.equals(rhs.gatewayId))))&&((this.auth_provider == rhs.auth_provider)||((this.auth_provider!= null)&&this.auth_provider.equals(rhs.auth_provider))));
     }
 
-    @Generated("jsonschema2pojo")
     public enum Protocol {
 
         LOCAL("local"),
@@ -189,7 +265,6 @@ public class EndpointConfiguration {
 
     }
 
-    @Generated("jsonschema2pojo")
     public enum Transport {
 
         SSL("ssl"),

@@ -1,0 +1,51 @@
+{
+  "include": "prod_pod.json",
+  "flow_defaults": {
+    "protocol": "mqtt",
+    "transport": "ssl",
+    "hostname": "localhost",
+    "auth_provider": {
+      "basic": {
+        "username": "rocket",
+        "password": "monkey"
+      }
+    }
+  },
+  "flows": {
+    "reflect": {
+      "recv_id": "reflect",
+      "send_id": "c/control"
+    },
+    "target": {
+      "recv_id": "events/#"
+    },
+    "state": {
+      "recv_id": "state"
+    },
+    "control": {
+      "recv_id": "c/control/#"
+    },
+    "provision": {
+      "recv_id": "events/discovery",
+      "send_id": "events",
+      "enabled": "yes"
+    },
+    "distributor": {
+      "enabled": "false"
+    }
+  },
+  "crons": {
+    "sendgroot": {
+      "send_id": "c/control"
+    }
+  },
+  "iot_access": {
+    "iot-access": {
+      "project_id": "implicit"
+    },
+    "implicit": {
+      "provider": "implicit",
+      "options": "enabled=${ETCD_CLUSTER}"
+    }
+  }
+}

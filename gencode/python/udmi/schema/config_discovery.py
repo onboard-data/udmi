@@ -1,21 +1,23 @@
 """Generated class for config_discovery.json"""
 
 
-class ObjectB9C13F4B:
+class ObjectED573706:
   """Generated schema class"""
 
   def __init__(self):
     self.families = None
-    self.uniqs = None
+    self.devices = None
+    self.refs = None
     self.features = None
 
   @staticmethod
   def from_dict(source):
     if not source:
       return None
-    result = ObjectB9C13F4B()
+    result = ObjectED573706()
     result.families = source.get('families')
-    result.uniqs = source.get('uniqs')
+    result.devices = source.get('devices')
+    result.refs = source.get('refs')
     result.features = source.get('features')
     return result
 
@@ -25,7 +27,7 @@ class ObjectB9C13F4B:
       return None
     result = {}
     for key in source:
-      result[key] = ObjectB9C13F4B.from_dict(source[key])
+      result[key] = ObjectED573706.from_dict(source[key])
     return result
 
   @staticmethod
@@ -39,8 +41,10 @@ class ObjectB9C13F4B:
     result = {}
     if self.families:
       result['families'] = self.families # 5
-    if self.uniqs:
-      result['uniqs'] = self.uniqs # 5
+    if self.devices:
+      result['devices'] = self.devices # 5
+    if self.refs:
+      result['refs'] = self.refs # 5
     if self.features:
       result['features'] = self.features # 5
     return result
@@ -52,7 +56,7 @@ class DiscoveryConfig:
 
   def __init__(self):
     self.generation = None
-    self.enumerate = None
+    self.depths = None
     self.families = None
 
   @staticmethod
@@ -61,7 +65,7 @@ class DiscoveryConfig:
       return None
     result = DiscoveryConfig()
     result.generation = source.get('generation')
-    result.enumerate = ObjectB9C13F4B.from_dict(source.get('enumerate'))
+    result.depths = ObjectED573706.from_dict(source.get('depths'))
     result.families = FamilyDiscoveryConfig.map_from(source.get('families'))
     return result
 
@@ -85,8 +89,8 @@ class DiscoveryConfig:
     result = {}
     if self.generation:
       result['generation'] = self.generation # 5
-    if self.enumerate:
-      result['enumerate'] = self.enumerate.to_dict() # 4
+    if self.depths:
+      result['depths'] = self.depths.to_dict() # 4
     if self.families:
       result['families'] = FamilyDiscoveryConfig.expand_dict(self.families) # 2
     return result

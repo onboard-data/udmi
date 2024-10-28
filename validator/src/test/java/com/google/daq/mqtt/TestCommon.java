@@ -22,12 +22,14 @@ public class TestCommon {
           .setDateFormat(new ISO8601DateFormat())
           .setSerializationInclusion(Include.NON_NULL);
   public static final String DEVICE_ID = "AHU-1";
+  public static final String GATEWAY_ID = "GAT-123";
   public static final String UDMI_VERSION = "1.3.14";
   public static final String DEVICE_NUM_ID = "97216312321";
   public static final String REGISTRY_ID = "ZZ-TRI-FECTA";
   public static final String TOOL_ROOT = "..";
   public static final String SCHEMA_SPEC = TOOL_ROOT + "/schema";
   public static final String SITE_DIR = TOOL_ROOT + "/sites/udmi_site_model";
+  public static final String MOCK_SITE = TOOL_ROOT + "/tests/sites/basic";
   public static final String SITE_REGION = "us-central1";
   public static final String ALT_REGISTRY = "ZZ-ALT-REG";
   public static final String LOG_LEVEL = Level.DEBUG.name();

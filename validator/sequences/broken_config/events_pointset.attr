@@ -1,0 +1,10 @@
+{
+  "deviceId" : "AHU-1",
+  "deviceNumId" : "123456789101112",
+  "deviceRegistryId" : "peringknife~ZZ-TRI-FECTA",
+  "projectId" : "bos-platform-dev",
+  "transactionId" : "PS:12724423683690843",
+  "publishTime" : "2024-10-23T16:21:03Z",
+  "subFolder" : "pointset",
+  "subType" : "events"
+}

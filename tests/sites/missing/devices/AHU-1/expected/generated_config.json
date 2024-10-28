@@ -1,6 +1,6 @@
 {
   "timestamp": "2020-05-01T13:39:07Z",
-  "version": "1.4.2",
+  "version": "1.5.2",
   "system": {
     "min_loglevel": 300,
     "metrics_rate_sec": 10,
@@ -8,12 +8,8 @@
   },
   "localnet": {
     "families": {
-      "ether": {
-        "addr": "00:50:b6:ed:5f:77"
-      },
-      "ipv4": {
-        "addr": "192.168.2.1"
-      }
+      "ether": { },
+      "ipv4": { }
     }
   },
   "pointset": {
@@ -23,7 +19,7 @@
         "units": "No-units"
       },
       "filter_differential_pressure_sensor": {
-        "ref": "AV12.present_value",
+        "ref": "FAXLE12.present_value",
         "units": "Degrees-Celsius"
       },
       "filter_differential_pressure_setpoint": {

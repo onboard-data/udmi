@@ -45,6 +45,10 @@
     }
   },
   "localnet": {
+    "parent": {
+      "target": "GAT-324",
+      "family": "inet"
+    },
     "families": {
       "inet": {
         "addr": "192.168.2.1"
@@ -70,7 +74,7 @@
       }
     }
   },
-  "version": "1.5.0",
+  "version": "1.5.2",
   "timestamp": "2020-05-01T13:39:07Z",
   "hash": "181301c3"
 }

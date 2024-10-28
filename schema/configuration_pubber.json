@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Pubber Configuration",
   "description": "Parameters to define a pubber runtime instance",
   "additionalProperties": true,
@@ -9,6 +9,9 @@
     },
     "iotProject": {
       "description": "IoT Core ingest project id",
+      "type": "string"
+    },
+    "projectId": {
       "type": "string"
     },
     "registryId": {

@@ -1,6 +1,5 @@
 package com.google.bos.udmi.service.core;
 
-import static com.google.bos.udmi.service.pod.ContainerBase.REFLECT_BASE;
 import static com.google.udmi.util.JsonUtil.toMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,14 +8,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.google.bos.udmi.service.messaging.impl.MessageBase.Bundle;
-import com.google.udmi.util.GeneralUtils;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import udmi.schema.Envelope.SubFolder;
 import udmi.schema.Envelope.SubType;
-import udmi.schema.PointsetEvent;
+import udmi.schema.PointsetEvents;
 
 class TargetProcessorTest extends ProcessorTestBase {
 
@@ -25,31 +23,25 @@ class TargetProcessorTest extends ProcessorTestBase {
 
   private static void verifyCommand(ArgumentCaptor<String> commandCaptor, boolean isError) {
     Map<String, Object> command = toMap(commandCaptor.getValue());
-    String payload = (String) command.remove("payload");
-    String payloadString = GeneralUtils.decodeBase64(payload);
     assertEquals(SubFolder.POINTSET.value(), command.remove("subFolder"), "subFolder field");
-    assertEquals("event", command.remove("subType"), "subType field");
+    assertEquals("events", command.remove("subType"), "subType field");
     assertEquals(TEST_DEVICE, command.remove("deviceId"));
-    assertEquals(TEST_NAMESPACE, command.remove("projectId"));
+    String expectedNamespace = !isError ? null : TEST_NAMESPACE;
+    assertEquals(expectedNamespace, command.remove("projectId"));
     assertEquals(TEST_REGISTRY, command.remove("deviceRegistryId"));
   }
 
   @NotNull
-  protected Class<? extends ProcessorBase> getProcessorClass() {
-    return TargetProcessor.class;
-  }
-
-  @NotNull
   private Object getTestMessage(boolean isExtra) {
-    return isExtra ? makeExtraFieldMessage() : new PointsetEvent();
+    return isExtra ? makeExtraFieldMessage() : new PointsetEvents();
   }
 
   private Bundle makeExtraFieldMessage() {
-    Map<String, Object> stringObjectMap = toMap(new PointsetEvent());
+    Map<String, Object> stringObjectMap = toMap(new PointsetEvents());
     stringObjectMap.put(EXTRA_FIELD_KEY, MONGOOSE);
     // Specify these explicitly since the sent object is a (generic) map.
     Bundle bundle = makeMessageBundle(stringObjectMap);
-    bundle.envelope.subType = SubType.EVENT;
+    bundle.envelope.subType = SubType.EVENTS;
     bundle.envelope.subFolder = SubFolder.POINTSET;
     bundle.envelope.projectId = TEST_NAMESPACE;
     return bundle;
@@ -62,19 +54,22 @@ class TargetProcessorTest extends ProcessorTestBase {
   public void unexpectedReceive() {
     initializeTestInstance();
     getReverseDispatcher().publish(getTestMessage(true));
-    getReverseDispatcher().waitForMessageProcessed(Object.class);
     terminateAndWait();
 
     assertEquals(1, captured.size(), "unexpected received message count");
     assertTrue(captured.get(0) instanceof Map, "unexpected on-map message");
     assertEquals(0, getExceptionCount(), "exception count");
     assertEquals(1, getDefaultCount(), "default handler count");
-    assertEquals(0, getMessageCount(PointsetEvent.class), "pointset handler count");
+    assertEquals(0, getMessageCount(PointsetEvents.class), "pointset handler count");
 
     ArgumentCaptor<String> commandCaptor = ArgumentCaptor.forClass(String.class);
-    verify(provider, times(1)).sendCommand(eq(REFLECT_BASE),
-        eq(TEST_REGISTRY), eq(SubFolder.UDMI), commandCaptor.capture());
+    verify(provider, times(1)).sendCommand(
+        eq(makeReflectEnvelope(false)), eq(SubFolder.UDMI), commandCaptor.capture());
     verifyCommand(commandCaptor, true);
+  }
+
+  private void initializeTestInstance() {
+    initializeTestInstance(TargetProcessor.class);
   }
 
   /**
@@ -84,17 +79,16 @@ class TargetProcessorTest extends ProcessorTestBase {
   public void simpleReceive() {
     initializeTestInstance();
     getReverseDispatcher().publish(getTestMessage(false));
-    getReverseDispatcher().waitForMessageProcessed(PointsetEvent.class);
     terminateAndWait();
 
     assertEquals(1, captured.size(), "unexpected received message count");
     assertEquals(0, getExceptionCount(), "exception count");
     assertEquals(0, getDefaultCount(), "default handler count");
-    assertEquals(1, getMessageCount(PointsetEvent.class), "pointset handler count");
+    assertEquals(1, getMessageCount(PointsetEvents.class), "pointset handler count");
 
     ArgumentCaptor<String> commandCaptor = ArgumentCaptor.forClass(String.class);
-    verify(provider, times(1)).sendCommand(eq(REFLECT_BASE),
-        eq(TEST_REGISTRY), eq(SubFolder.UDMI), commandCaptor.capture());
+    verify(provider, times(1)).sendCommand(
+        eq(makeReflectEnvelope(false)), eq(SubFolder.UDMI), commandCaptor.capture());
     verifyCommand(commandCaptor, false);
   }
 

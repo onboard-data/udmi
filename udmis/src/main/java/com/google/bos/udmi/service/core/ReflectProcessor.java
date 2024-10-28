@@ -8,43 +8,60 @@ import static com.google.udmi.util.Common.DETAIL_KEY;
 import static com.google.udmi.util.Common.DEVICE_ID_KEY;
 import static com.google.udmi.util.Common.ERROR_KEY;
 import static com.google.udmi.util.Common.TIMESTAMP_KEY;
+import static com.google.udmi.util.Common.TRANSACTION_KEY;
+import static com.google.udmi.util.GeneralUtils.catchToElse;
+import static com.google.udmi.util.GeneralUtils.catchToNull;
 import static com.google.udmi.util.GeneralUtils.decodeBase64;
 import static com.google.udmi.util.GeneralUtils.deepCopy;
 import static com.google.udmi.util.GeneralUtils.encodeBase64;
+import static com.google.udmi.util.GeneralUtils.firstNonNull;
 import static com.google.udmi.util.GeneralUtils.friendlyStackTrace;
 import static com.google.udmi.util.GeneralUtils.ifNotNullGet;
 import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
 import static com.google.udmi.util.GeneralUtils.multiTrim;
+import static com.google.udmi.util.GeneralUtils.requireNull;
 import static com.google.udmi.util.GeneralUtils.stackTraceString;
+import static com.google.udmi.util.JsonUtil.asMap;
 import static com.google.udmi.util.JsonUtil.convertTo;
 import static com.google.udmi.util.JsonUtil.convertToStrict;
 import static com.google.udmi.util.JsonUtil.fromString;
+import static com.google.udmi.util.JsonUtil.fromStringStrict;
 import static com.google.udmi.util.JsonUtil.isoConvert;
+import static com.google.udmi.util.JsonUtil.mapCast;
 import static com.google.udmi.util.JsonUtil.stringify;
 import static com.google.udmi.util.JsonUtil.stringifyTerse;
 import static com.google.udmi.util.JsonUtil.toMap;
+import static com.google.udmi.util.JsonUtil.toObject;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static udmi.schema.CloudModel.Resource_type.REGISTRY;
 import static udmi.schema.Envelope.SubFolder.UPDATE;
 
 import com.google.bos.udmi.service.messaging.MessageContinuation;
+import com.google.bos.udmi.service.messaging.ModelUpdate;
+import com.google.bos.udmi.service.messaging.SiteMetadataUpdate;
 import com.google.bos.udmi.service.messaging.StateUpdate;
 import com.google.bos.udmi.service.pod.UdmiServicePod;
+import com.google.common.collect.ImmutableList;
 import com.google.udmi.util.JsonUtil;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
+import com.google.udmi.util.MetadataMapKeys;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import udmi.schema.CloudModel;
 import udmi.schema.CloudModel.Operation;
+import udmi.schema.EndpointConfiguration;
+import udmi.schema.Entry;
 import udmi.schema.Envelope;
 import udmi.schema.Envelope.SubFolder;
 import udmi.schema.Envelope.SubType;
+import udmi.schema.Level;
+import udmi.schema.SystemModel;
 import udmi.schema.UdmiConfig;
+import udmi.schema.UdmiEvents;
 import udmi.schema.UdmiState;
 
 /**
@@ -55,26 +72,52 @@ public class ReflectProcessor extends ProcessorBase {
 
   public static final String PAYLOAD_KEY = "payload";
   private static final Date START_TIME = new Date();
-  private static final TemporalAmount CONFIG_ACK_FUDGE = Duration.of(5, ChronoUnit.MINUTES);
+  private static final String LEGACY_METADATA_STRING = "{ }";
+
+  public ReflectProcessor(EndpointConfiguration config) {
+    super(config);
+  }
+
+  public static String makeTransactionId() {
+    return format("RP:%08x", Objects.hash(System.currentTimeMillis(), Thread.currentThread()));
+  }
 
   @Override
   protected void defaultHandler(Object message) {
     MessageContinuation continuation = getContinuation(message);
-    Envelope reflection = continuation.getEnvelope();
+    Envelope reflect = continuation.getEnvelope();
     Map<String, Object> objectMap = toMap(message);
     try {
-      if (reflection.subFolder == null) {
-        reflectStateHandler(reflection, extractUdmiState(message));
-      } else if (reflection.subFolder != SubFolder.UDMI) {
-        throw new IllegalStateException("Unexpected reflect subfolder " + reflection.subFolder);
+      boolean isCommand = objectMap.containsKey(PAYLOAD_KEY);
+      if (reflect.subFolder == null && !isCommand) {
+        reflectStateHandler(reflect, extractUdmiState(message));
+      } else if (reflect.subFolder != SubFolder.UDMI && reflect.subType != SubType.REFLECT) {
+        throw new IllegalStateException(format("Neither type %s nor folder %s is udmi",
+            reflect.subType, reflect.subFolder));
+      } else if (message instanceof UdmiState distributedUpdate) {
+        updateAwareness(reflect, distributedUpdate);
+      } else if (objectMap.isEmpty()) {
+        // Ignore empty messages, used as keep-alive messages.
       } else {
-        Map<String, Object> payload = extractMessagePayload(objectMap);
+        Object payload = extractMessagePayload(objectMap);
         Envelope envelope = extractMessageEnvelope(objectMap);
-        reflection.transactionId = envelope.transactionId;
-        processReflection(reflection, envelope, payload);
+        requireNull(envelope.payload, "payload not extracted from message envelope");
+        // If the message came from a reflector device, check the registry ID matches
+        // the device ID
+        if (reflect.deviceId != null) {
+          checkState(reflect.deviceId.equals(envelope.deviceRegistryId),
+              format("envelope %s/%s registryId %s does not match expected reflector deviceId %s",
+                  envelope.subType, envelope.subFolder, envelope.deviceRegistryId,
+                  reflect.deviceId));
+        }
+
+        envelope.source = reflect.source;
+        reflect.transactionId = firstNonNull(envelope.transactionId, reflect.transactionId,
+            ReflectProcessor::makeTransactionId);
+        processReflection(reflect, envelope, payload);
       }
     } catch (Exception e) {
-      processException(reflection, objectMap, e);
+      processException(reflect, objectMap, e);
     }
   }
 
@@ -89,56 +132,101 @@ public class ReflectProcessor extends ProcessorBase {
     return lastConfig.after(START_TIME) && !lastConfigAck.before(lastConfig);
   }
 
+  private void reflectUdmiLog(Envelope attributes, String message) {
+    Envelope logging = deepCopy(attributes);
+    logging.subType = SubType.EVENTS;
+    logging.subFolder = SubFolder.UDMI;
+    Entry entry = new Entry();
+    entry.message = message;
+    entry.level = Level.INFO.value();
+    entry.timestamp = new Date();
+    UdmiEvents events = new UdmiEvents();
+    events.logentries = ImmutableList.of(entry);
+    reflectMessage(logging, stringify(events));
+  }
+
+  private Object extractModel(CloudModel request) {
+    String metadata = catchToNull(() -> request.metadata.get(MetadataMapKeys.UDMI_METADATA));
+    if (metadata == null) {
+      return null;
+    } else if (request.resource_type == REGISTRY) {
+      return asSiteMetadataUpdate(metadata);
+    } else {
+      return asModelUpdate(metadata);
+    }
+  }
+
+  private SiteMetadataUpdate asSiteMetadataUpdate(String metadataString) {
+    SiteMetadataUpdate siteMetadataUpdate =
+        fromStringDynamic(SiteMetadataUpdate.class, metadataString);
+    // TODO: Remove the LEGACY_METADATA_STRING check once tool deployments have matured.
+    if (!LEGACY_METADATA_STRING.equals(metadataString)) {
+      requireNonNull(siteMetadataUpdate.name, "missing site model name");
+    }
+    return siteMetadataUpdate;
+  }
+
+  private <T> T fromStringDynamic(Class<T> targetClass, String metadataString) {
+    try {
+      return fromStringStrict(targetClass, metadataString);
+    } catch (Exception e) {
+      warn("String conversion failed, trying again with relaxed conversion: ",
+          friendlyStackTrace(e));
+      return fromString(targetClass, metadataString);
+    }
+  }
+
   private Envelope extractMessageEnvelope(Object message) {
     return convertToStrict(Envelope.class, message);
   }
 
-  private Map<String, Object> extractMessagePayload(Map<String, Object> message) {
+  private Object extractMessagePayload(Map<String, Object> message) {
     String payload = (String) message.remove(PAYLOAD_KEY);
-    return ifNotNullGet(payload, data -> toMap(decodeBase64(data)));
+    return ifNotNullGet(payload, data -> toObject(decodeBase64(data)));
   }
 
   private UdmiState extractUdmiState(Object message) {
-    Map<String, Object> stringObjectMap = JsonUtil.asMap(message);
-    UdmiState udmiState =
-        convertToStrict(UdmiState.class, stringObjectMap.get(SubFolder.UDMI.value()));
+    Map<String, Object> stringObjectMap = asMap(message);
+    UdmiState udmiState = convertTo(UdmiState.class, stringObjectMap.get(SubFolder.UDMI.value()));
     requireNonNull(udmiState, "reflector state update missing udmi subfolder");
     udmiState.timestamp = JsonUtil.getDate((String) stringObjectMap.get(TIMESTAMP_KEY));
     return udmiState;
   }
 
-  private CloudModel getReflectionResult(Envelope attributes, Map<String, Object> payload) {
+  private CloudModel getReflectionResult(Envelope attributes, Object payload) {
     try {
-      switch (attributes.subType) {
-        case QUERY:
-          return reflectQuery(attributes, payload);
-        case MODEL:
-          return reflectModel(attributes, convertToStrict(CloudModel.class, payload));
-        default:
-          return reflectPropagate(attributes, ofNullable(payload).orElseGet(HashMap::new));
-      }
+      SubType subType = ofNullable(attributes.subType).orElse(SubType.EVENTS);
+      return switch (subType) {
+        case QUERY -> reflectQuery(attributes, mapCast(payload));
+        case MODEL -> reflectModel(attributes, convertToStrict(CloudModel.class, payload));
+        default -> reflectProcess(attributes, payload);
+      };
     } catch (Exception e) {
       throw new RuntimeException("While processing reflect message type " + attributes.subType, e);
     }
   }
 
   private void processException(Envelope reflection, Map<String, Object> objectMap, Exception e) {
+    String transactionId =
+        ofNullable((String) objectMap.get(TRANSACTION_KEY)).orElse(reflection.transactionId);
     String stackMessage = friendlyStackTrace(e);
     String detailString = multiTrim(stackTraceString(e), CONDENSER_STRING);
-    warn("Processing exception %s: %s", reflection.transactionId, stackMessage);
-    debug("Stack trace details %s: %s", reflection.transactionId, detailString);
+    String registryId = reflection.deviceRegistryId;
+    String deviceId = reflection.deviceId;
+    warn("Processing exception %s/%s %s: %s", registryId, deviceId, transactionId, stackMessage);
+    debug("Stack trace details %s/%s %s: %s", registryId, deviceId, transactionId, detailString);
     Map<String, Object> message = new HashMap<>();
     message.put(ERROR_KEY, stackMessage);
     message.put(DETAIL_KEY, detailString);
     Envelope envelope = new Envelope();
     envelope.subFolder = SubFolder.ERROR;
     envelope.deviceId = (String) objectMap.get(DEVICE_ID_KEY);
-    envelope.transactionId = reflection.transactionId;
+    envelope.transactionId = transactionId;
     sendReflectCommand(reflection, envelope, message);
   }
 
   private void processReflection(Envelope reflection, Envelope envelope,
-      Map<String, Object> payload) {
+      Object payload) {
     debug("Processing reflection %s/%s %s %s", envelope.subType, envelope.subFolder,
         isoConvert(envelope.publishTime), envelope.transactionId);
     CloudModel result = getReflectionResult(envelope, payload);
@@ -158,7 +246,8 @@ public class ReflectProcessor extends ProcessorBase {
   }
 
   private CloudModel queryCloudRegistry(Envelope attributes) {
-    return iotAccess.listDevices(attributes.deviceRegistryId);
+    return iotAccess.listDevices(attributes.deviceRegistryId,
+        progress -> reflectUdmiLog(attributes, format("Fetched %d devices...", progress)));
   }
 
   private CloudModel queryDeviceState(Envelope attributes) {
@@ -169,7 +258,7 @@ public class ReflectProcessor extends ProcessorBase {
       StateUpdate stateUpdate = fromString(StateUpdate.class, state);
       stateUpdate.configAcked = checkConfigAckTime(attributes, stateUpdate);
       processStateUpdate(attributes, stateUpdate);
-      publish(stateUpdate);
+      publish(attributes, stateUpdate);
       reflectStateUpdate(attributes, stringify(stateUpdate));
       CloudModel cloudModel = new CloudModel();
       cloudModel.operation = Operation.FETCH;
@@ -180,16 +269,40 @@ public class ReflectProcessor extends ProcessorBase {
   }
 
   private CloudModel reflectModel(Envelope attributes, CloudModel request) {
-    return iotAccess.modelResource(attributes.deviceRegistryId, attributes.deviceId, request);
+    ifNotNullThen(extractModel(request), model -> publish(attributes, model));
+    if (request.resource_type == REGISTRY) {
+      return iotAccess.modelRegistry(attributes.deviceRegistryId, attributes.deviceId, request);
+    } else {
+      return iotAccess.modelDevice(attributes.deviceRegistryId, attributes.deviceId, request);
+    }
   }
 
-  private CloudModel reflectPropagate(Envelope attributes, Map<String, Object> payload) {
-    if (requireNonNull(attributes.subType) == SubType.CONFIG) {
+  private ModelUpdate asModelUpdate(String modelString) {
+    // If it's not a valid JSON object, then fall back to a string description alternate.
+    if (modelString == null || !modelString.startsWith(JsonUtil.JSON_OBJECT_LEADER)) {
+      ModelUpdate modelUpdate = new ModelUpdate();
+      modelUpdate.system = new SystemModel();
+      modelUpdate.system.description = modelString;
+      return modelUpdate;
+    }
+    ModelUpdate modelUpdate = fromStringDynamic(ModelUpdate.class, modelString);
+    requireNonNull(modelUpdate.system, "missing system block in model message");
+    return modelUpdate;
+  }
+
+  private CloudModel reflectProcess(Envelope attributes, Object payload) {
+    if (payload == null) {
+      return null;
+    }
+    if (attributes.subType == SubType.CONFIG) {
       processConfigChange(attributes, payload, null);
     }
-    Class<?> messageClass = getMessageClassFor(attributes);
+    if (payload instanceof String) {
+      return null;
+    }
+    Class<?> messageClass = getMessageClassFor(attributes, true);
     debug("Propagating message %s: %s", attributes.transactionId, messageClass.getSimpleName());
-    publish(convertTo(messageClass, payload));
+    publish(attributes, convertTo(messageClass, payload));
     return null;
   }
 
@@ -215,7 +328,11 @@ public class ReflectProcessor extends ProcessorBase {
     final String registryId = envelope.deviceRegistryId;
     final String deviceId = envelope.deviceId;
 
-    ifNotNullThen(distributor, d -> d.distribute(envelope, toolState));
+    // Ensure source is encoded in the distribution (not always send in some mechanisms).
+    toolState.source = envelope.source;
+
+    ifNotNullThen(distributor, d -> catchToElse(() -> d.publish(envelope, toolState, containerId),
+        e -> error("Error handling update: %s %s", friendlyStackTrace(e), envelope.transactionId)));
     updateAwareness(envelope, toolState);
 
     UdmiConfig udmiConfig = UdmiServicePod.getUdmiConfig(toolState);
@@ -225,7 +342,7 @@ public class ReflectProcessor extends ProcessorBase {
     configMap.put(TIMESTAMP_KEY, isoConvert());
     String contents = stringifyTerse(configMap);
     debug("Setting reflector config %s %s: %s", registryId, deviceId, contents);
-    iotAccess.modifyConfig(registryId, deviceId, previous -> contents);
+    iotAccess.modifyConfig(envelope, previous -> contents);
   }
 
   private void reflectStateUpdate(Envelope attributes, String state) {
@@ -236,10 +353,12 @@ public class ReflectProcessor extends ProcessorBase {
   }
 
   private void sendReflectCommand(Envelope reflection, Envelope message, Object payload) {
-    String reflectRegistry = reflection.deviceRegistryId;
-    String deviceRegistry = reflection.deviceId;
     message.payload = encodeBase64(stringify(payload));
-    iotAccess.sendCommand(reflectRegistry, deviceRegistry, SubFolder.UDMI, stringify(message));
+    message.source = reflection.source;
+
+    String deviceRegistry = reflection.deviceId;
+    iotAccess.sendCommand(makeReflectEnvelope(deviceRegistry, reflection.source), SubFolder.UDMI,
+        stringify(message));
   }
 
   private void updateProviderAffinity(Envelope envelope, String source) {
@@ -264,7 +383,7 @@ public class ReflectProcessor extends ProcessorBase {
   void updateAwareness(Envelope envelope, UdmiState toolState) {
     debug("Processing UdmiState for %s/%s: %s", envelope.deviceRegistryId, envelope.deviceId,
         stringifyTerse(toolState));
-    ifNotNullThen(toolState.setup, setup -> updateProviderAffinity(envelope, envelope.source));
+    ifNotNullThen(toolState.setup, setup -> updateProviderAffinity(envelope, toolState.source));
     ifNotNullThen(toolState.regions, this::updateRegistryRegions);
   }
 }

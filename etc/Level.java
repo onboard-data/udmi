@@ -7,12 +7,14 @@ import java.util.Map;
 // proper source and don't be fooled! This is subset of the StackDriver LogSeverity levels.
 public enum Level {
 
+  INVALID(-1),
   TRACE(50),
   DEBUG(100),
   INFO(200),
   NOTICE(300),
   WARNING(400),
-  ERROR(500);
+  ERROR(500),
+  CRITIAL(600);
 
   private final int value;
   private final static Map<Integer, Level> CONSTANTS = new HashMap<>();

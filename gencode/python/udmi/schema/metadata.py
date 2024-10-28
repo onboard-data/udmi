@@ -16,9 +16,7 @@ class Metadata:
     self.timestamp = None
     self.version = None
     self.upgraded_from = None
-    self.description = None
     self.hash = None
-    self.device_version = None
     self.cloud = None
     self.system = None
     self.gateway = None
@@ -36,16 +34,14 @@ class Metadata:
     result.timestamp = source.get('timestamp')
     result.version = source.get('version')
     result.upgraded_from = source.get('upgraded_from')
-    result.description = source.get('description')
     result.hash = source.get('hash')
-    result.device_version = source.get('device_version')
     result.cloud = CloudModel.from_dict(source.get('cloud'))
     result.system = SystemModel.from_dict(source.get('system'))
     result.gateway = GatewayModel.from_dict(source.get('gateway'))
     result.discovery = DiscoveryModel.from_dict(source.get('discovery'))
     result.localnet = LocalnetModel.from_dict(source.get('localnet'))
     result.testing = TestingModel.from_dict(source.get('testing'))
-    result.features = FeatureEnumeration.map_from(source.get('features'))
+    result.features = FeatureDiscovery.map_from(source.get('features'))
     result.pointset = PointsetModel.from_dict(source.get('pointset'))
     return result
 
@@ -73,12 +69,8 @@ class Metadata:
       result['version'] = self.version # 5
     if self.upgraded_from:
       result['upgraded_from'] = self.upgraded_from # 5
-    if self.description:
-      result['description'] = self.description # 5
     if self.hash:
       result['hash'] = self.hash # 5
-    if self.device_version:
-      result['device_version'] = self.device_version # 5
     if self.cloud:
       result['cloud'] = self.cloud.to_dict() # 4
     if self.system:
@@ -92,7 +84,7 @@ class Metadata:
     if self.testing:
       result['testing'] = self.testing.to_dict() # 4
     if self.features:
-      result['features'] = FeatureEnumeration.expand_dict(self.features) # 2
+      result['features'] = FeatureDiscovery.expand_dict(self.features) # 2
     if self.pointset:
       result['pointset'] = self.pointset.to_dict() # 4
     return result

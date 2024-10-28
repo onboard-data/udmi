@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Udmi State",
   "description": "State of a UDMI reflector client",
   "type": "object",
@@ -14,6 +14,10 @@
     },
     "version": {
       "description": "Version of the UDMI schema",
+      "type": "string"
+    },
+    "source": {
+      "description": "Indicator of where this source update came from",
       "type": "string"
     },
     "regions": {
@@ -35,9 +39,36 @@
           "type": "string",
           "description": "User id of the person running the tool"
         },
+        "udmi_version": {
+          "type": "string",
+          "description": "Semantic tagged version of udmis install"
+        },
+        "udmi_commit": {
+          "type": "string",
+          "description": "Commit hash of this udmis install"
+        },
+        "udmi_ref": {
+          "type": "string",
+          "description": "Complete reference of udmis install"
+        },
+        "udmi_timever": {
+          "type": "string",
+          "description": "Timestamp version id of udmis install"
+        },
+        "msg_source": {
+          "type": "string",
+          "description": "Source parameter to use for this connection stream"
+        },
         "update_to": {
           "type": "string",
           "description": "Optional version for a udmis update trigger"
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the tool being used" 
+        },
+        "transaction_id": {
+          "type": "string"
         }
       }
     }

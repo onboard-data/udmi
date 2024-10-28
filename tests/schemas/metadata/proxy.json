@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.2",
   "timestamp": "2018-08-26T21:39:29.364Z",
   "system": {
     "location": {
@@ -17,15 +17,8 @@
         "name": "AHU-1"
       }
     },
-    "aux": {
+    "adjunct": {
       "suffix": "extention11-optional"
-    }
-  },
-  "localnet": {
-    "families": {
-      "bacnet": {
-        "addr": "82eecd"
-      }
     }
   },
   "pointset": {
@@ -37,7 +30,9 @@
     }
   },
   "gateway": {
-    "family": "bacnet",
+    "target": {
+      "family": "bacnet"
+    },
     "gateway_id": "LTGW-123"
   }
 }

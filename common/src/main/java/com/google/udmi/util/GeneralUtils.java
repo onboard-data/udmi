@@ -1,5 +1,7 @@
 package com.google.udmi.util;
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Sets.symmetricDifference;
 import static com.google.udmi.util.JsonUtil.isoConvert;
 import static com.google.udmi.util.ProperPrinter.OutputFormat.COMPRESSED;
 import static com.google.udmi.util.ProperPrinter.OutputFormat.VERBOSE;
@@ -29,6 +31,9 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,18 +56,18 @@ import org.apache.commons.io.FileUtils;
 public class GeneralUtils {
 
   public static final Joiner CSV_JOINER = Joiner.on(", ");
+  public static final Joiner NEWLINE_JOINER = Joiner.on("\n");
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
       .enable(SerializationFeature.INDENT_OUTPUT)
       .setDateFormat(new ISO8601DateFormat())
       .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-      .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+      .setSerializationInclusion(Include.NON_NULL);
   public static final ObjectMapper OBJECT_MAPPER_RAW =
       OBJECT_MAPPER.copy()
           .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
           .enable(Feature.ALLOW_TRAILING_COMMA)
           .enable(Feature.STRICT_DUPLICATE_DETECTION)
-          .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-          .setSerializationInclusion(Include.NON_NULL);
+          .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   public static final ObjectMapper OBJECT_MAPPER_STRICT =
       OBJECT_MAPPER_RAW.copy()
           .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -69,10 +75,15 @@ public class GeneralUtils {
 
   private static final String SEPARATOR = "\n  ";
   private static final Joiner INDENTED_LINES = Joiner.on(SEPARATOR);
+  private static final String NULL_STRING = "null";
   private static Duration clockSkew = Duration.ZERO;
 
   public static String[] arrayOf(String... args) {
     return args;
+  }
+
+  public static String booleanString(Boolean bool) {
+    return ifNotNullGet(bool, value -> Boolean.toString(bool));
   }
 
   public static String changedLines(List<DiffEntry> nullableChanges) {
@@ -87,8 +98,8 @@ public class GeneralUtils {
    * the target class is "final" but the fields themselves need to be updated.
    *
    * @param from source object
-   * @param to   target object
-   * @param <T>  type of object
+   * @param to target object
+   * @param <T> type of object
    */
   public static <T> void copyFields(T from, T to, boolean includeNull) {
     Field[] fields = from.getClass().getDeclaredFields();
@@ -125,11 +136,18 @@ public class GeneralUtils {
   }
 
   public static String encodeBase64(String payload) {
-    return encodeBase64(payload.getBytes());
+    return ifNotNullGet(payload, raw -> encodeBase64(raw.getBytes()));
   }
 
   public static String encodeBase64(byte[] payload) {
     return Base64.getEncoder().encodeToString(payload);
+  }
+
+  /**
+   * TODO: Update to use varargs, and create non-supplier version.
+   */
+  public static <T> T firstNonNull(T obj1, T obj2, Supplier<T> supplier) {
+    return ofNullable(ofNullable(obj1).orElse(obj2)).orElseGet(supplier);
   }
 
   /**
@@ -138,6 +156,10 @@ public class GeneralUtils {
    * hopefully somewhat meaningful. Real debuggers will need to dig out the full stack trace!
    */
   public static String friendlyStackTrace(Throwable e) {
+    return CSV_JOINER.join(friendlyLineTrace(e)).replace('\n', ' ');
+  }
+
+  public static List<String> friendlyLineTrace(Throwable e) {
     List<String> messages = new ArrayList<>();
     while (e != null) {
       if (e instanceof ValidationException validationException) {
@@ -152,15 +174,23 @@ public class GeneralUtils {
       }
       e = e.getCause();
     }
-    return CSV_JOINER.join(messages).replace('\n', ' ');
+    return messages;
   }
 
-  public static <T> T fromJsonFile(File path, Class<T> valueType) {
+  private static <T> T fromJsonFile(File path, Class<T> valueType, ObjectMapper objectMapper) {
     try {
-      return OBJECT_MAPPER.readValue(path, valueType);
+      return OBJECT_MAPPER_STRICT.readValue(path, valueType);
     } catch (Exception e) {
       throw new RuntimeException("While loading json file " + path.getAbsolutePath(), e);
     }
+  }
+
+  public static <T> T fromJsonFile(File path, Class<T> valueType) {
+    return fromJsonFile(path, valueType, OBJECT_MAPPER);
+  }
+
+  public static <T> T fromJsonFileStrict(File path, Class<T> valueType) {
+    return fromJsonFile(path, valueType, OBJECT_MAPPER_STRICT);
   }
 
   public static <T> T fromJsonString(String body, Class<T> valueType) {
@@ -185,6 +215,35 @@ public class GeneralUtils {
     } catch (Exception e) {
       throw new RuntimeException("While converting to limited json string", e);
     }
+  }
+
+  public static Runnable ignoreValue(Object ignored) {
+    return () -> {
+    };
+  }
+
+  public static boolean isNotEmpty(String s) {
+    return !ofNullable(s).map(String::isEmpty).orElse(true);
+  }
+
+  public static boolean isNullOrNotEmpty(String value) {
+    return !ofNullable(value).map(String::isEmpty).orElse(false);
+  }
+
+  public static boolean isNullOrTruthy(String value) {
+    return ofNullable(value).map(GeneralUtils::isTruthy).orElse(true);
+  }
+
+  private static boolean isTruthy(String value) {
+    return value != null && !value.isEmpty() && !"false".equals(value);
+  }
+
+  public static String nullAsNull(String part) {
+    return NULL_STRING.equals(part) ? null : part;
+  }
+
+  public static Date toDate(Instant lastSeen) {
+    return ifNotNullGet(lastSeen, Date::from);
   }
 
   private static String writeToPrettyString(Object data, OutputFormat indent) {
@@ -216,6 +275,11 @@ public class GeneralUtils {
 
   public static Map<String, Object> getSubMap(Map<String, Object> input, String field) {
     //noinspection unchecked
+    return (Map<String, Object>) input.get(field);
+  }
+
+  public static Map<String, Object> getSubMapNull(Map<String, Object> input, String field) {
+    //noinspection unchecked
     return ifNotNullGet(input, map -> (Map<String, Object>) map.get(field));
   }
 
@@ -233,13 +297,32 @@ public class GeneralUtils {
     return value == null ? elseResult : converter.apply(value);
   }
 
+  public static <T, V> V ifNotNullGetElse(T value, Function<T, V> converter,
+      Supplier<V> elseResult) {
+    return value == null ? elseResult.get() : converter.apply(value);
+  }
+
   public static <T, V> V ifNotNullGet(T value, Supplier<V> converter) {
     return value == null ? null : converter.get();
+  }
+
+  public static <T, V> V ifNullElse(T value, V elseResult, Function<T, V> converter) {
+    return value == null ? elseResult : converter.apply(value);
   }
 
   public static void ifNullThen(Object value, Runnable action) {
     if (value == null) {
       action.run();
+    }
+  }
+
+  public static void requireNull(Object value, String description) {
+    checkState(value == null, description);
+  }
+
+  public static <T> void ifNotNullThrow(T value, String message) {
+    if (value != null) {
+      throw new RuntimeException(message);
     }
   }
 
@@ -261,19 +344,35 @@ public class GeneralUtils {
     }
   }
 
-  public static <T> T ifTrueGet(Object conditional, T value) {
+  public static <T> T ifTrueGet(Boolean conditional, T value) {
     return ifTrueGet(conditional, () -> value);
   }
 
-  public static <T> T ifTrueGet(Object conditional, Supplier<T> action) {
+  public static <T> T ifTrueGet(Boolean conditional, Supplier<T> action) {
     if (isTrue(conditional)) {
       return action.get();
     }
     return null;
   }
 
+  public static <T> T ifTrueGet(Supplier<Boolean> conditional, Supplier<T> action) {
+    return isTrue(conditional) ? action.get() : null;
+  }
+
   public static <T> T ifTrueGet(Object conditional, Supplier<T> action, Supplier<T> alternate) {
     return isTrue(conditional) ? action.get() : alternate.get();
+  }
+
+  public static <T> T ifTrueGet(Object conditional, Supplier<T> action, T alternate) {
+    return isTrue(conditional) ? action.get() : alternate;
+  }
+
+  public static <T> T ifTrueGet(Object conditional, T value, Supplier<T> alternate) {
+    return isTrue(conditional) ? value : alternate.get();
+  }
+
+  public static <T> T ifTrueGet(Object conditional, T value, T alternate) {
+    return isTrue(conditional) ? value : alternate;
   }
 
   public static <T> void ifTrueThen(Object conditional, Runnable action) {
@@ -288,8 +387,24 @@ public class GeneralUtils {
     }
   }
 
-  public static <T> T ifNotTrueGet(Object conditional, Supplier<T> supplier) {
+  public static <T> T ifNotTrueGet(Boolean conditional, Supplier<T> supplier) {
     return isTrue(conditional) ? null : supplier.get();
+  }
+
+  public static <T> T ifNotTrueGet(Boolean conditional, T value) {
+    return isTrue(conditional) ? null : value;
+  }
+
+  public static <T> T ifNotTrueGet(Supplier<Boolean> conditional, Supplier<T> supplier) {
+    return isTrue(catchToNull(conditional)) ? null : supplier.get();
+  }
+
+  public static <T> T ifNotTrueGet(Supplier<Boolean> conditional, T value) {
+    return isTrue(catchToNull(conditional)) ? null : value;
+  }
+
+  public static boolean isNotTrue(Boolean value) {
+    return !isTrue(value);
   }
 
   public static boolean isTrue(Object value) {
@@ -332,6 +447,23 @@ public class GeneralUtils {
     }
   }
 
+  public static <T> T catchToElse(Supplier<T> provider, Consumer<Exception> alternate) {
+    try {
+      return provider.get();
+    } catch (Exception e) {
+      alternate.accept(e);
+      return null;
+    }
+  }
+
+  public static void catchToElse(Runnable provider, Consumer<Exception> alternate) {
+    try {
+      provider.run();
+    } catch (Exception e) {
+      alternate.accept(e);
+    }
+  }
+
   public static <T> T catchToElse(Supplier<T> provider, T alternate) {
     try {
       return provider.get();
@@ -346,6 +478,11 @@ public class GeneralUtils {
 
   public static <T> T catchToNull(Supplier<T> provider) {
     return catchToElse(provider, (T) null);
+  }
+
+  public static String joinOrNull(String prefix, Set<Object> setDifference) {
+    return ifTrueGet(setDifference == null || setDifference.isEmpty(), (String) null,
+        () -> prefix + CSV_JOINER.join(setDifference));
   }
 
   public static <U> U mapReplace(U previous, U added) {
@@ -471,11 +608,11 @@ public class GeneralUtils {
     return variable;
   }
 
-  public static void writeString(File metadataFile, String metadataString) {
+  public static void writeString(File file, String string) {
     try {
-      FileUtils.write(metadataFile, metadataString, Charset.defaultCharset());
+      FileUtils.write(file, string, Charset.defaultCharset());
     } catch (IOException e) {
-      throw new RuntimeException("While writing output file " + metadataFile.getAbsolutePath(), e);
+      throw new RuntimeException("While writing output file " + file.getAbsolutePath(), e);
     }
   }
 
@@ -493,10 +630,38 @@ public class GeneralUtils {
   }
 
   public static Date getNow() {
-    return Date.from(Instant.now().plus(clockSkew));
+    return Date.from(instantNow());
+  }
+
+  public static Instant instantNow() {
+    return Instant.now().plus(clockSkew);
   }
 
   public static String getTimestamp() {
     return isoConvert(getNow());
+  }
+
+  public static String prefixedDifference(String prefix, Set<String> a, Set<String> b) {
+    return joinOrNull(prefix, symmetricDifference(a, b));
+  }
+
+  public static String removeArg(List<String> argList, String description) {
+    if (argList.isEmpty()) {
+      throw new RuntimeException(format("Missing required %s argument", description));
+    }
+    return argList.remove(0);
+  }
+
+  public static byte[] getFileBytes(String dataFile) {
+    Path dataPath = Paths.get(dataFile);
+    try {
+      return Files.readAllBytes(dataPath);
+    } catch (Exception e) {
+      throw new RuntimeException("While getting data from " + dataPath.toAbsolutePath(), e);
+    }
+  }
+
+  public static byte[] getFileBytes(File dataFile) {
+    return getFileBytes(dataFile.getPath());
   }
 }

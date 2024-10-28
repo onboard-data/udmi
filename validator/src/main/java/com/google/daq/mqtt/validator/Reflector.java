@@ -1,11 +1,14 @@
 package com.google.daq.mqtt.validator;
 
-import static com.google.daq.mqtt.validator.Validator.REQUIRED_FUNCTION_VER;
+import static com.google.daq.mqtt.validator.Validator.TOOLS_FUNCTIONS_VERSION;
+import static com.google.udmi.util.Common.ERROR_KEY;
 import static com.google.udmi.util.Common.GCP_REFLECT_KEY_PKCS8;
 import static com.google.udmi.util.Common.NO_SITE;
+import static com.google.udmi.util.Common.SUBFOLDER_PROPERTY_KEY;
 import static com.google.udmi.util.Common.removeNextArg;
 import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
-import static com.google.udmi.util.GeneralUtils.mergeObject;
+import static com.google.udmi.util.JsonUtil.isoConvert;
+import static java.lang.String.format;
 
 import com.google.bos.iot.core.proxy.IotReflectorClient;
 import com.google.daq.mqtt.util.CloudIotManager;
@@ -13,12 +16,13 @@ import com.google.daq.mqtt.util.ConfigUtil;
 import com.google.daq.mqtt.util.MessagePublisher.QuerySpeed;
 import com.google.daq.mqtt.validator.Validator.MessageBundle;
 import com.google.udmi.util.Common;
-import com.google.udmi.util.GeneralUtils;
 import java.io.File;
 import java.io.FileInputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import udmi.schema.Envelope.SubFolder;
 import udmi.schema.ExecutionConfiguration;
 
 /**
@@ -26,7 +30,8 @@ import udmi.schema.ExecutionConfiguration;
  */
 public class Reflector {
 
-  private static final int RETRY_COUNT = 1;
+  private static final int RETRY_COUNT = 2;
+  public static final String REFLECTOR_TOOL_NAME = "reflector";
   private final List<String> reflectCommands;
   private String siteDir;
   private ExecutionConfiguration executionConfiguration;
@@ -92,18 +97,34 @@ public class Reflector {
     int retryCount = RETRY_COUNT;
     String recvId = null;
     String sendId = client.publish(executionConfiguration.device_id, topic, data);
-    System.err.println("Waiting for return transaction " + sendId);
-    do {
-      MessageBundle messageBundle = client.takeNextMessage(QuerySpeed.SHORT);
-      if (messageBundle == null) {
-        System.err.println("Receive timeout, retries left: " + --retryCount);
-        if (retryCount == 0) {
-          throw new RuntimeException("Maximum retry count reached");
+    Instant startTime = Instant.now();
+    Instant endTime = startTime.plusSeconds(QuerySpeed.SHORT.seconds());
+    try {
+      MessageBundle messageBundle;
+
+      do {
+        if (endTime.isBefore(Instant.now())) {
+          throw new RuntimeException("Timeout waiting for reflector response");
         }
-      } else {
-        recvId = messageBundle.attributes.get("transactionId");
+        messageBundle = client.takeNextMessage(QuerySpeed.SHORT);
+        if (messageBundle == null) {
+          System.err.println("Receive timeout, retries left: " + --retryCount);
+          if (retryCount == 0) {
+            throw new RuntimeException("Maximum retry count reached");
+          }
+        } else {
+          recvId = messageBundle.attributes.get("transactionId");
+        }
+      } while (!sendId.equals(recvId));
+
+      if (SubFolder.ERROR.value().equals(messageBundle.attributes.get(SUBFOLDER_PROPERTY_KEY))) {
+        throw new RuntimeException(
+            "Error processing request: " + messageBundle.message.get(ERROR_KEY));
       }
-    } while (!sendId.equals(recvId));
+    } catch (Exception e) {
+      throw new RuntimeException(format("While waiting for return transaction %s started %s",
+          sendId, isoConvert(startTime)), e);
+    }
   }
 
   private void initialize() {
@@ -113,7 +134,9 @@ public class Reflector {
       executionConfiguration.key_file = keyFile;
     }
     executionConfiguration.udmi_version = Common.getUdmiVersion();
-    client = new IotReflectorClient(executionConfiguration, REQUIRED_FUNCTION_VER);
+    client = new IotReflectorClient(executionConfiguration, TOOLS_FUNCTIONS_VERSION,
+        REFLECTOR_TOOL_NAME);
+    client.activate();
   }
 
   private List<String> parseArgs(List<String> argsList) {
@@ -169,7 +192,18 @@ public class Reflector {
       File cloudConfig = new File(siteDir, "cloud_iot_config.json");
       ExecutionConfiguration siteConfig = CloudIotManager.validate(
           ConfigUtil.readExeConfig(cloudConfig), executionConfiguration.project_id);
-      executionConfiguration = mergeObject(executionConfiguration, siteConfig);
+
+      // These parameters should always be taken from the site_model.
+      executionConfiguration.registry_id = siteConfig.registry_id;
+      executionConfiguration.cloud_region = siteConfig.cloud_region;
+      executionConfiguration.site_name = siteConfig.site_name;
+
+      // Only use the site_model values for project_spec if not otherwise specified.
+      if (executionConfiguration.project_id == null) {
+        executionConfiguration.iot_provider = siteConfig.iot_provider;
+        executionConfiguration.project_id = siteConfig.project_id;
+        executionConfiguration.udmi_namespace = siteConfig.udmi_namespace;
+      }
     }
   }
 }

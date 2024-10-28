@@ -13,6 +13,7 @@ import java.util.MissingFormatArgumentException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public abstract class Common {
 
   public static final String UPDATE_QUERY_TOPIC = "update/query";
+  public static final String UPDATE_CONFIG_TOPIC = "update/config";
   public static final String EXCEPTION_KEY = "exception";
   public static final String ERROR_KEY = "error";
   public static final String DETAIL_KEY = "detail";
@@ -32,35 +34,51 @@ public abstract class Common {
   public static final String UPGRADED_FROM = "upgraded_from";
   public static final String DOWNGRADED_FROM = "downgraded_from";
   public static final String CLOUD_VERSION_KEY = "cloud_version";
+  public static final String SITE_METADATA_KEY = "site_metadata";
   public static final String UDMI_VERSION_KEY = "udmi_version";
   public static final String SUBTYPE_PROPERTY_KEY = "subType";
+  public static final String RAWFOLDER_PROPERTY_KEY = "rawFolder";
   public static final String SUBFOLDER_PROPERTY_KEY = "subFolder";
   public static final String PROJECT_ID_PROPERTY_KEY = "projectId";
   public static final String REGISTRY_ID_PROPERTY_KEY = "deviceRegistryId";
+  public static final String DEFAULT_REGION = "us-central1";
   public static final String DEVICE_ID_KEY = "deviceId";
   public static final String GATEWAY_ID_KEY = "gatewayId";
-  public static final String MESSAGE_SOURCE_PROPERTY_KEY = "source";
+  public static final String SOURCE_KEY = "source";
   public static final String NO_SITE = "--";
   public static final String GCP_REFLECT_KEY_PKCS8 = "reflector/rsa_private.pkcs8";
   public static final String CONDENSER_STRING = "^^";
   public static final char DETAIL_SEPARATOR_CHAR = ';';
   public static final String DETAIL_SEPARATOR = DETAIL_SEPARATOR_CHAR + " ";
   public static final Joiner DETAIL_JOINER = Joiner.on(DETAIL_SEPARATOR);
-  public static final String CONFIG_CATEGORY = "config";
-  public static final String COMMANDS_CATEGORY = "commands";
   public static final String CATEGORY_PROPERTY_KEY = "category";
-  private static final String PREFIX_SEPARATOR = "~";
-  private static final String UDMI_VERSION_ENV = "UDMI_VERSION";
+  public static final Pattern DEVICE_ID_ALLOWABLE = Pattern.compile("^[-_a-zA-Z0-9]+$");
+  public static final Pattern POINT_NAME_ALLOWABLE = DEVICE_ID_ALLOWABLE;
+  public static final int SEC_TO_MS = 1000;
+  public static final String SOURCE_SEPARATOR = "+";
+  public static final String SOURCE_SEPARATOR_REGEX = "\\" + SOURCE_SEPARATOR;
+
+  public static final String NAMESPACE_SEPARATOR = "~";
+  private static final String UDMI_VERSION_ENV = "UDMI_TOOLS";
+  public static final int EXIT_CODE_ERROR = 1;
+  public static final String UNKNOWN_UDMI_VERSION = "unknown";
 
   /**
    * Remove the next item from the list in an exception-safe way.
-   *
-   * @param argList list of arguments
-   * @return removed argument
    */
   public static String removeNextArg(List<String> argList) {
     if (argList.isEmpty()) {
       throw new MissingFormatArgumentException("Missing argument");
+    }
+    return argList.remove(0);
+  }
+
+  /**
+   * Remove the next item from the list in an exception-safe way.
+   */
+  public static String removeNextArg(List<String> argList, String descriptor) {
+    if (argList.isEmpty()) {
+      throw new MissingFormatArgumentException("Missing argument " + descriptor);
     }
     return argList.remove(0);
   }
@@ -94,7 +112,7 @@ public abstract class Common {
   }
 
   public static String getUdmiVersion() {
-    return Optional.ofNullable(System.getenv(UDMI_VERSION_ENV)).orElse("unknown");
+    return Optional.ofNullable(System.getenv(UDMI_VERSION_ENV)).orElse(UNKNOWN_UDMI_VERSION);
   }
 
   /**
@@ -113,7 +131,7 @@ public abstract class Common {
           .collect(Collectors.toSet());
       return new TreeSet<>(classes);
     } catch (Exception e) {
-      throw new RuntimeException("While loading classes for package " + packageName);
+      throw new RuntimeException("While loading classes for package " + packageName, e);
     }
   }
 
@@ -162,6 +180,6 @@ public abstract class Common {
   }
 
   public static String getNamespacePrefix(String udmiNamespace) {
-    return Strings.isNullOrEmpty(udmiNamespace) ? "" : udmiNamespace + PREFIX_SEPARATOR;
+    return Strings.isNullOrEmpty(udmiNamespace) ? "" : udmiNamespace + NAMESPACE_SEPARATOR;
   }
 }

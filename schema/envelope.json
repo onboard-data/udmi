@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Envelope",
   "description": "The UDMI `envelope` is not a message itself, per se, but the attributes and other information that is delivered along with a message. [Message Envelope Documentation](../docs/messages/envelope.md)",
   "$section": "Messages",
@@ -7,7 +7,7 @@
   "properties": {
     "deviceId": {
       "type": "string",
-      "pattern": "^[A-Z]{2,6}-[0-9]{1,6}$"
+      "pattern": "^[A-Z]{2,6}-[1-9][0-9]*$"
     },
     "deviceNumId": {
       "type": "string",
@@ -33,7 +33,7 @@
     },
     "gatewayId": {
       "type": "string",
-      "pattern": "^[A-Z]{2,6}-[0-9]{1,6}$"
+      "pattern": "^[A-Z]{2,6}-[1-9][0-9]*$"
     },
     "transactionId": {
       "type": "string"
@@ -41,6 +41,9 @@
     "publishTime": {
       "type": "string",
       "format": "date-time"
+    },
+    "rawFolder": {
+      "type": "string"
     },
     "subFolder": {
       "enum": [
@@ -64,8 +67,10 @@
     "subType": {
       "enum": [
         "invalid",
-        "event",
-        "command",
+        "reflect",
+        "events",
+        "errors",
+        "commands",
         "config",
         "state",
         "query",
@@ -75,9 +80,6 @@
     }
   },
   "required": [
-    "projectId",
-    "deviceRegistryId",
-    "deviceId",
-    "subFolder"
+    "deviceRegistryId"
   ]
 }

@@ -27,9 +27,6 @@ CACHE_ROOT=validator/sequences
 TEST_ROOT=$RUNDIR/sites/udmi_site_model/out/devices/AHU-1
 ARCHIVE_ROOT=/tmp/$CACHE_ROOT
 
-# Fix sort order difference on different platforms.
-export LC_ALL=C
-
 function usage(){
     echo "Usage: $0 [OPTION]"
     echo
@@ -44,6 +41,12 @@ function usage(){
 if [[ $# == 0 ]]; then
     usage
 fi
+
+update=
+archive=
+validate_saved=
+validate_archive=
+import_cache=
 
 while getopts "i:auxt" opt; do
     case $opt in
@@ -113,7 +116,6 @@ if [[ -n $validate_saved ]]; then
     ls $CACHE_ROOT/ > out/cached_sequences.out
     ls $TEST_ROOT/tests/ > out/device_sequences.out
     diff -u out/cached_sequences.out out/device_sequences.out || fail Unexpected difference with cached results.
-    echo Verification successful for $root_count tests.
 fi
 
 if [[ -n $archive ]]; then

@@ -1,7 +1,6 @@
 
 package udmi.schema;
 
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -16,9 +15,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "udmi_prefix"
+    "udmi_prefix",
+    "failure_rate"
 })
-@Generated("jsonschema2pojo")
 public class BasePodConfiguration {
 
     /**
@@ -28,10 +27,18 @@ public class BasePodConfiguration {
     @JsonProperty("udmi_prefix")
     @JsonPropertyDescription("prefix for udmi namespacing")
     public String udmi_prefix;
+    /**
+     * chance of random failure in various bits of the system
+     * 
+     */
+    @JsonProperty("failure_rate")
+    @JsonPropertyDescription("chance of random failure in various bits of the system")
+    public Double failure_rate;
 
     @Override
     public int hashCode() {
         int result = 1;
+        result = ((result* 31)+((this.failure_rate == null)? 0 :this.failure_rate.hashCode()));
         result = ((result* 31)+((this.udmi_prefix == null)? 0 :this.udmi_prefix.hashCode()));
         return result;
     }
@@ -45,7 +52,7 @@ public class BasePodConfiguration {
             return false;
         }
         BasePodConfiguration rhs = ((BasePodConfiguration) other);
-        return ((this.udmi_prefix == rhs.udmi_prefix)||((this.udmi_prefix!= null)&&this.udmi_prefix.equals(rhs.udmi_prefix)));
+        return (((this.failure_rate == rhs.failure_rate)||((this.failure_rate!= null)&&this.failure_rate.equals(rhs.failure_rate)))&&((this.udmi_prefix == rhs.udmi_prefix)||((this.udmi_prefix!= null)&&this.udmi_prefix.equals(rhs.udmi_prefix))));
     }
 
 }

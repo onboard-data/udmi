@@ -4,7 +4,6 @@ package udmi.schema;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "mode",
     "last_start"
 })
-@Generated("jsonschema2pojo")
 public class Operation {
 
     /**
@@ -64,11 +62,11 @@ public class Operation {
      * Operating mode for the device. Default is 'active'.
      * 
      */
-    @Generated("jsonschema2pojo")
     public enum SystemMode {
 
         INITIAL("initial"),
         ACTIVE("active"),
+        UPDATING("updating"),
         RESTART("restart"),
         TERMINATE("terminate"),
         SHUTDOWN("shutdown");

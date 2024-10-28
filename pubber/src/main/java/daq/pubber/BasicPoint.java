@@ -1,14 +1,19 @@
 package daq.pubber;
 
+import static com.google.udmi.util.GeneralUtils.deepCopy;
 import static com.google.udmi.util.GeneralUtils.getNow;
+import static com.google.udmi.util.GeneralUtils.isTrue;
 
+import java.util.Objects;
+import udmi.lib.intf.AbstractPoint;
 import udmi.schema.Category;
 import udmi.schema.Entry;
-import udmi.schema.PointEnumerationEvent;
 import udmi.schema.PointPointsetConfig;
-import udmi.schema.PointPointsetEvent;
+import udmi.schema.PointPointsetEvents;
+import udmi.schema.PointPointsetModel;
 import udmi.schema.PointPointsetState;
 import udmi.schema.PointPointsetState.Value_state;
+import udmi.schema.RefDiscovery;
 
 /**
  * Abstract representation of a basic data point.
@@ -16,27 +21,29 @@ import udmi.schema.PointPointsetState.Value_state;
 public abstract class BasicPoint implements AbstractPoint {
 
   protected final String name;
-  protected final PointPointsetEvent data = new PointPointsetEvent();
+  protected final PointPointsetEvents data = new PointPointsetEvents();
   private final PointPointsetState state = new PointPointsetState();
   private final boolean writable;
+  private final String pointRef;
   protected boolean written;
   private boolean dirty;
 
   /**
    * Construct a maybe writable point.
-   *
-   * @param name     Point name
-   * @param writable True if writable
-   * @param units    Units for the point
    */
-  public BasicPoint(String name, boolean writable, String units) {
+  public BasicPoint(String name, PointPointsetModel pointModel) {
     this.name = name;
-    this.writable = writable;
-    state.units = units;
+    writable = isTrue(pointModel.writable);
+    state.units = pointModel.units;
     dirty = true;
+    pointRef = pointModel.ref;
   }
 
-  abstract Object getValue();
+  protected abstract Object getValue();
+
+  protected abstract Object setValue(Object setValue);
+
+  protected abstract boolean validateValue(Object setValue);
 
   @Override
   public void updateData() {
@@ -58,7 +65,7 @@ public abstract class BasicPoint implements AbstractPoint {
     return name;
   }
 
-  public PointPointsetEvent getData() {
+  public PointPointsetEvents getData() {
     return data;
   }
 
@@ -68,64 +75,79 @@ public abstract class BasicPoint implements AbstractPoint {
    * @param config Configuration to set
    */
   public void setConfig(PointPointsetConfig config) {
-    Value_state previous = state.value_state;
+    Value_state previousValueState = state.value_state;
+    Entry previousStatus = deepCopy(state.status);
+    updateStateConfig(config);
+    dirty = dirty
+        || state.value_state != previousValueState
+        || !Objects.equals(state.status, previousStatus);
+  }
+
+  /**
+   * Update the state of this point based off of a new config.
+   */
+  public void updateStateConfig(PointPointsetConfig config) {
     state.status = null;
+
+    if (config != null && !Objects.equals(pointRef, config.ref)) {
+      state.status = createEntryFrom(Category.POINTSET_POINT_FAILURE, "Invalid point ref");
+      return;
+    }
 
     if (config == null || config.set_value == null) {
       written = false;
       state.value_state = null;
       updateData();
-    } else if (!validateValue(config.set_value)) {
-      state.status = invalidValueStatus();
-      state.value_state = Value_state.INVALID;
-    } else if (!writable) {
-      state.status = notWritableStatus();
+      return;
+    }
+
+    try {
+      if (!validateValue(config.set_value)) {
+        state.status = createEntryFrom(Category.POINTSET_POINT_INVALID,
+            "Written value is not valid");
+        state.value_state = Value_state.INVALID;
+        return;
+      }
+    } catch (Exception ex) {
+      state.status = createEntryFrom(Category.POINTSET_POINT_FAILURE, ex.getMessage());
       state.value_state = Value_state.FAILURE;
-    } else {
+      return;
+    }
+
+    if (!writable) {
+      state.status = createEntryFrom(Category.POINTSET_POINT_FAILURE, "Point is not writable");
+      state.value_state = Value_state.FAILURE;
+      return;
+    }
+
+    try {
+      data.present_value = setValue(config.set_value);
       state.value_state = Value_state.APPLIED;
       written = true;
-      data.present_value = config.set_value;
+    } catch (Exception ex) {
+      state.status = createEntryFrom(Category.POINTSET_POINT_FAILURE, ex.getMessage());
+      state.value_state = Value_state.FAILURE;
     }
-    dirty = state.value_state != previous;
-  }
-
-  protected abstract boolean validateValue(Object setValue);
-
-  private Entry getEntry() {
-    Entry entry = new Entry();
-    entry.detail = getPointDetail();
-    entry.timestamp = getNow();
-    return entry;
-  }
-
-  private String getPointDetail() {
-    return String.format("Point %s (writable %s)", name, writable);
-  }
-
-  private Entry invalidValueStatus() {
-    Entry entry = getEntry();
-    entry.message = "Written value is not valid";
-    entry.category = Category.POINTSET_POINT_INVALID;
-    entry.level = Category.POINTSET_POINT_INVALID_VALUE;
-    return entry;
-  }
-
-  private Entry notWritableStatus() {
-    Entry entry = getEntry();
-    entry.message = "Point is not writable";
-    entry.category = Category.POINTSET_POINT_FAILURE;
-    entry.level = Category.POINTSET_POINT_FAILURE_VALUE;
-    return entry;
   }
 
   @Override
-  public PointEnumerationEvent enumerate() {
-    PointEnumerationEvent point = new PointEnumerationEvent();
+  public RefDiscovery enumerate() {
+    RefDiscovery point = new RefDiscovery();
     point.description = getClass().getSimpleName() + " " + getName();
     point.writable = writable ? true : null;
     populateEnumeration(point);
     return point;
   }
 
-  protected abstract void populateEnumeration(PointEnumerationEvent point);
+  private Entry createEntryFrom(String category, String message) {
+    Entry entry = new Entry();
+    entry.detail = String.format("Point %s (writable %s)", name, writable);
+    entry.timestamp = getNow();
+    entry.message = message;
+    entry.category = category;
+    entry.level = Category.LEVEL.get(category).value();
+    return entry;
+  }
+
+  protected abstract void populateEnumeration(RefDiscovery point);
 }

@@ -2,6 +2,7 @@
 \#*
 
 /udmi-support_*/
+/site_model
 udmi_site_model/
 gcp_reflect_key.pkcs8
 workspace.xml
@@ -23,6 +24,7 @@ credentials.json
 /udmis/build/
 /udmis/out/
 /udmis/var/
+/udmis/profile/
 /udmis/.idea/libraries/
 /selfie/build/
 /pubber/build/
@@ -32,6 +34,7 @@ credentials.json
 /sites/
 /attributes.json
 /venv/
+/venv
 /local/
 .pubber.pid
 __pycache__/
@@ -40,8 +43,9 @@ __pycache__/
 /udmi_*.log
 
 .vscode
+.class
 
-#Terraform authentication and template files.
+# Terraform authentication and template files.
 cloud/gcp/terraform.tfvars
 cloud/gcp/udmi-sites.tf
 cloud/gcp/main.tf

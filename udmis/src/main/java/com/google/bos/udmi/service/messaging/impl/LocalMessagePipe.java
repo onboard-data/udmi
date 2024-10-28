@@ -58,13 +58,13 @@ public class LocalMessagePipe extends MessageBase {
 
   @NotNull
   private Function<String, BlockingQueue<QueueEntry>> trackedQueue(String name) {
-    return key -> new LinkedBlockingQueue<>();
+    return key -> new LinkedBlockingQueue<>(queueCapacity);
   }
 
   /**
    * Publish a message bundle to this pipe. Simply pushes it into the outgoing queue!
    */
-  public void publish(Bundle bundle) {
+  protected void publishRaw(Bundle bundle) {
     try {
       debug("Publishing bundle to %s", this);
       pushQueueEntry(destinationQueue, stringify(bundle));

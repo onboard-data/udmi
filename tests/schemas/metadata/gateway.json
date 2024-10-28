@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.2",
   "timestamp": "2018-08-26T21:39:29.364Z",
   "system": {
     "location": {
@@ -14,7 +14,7 @@
       "asset": {
         "guid": "bim://04aEp5ymD_$u5IxhJN2aGi",
         "site": "US-SFO-XYY",
-        "name": "AHU-01"
+        "name": "AHU-1"
       }
     }
   },

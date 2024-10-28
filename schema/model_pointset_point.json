@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Point Pointset Model",
   "description": "Information about a specific point name of the device.",
   "type": "object",
@@ -42,6 +42,15 @@
       "description": "Mapping for the point to an internal resource (e.g. BACnet object reference)",
       "type": "string",
       "examples": ["AI3", "400070"]
+    },
+    "tags":{
+      "description": "Tags assosciated with the point",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "pattern": "^[a-z0-9]+$"
+      },
+      "examples": [["lighting"], ["energy", "hvac"]]
     }
   }
 }

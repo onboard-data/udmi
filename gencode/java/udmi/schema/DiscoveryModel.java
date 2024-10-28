@@ -2,7 +2,6 @@
 package udmi.schema;
 
 import java.util.HashMap;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,11 +17,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "families"
 })
-@Generated("jsonschema2pojo")
 public class DiscoveryModel {
 
     @JsonProperty("families")
-    public HashMap<String, FamilyDiscoveryTestingModel> families;
+    public HashMap<String, FamilyDiscoveryModel> families;
 
     @Override
     public int hashCode() {

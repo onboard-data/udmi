@@ -1,34 +1,32 @@
 
 package udmi.schema;
 
-import javax.annotation.processing.Generated;
+import java.util.HashMap;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
  * Localnet Config
  * <p>
- * Used to describe device local network parameters
+ * Currently unused: request local network configuration
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "families"
 })
-@Generated("jsonschema2pojo")
 public class LocalnetConfig {
 
     /**
-     * Family Reference
-     * <p>
-     * 
-     * (Required)
+     * Address family config for reporting.
      * 
      */
     @JsonProperty("families")
-    public Object families;
+    @JsonPropertyDescription("Address family config for reporting.")
+    public HashMap<String, FamilyLocalnetConfig> families;
 
     @Override
     public int hashCode() {

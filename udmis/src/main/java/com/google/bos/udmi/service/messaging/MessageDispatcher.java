@@ -1,10 +1,13 @@
 package com.google.bos.udmi.service.messaging;
 
+import static com.google.udmi.util.GeneralUtils.ifNotNullGet;
 import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
+import static com.google.udmi.util.GeneralUtils.ifTrueGet;
 
 import com.google.bos.udmi.service.messaging.impl.MessageDispatcherImpl;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 import udmi.schema.EndpointConfiguration;
 import udmi.schema.Envelope;
@@ -24,8 +27,8 @@ public interface MessageDispatcher {
    */
   Class<?> EXCEPTION_CLASS = Exception.class;
 
-  static MessageDispatcher from(EndpointConfiguration configuration) {
-    return new MessageDispatcherImpl(configuration);
+  static MessageDispatcher from(EndpointConfiguration config) {
+    return ifNotNullGet(config, MessageDispatcherImpl::new);
   }
 
   static MessageDispatcher from(EndpointConfiguration from, EndpointConfiguration to) {
@@ -44,7 +47,7 @@ public interface MessageDispatcher {
   /**
    * Make a new continuation with the given envelope.
    */
-  public MessageContinuation withEnvelope(Envelope envelope);
+  MessageContinuation withEnvelope(Envelope envelope);
 
   /**
    * Get a message continuation for the received message.
@@ -92,6 +95,22 @@ public interface MessageDispatcher {
     @SuppressWarnings("unchecked")
     public <T> void registerWith(MessageDispatcher dispatcher) {
       dispatcher.registerHandler((Class<T>) getKey(), (Consumer<T>) getValue());
+    }
+  }
+
+  static RawString rawString(String rawString) {
+    return new RawString(rawString);
+  }
+
+  /**
+   * Marker class to indicate a string that should be applied/sent directly with no JSON or
+   * map interpretation.
+   */
+  class RawString {
+    public final String rawString;
+
+    private RawString(String rawString) {
+      this.rawString = rawString;
     }
   }
 }

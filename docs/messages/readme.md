@@ -32,19 +32,15 @@ flow, but also the treatment of the message as it moves through the system:
 |         | __Uplink__  | __Downlink__  |
 |---------|---------|-----------|
 | __Sticky__  | _state_ | _config_  |
-| __Stream__  | _event_ | _command_ |
+| __Stream__  | _events_ | _command_ |
 
 The properties and uses of the four types fall out from this accordingly:
 * _state_: Sticky to the cloud information from the device, including information such as the overall
-status of the device, and any errors or conditions from, e.g., writing points. See
-[IoT Core State Docs](https://cloud.google.com/iot/docs/how-tos/config/getting-state) for more information.
-* _event_: The canonical streaming telemetry messages from the device, usually containing things
-like temperature readings or system memory utilization. See
-[IoT Core Event Docs](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#publishing_telemetry_events) for more information.
-* _config_: Ability to control the behavior of a device, e.g. for key rotation, writeback, etc... See
-[IoT Core Config Docs](https://cloud.google.com/iot/docs/how-tos/config/configuring-devices) for more information.
+status of the device, and any errors or conditions from, e.g., writing points.
+* _events_: The canonical streaming telemetry messages from the device, usually containing things
+like temperature readings or system memory utilization.
+* _config_: Ability to control the behavior of a device, e.g. for key rotation, writeback, etc...
 * _command_: Direct but transitory messages to a device, e.g. to install a new auth key or perform diagnostic operations.
-See [IoT Core Command Docs](https://cloud.google.com/iot/docs/how-tos/commands) for more information.
 
 Individual blocks (folders), such as _system_ or _pointset_ will have their own semantic uses for the various types.
 See the individual block folder documentation to learn more about those aspects.
@@ -54,9 +50,9 @@ See the individual block folder documentation to learn more about those aspects.
 - [config](config.md) ([_🧬schema_](../../gencode/docs/config.html))
 - [state](state.md) ([_🧬schema_](../../gencode/docs/config.html))
 - [event](event.md)
-  - [Pointset (telemetry)](pointset.md#telemetry) ([_🧬schema_](../../gencode/docs/event_pointset.html))
-  - [System (logging, etc)](system.md) ([_🧬schema_](../../gencode/docs/event_system.html))
-  - [Discovery](../specs/discovery.md) ([_🧬schema_](../../gencode/docs/event_discovery.html))
+  - [Pointset (telemetry)](pointset.md#telemetry) ([_🧬schema_](../../gencode/docs/events_pointset.html))
+  - [System (logging, etc)](system.md) ([_🧬schema_](../../gencode/docs/events_system.html))
+  - [Discovery](../specs/discovery.md) ([_🧬schema_](../../gencode/docs/events_discovery.html))
 - [envelope](envelope.md)
 
 ## MQTT Topics

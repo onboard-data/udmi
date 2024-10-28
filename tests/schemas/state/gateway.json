@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.2",
   "timestamp": "2018-08-26T21:39:29.364Z",
   "system": {
     "hardware": {  // Fixed set of keys with arbitrary values indicating hardware items.
@@ -33,23 +33,11 @@
     }
   },
   "gateway": {
-    "devices": {
-      "991": {
-        "status": {
-          "message": "Error attaching device",
-          "category": "system.config.apply",
-          "timestamp": "2018-08-26T21:39:30.364Z",
-          "level": 600
-        }
-      },
-      "SMS-91": {
-        "status": {
-          "message": "Error attaching device",
-          "category": "system.config.apply",
-          "timestamp": "2018-08-26T21:39:30.364Z",
-          "level": 600
-        }
-      }
+    "status": {
+      "message": "Error attaching devices: AHU-1",
+      "category": "gateway.setup.attach",
+      "timestamp": "2018-08-26T21:39:30.364Z",
+      "level": 600
     }
   }
 }

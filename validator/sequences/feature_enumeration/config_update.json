@@ -1,17 +1,15 @@
 {
   "discovery" : {
-    "enumerate" : {
-      "features" : true
+    "depths" : {
+      "features" : "entries"
     }
   },
   "localnet" : {
     "families" : {
-      "ether" : {
-        "addr" : "00:50:b6:ed:5f:77"
-      },
-      "ipv4" : {
-        "addr" : "192.168.2.1"
-      }
+      "ether" : { },
+      "ipv4" : { },
+      "ipv6" : { },
+      "vendor" : { }
     }
   },
   "pointset" : {
@@ -31,15 +29,17 @@
     }
   },
   "system" : {
-    "metrics_rate_sec" : 600,
+    "metrics_rate_sec" : 10,
     "min_loglevel" : 200,
     "operation" : {
-      "last_start" : "2023-11-07T14:28:37Z"
+      "last_start" : "2024-10-09T00:13:48Z"
     },
     "testing" : {
-      "sequence_name" : "feature_enumeration"
+      "config_base" : 23,
+      "sequence_name" : "feature_enumeration",
+      "transaction_id" : "RC:0b1678.0025"
     }
   },
-  "timestamp" : "2023-11-07T14:29:01Z",
-  "version" : "1.4.2-40-gdeae740b"
+  "timestamp" : "2024-10-09T00:14:51Z",
+  "version" : "git-a719207"
 }

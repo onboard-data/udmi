@@ -1,36 +1,51 @@
 package daq.pubber;
 
-import udmi.schema.PointEnumerationEvent;
+import udmi.lib.intf.AbstractPoint;
+import udmi.schema.PointPointsetModel;
+import udmi.schema.RefDiscovery;
 
 /**
  * Represents a randomly generated numerical point.
  */
 public class RandomPoint extends BasicPoint implements AbstractPoint {
 
-  private final String name;
+  private static final double DEFAULT_BASELINE_VALUE = 50;
   private final double min;
   private final double max;
   private final String units;
 
   /**
    * Creates a random point generator for data simulation.
-   *
-   * @param name     point name
-   * @param writable indicates if point is writable
-   * @param min      minimum value for generated point
-   * @param max      maximum value for generated point
-   * @param units    units of generated point
    */
-  public RandomPoint(String name, boolean writable, double min, double max, String units) {
-    super(name, writable, units);
-    this.name = name;
-    this.min = min;
-    this.max = max;
-    this.units = units;
+  public RandomPoint(String name, PointPointsetModel pointModel) {
+    super(name, pointModel);
+    double baselineValue = convertValue(pointModel.baseline_value, DEFAULT_BASELINE_VALUE);
+    double baselineTolerance = convertValue(pointModel.baseline_tolerance, baselineValue);
+    this.min = baselineValue - baselineTolerance;
+    this.max = baselineValue + baselineTolerance;
+    this.units = pointModel.units;
+  }
+
+  private double convertValue(Object baselineValue, double defaultBaselineValue) {
+    if (baselineValue == null) {
+      return defaultBaselineValue;
+    }
+    if (baselineValue instanceof Double) {
+      return (double) baselineValue;
+    }
+    if (baselineValue instanceof Integer) {
+      return (double) (int) baselineValue;
+    }
+    throw new RuntimeException("Unknown value type " + baselineValue.getClass());
   }
 
   @Override
-  Object getValue() {
+  protected Object setValue(Object setValue) {
+    return setValue;
+  }
+
+  @Override
+  protected Object getValue() {
     return Math.round(Math.random() * (max - min) + min);
   }
 
@@ -48,7 +63,7 @@ public class RandomPoint extends BasicPoint implements AbstractPoint {
   }
 
   @Override
-  protected void populateEnumeration(PointEnumerationEvent point) {
+  protected void populateEnumeration(RefDiscovery point) {
     point.units = units;
   }
 }

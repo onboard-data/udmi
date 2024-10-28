@@ -2,7 +2,6 @@
 package udmi.schema;
 
 import java.util.Date;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -27,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "blobset",
     "pointset"
 })
-@Generated("jsonschema2pojo")
 public class Config {
 
     /**
@@ -83,11 +81,11 @@ public class Config {
     /**
      * Localnet Config
      * <p>
-     * Used to describe device local network parameters
+     * Currently unused: request local network configuration
      * 
      */
     @JsonProperty("localnet")
-    @JsonPropertyDescription("Used to describe device local network parameters")
+    @JsonPropertyDescription("Currently unused: request local network configuration")
     public LocalnetConfig localnet;
     /**
      * Blobset Config

@@ -1,25 +1,69 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "System Model",
   "description": "High-level system information about the device. [System Model Documentation](../docs/messages/system.md)",
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
+    "description": {
+      "description": "Generic human-readable text describing the device",
+      "type": "string"
+    },
+    "device_version": {
+      "description": "Version of schema supported by the device",
+      "type": "string",
+      "examples": ["1.5.0"]
+    },
+    "zone": {
+      "description": "Aggregation of spaces, partial spaces or other zones that the device is serving",
+      "type": "string",
+      "pattern": "^[-_a-zA-Z0-9]+$",
+      "examples": ["Zone1", "Kitchen_101"]
+    },
+    "tags":{
+      "description": "Tags associated with the device",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "pattern": "^[a-z0-9]+$"
+      },
+      "examples": [["lighting"], ["energy", "building"]]
+    },
     "location": {
-      "description": "Properties the expected physical location of the device.",
+      "description": "Properties of the expected physical location of the device",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "site": {
-          "description": "The site name according to the site model in which a device is installed in",
+          "description": "The site name according to the site model in which the device is installed in",
           "type": "string",
-          "pattern": "^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]{2,9}$",
+          "pattern": "^[A-Z]{2}-[A-Z]{3,4}-[A-Z0-9]{2,9}$",
           "examples": ["US-SFO-XYY"]
+        },
+        "panel": {
+          "description": "The reference of the panel where the device is installed in",
+          "type": "string",
+          "pattern": "^[-_a-zA-Z0-9]+$",
+          "examples": ["Panel123", "CTRP-567"]
         },
         "section": {
           "type": "string",
           "pattern": "^[A-Z0-9-]+$"
+        },
+        "room": {
+          "type": "string",
+          "pattern": "^[-_a-zA-Z0-9]+$"
+        },
+        "floor": {
+          "type": "string",
+          "description": "Name of floor level",
+          "pattern": "^[A-Z0-9-]+$",
+          "examples": ["1", "1A", "G", "B1M", "RF"]
+        },
+        "floor_seq": {
+          "type": "integer",
+          "description": "Sequential integer representation for a floor, primarily for comparisons when non integer floors are used, e.g. 1 and 1M"
         },
         "position": {
           "type": "object",
@@ -38,11 +82,34 @@
               "type": "number"
             }
           }
+        },
+        "coordinates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "lat": {
+              "description": "The `latitude` coordinate of the device in the WGS84 coordinate system",
+              "type": "number"
+            },
+            "long": {
+              "description": "The `longitude` coordinate of the device in the WGS84 coordinate system",
+              "type": "number"
+            },
+            "alt_m": {
+              "description": "The `altitude` coordinate of the device in meters",
+              "type": "number"
+            }
+          }
         }
       },
       "required": [
         "site"
       ]
+    },
+    "serial_no": {
+      "description": "The serial number of the physical device",
+      "type": "string",
+      "examples": ["A1B2C3D4", "00001"]
     },
     "hardware": {
       "$ref": "file:model_system_hardware.json"
@@ -74,11 +141,11 @@
             },
             "site": {
               "type": "string",
-              "pattern": "^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]{2,9}$"
+              "pattern": "^[A-Z]{2}-[A-Z]{3,4}-[A-Z0-9]{2,9}$"
             },
             "name": {
               "type": "string",
-              "pattern": "^[A-Z]{2,6}-[0-9]{1,6}$"
+              "pattern": "^[A-Z]{2,6}-[1-9][0-9]*$"
             }
           },
           "required": [
@@ -91,7 +158,7 @@
         "asset"
       ]
     },
-    "aux": {
+    "adjunct": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -107,6 +174,12 @@
       "minimum": 100,
       "maximum": 800,
       "default": 300
+    },
+    "metrics_rate_sec": {
+      "description": "The rate at which the system should send system event updates. 0 indicates no updates.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400
     }
   }
 }

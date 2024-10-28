@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Metadata",
   "description": "[Metadata](../docs/specs/metadata.md) is a description about the device: a specification about how the device should be configured and expectations about what the device should be doing. Defined by `metadata.json`",
   "$section": "Site Model",
@@ -26,18 +26,10 @@
       "description": "Original version of the UDMI schema for this file",
       "type": "string"
     },
-    "description": {
-      "description": "Generic human-readable text describing the device",
-      "type": "string"
-    },
     "hash": {
       "description": "Automatically generated field that contains the hash of file contents.",
       "type": "string",
       "pattern": "^[0-9a-z]{8}$"
-    },
-    "device_version": {
-      "description": "Version of schema supported by the device",
-      "type": "string"
     },
     "cloud": {
       "$ref": "file:model_cloud.json#"

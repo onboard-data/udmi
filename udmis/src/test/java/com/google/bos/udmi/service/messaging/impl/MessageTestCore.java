@@ -17,6 +17,7 @@ import udmi.schema.SetupUdmiConfig;
 public abstract class MessageTestCore {
 
   public static final String TEST_DEVICE = "bacnet-3104810";
+  public static final String TEST_GATEWAY = "manager";
   public static final String TEST_REGION = "us-central1";
   public static final String TEST_REGISTRY = "TEST_REGISTRY";
   public static final String TEST_PROJECT = "TEST_PROJECT";
@@ -52,7 +53,7 @@ public abstract class MessageTestCore {
     }
   }
 
-  protected void augmentConfig(@NotNull EndpointConfiguration configuration) {
+  protected void augmentConfig(@NotNull EndpointConfiguration configuration, boolean reversed) {
     configuration.protocol = Protocol.LOCAL;
   }
 
@@ -65,7 +66,7 @@ public abstract class MessageTestCore {
     config.hostname = TEST_NAMESPACE;
     config.recv_id = reversed ? TEST_DESTINATION : TEST_SOURCE;
     config.send_id = reversed ? TEST_SOURCE : TEST_DESTINATION;
-    augmentConfig(config);
+    augmentConfig(config, reversed);
     return config;
   }
 }

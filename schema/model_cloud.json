@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Cloud Model",
   "description": "Information specific to how the device communicates with the cloud.",
   "type": "object",
@@ -15,6 +15,14 @@
     "version": {
       "description": "Version of the UDMI schema",
       "type": "string"
+    },
+    "connection_type": {
+      "description": "Connection type for connecting to cloud",
+      "enum": [
+        "GATEWAY",
+        "DIRECT",
+        "PROXIED"
+      ]
     },
     "auth_type": {
       "description": "The key type used for cloud communication.",
@@ -37,8 +45,14 @@
         "REGISTRY"
       ]
     },
+    "config": {
+      "$ref": "file:model_cloud_config.json#"
+    },
     "blocked": {
       "type": "boolean"
+    },
+    "detail": {
+      "type": "string"
     },
     "credentials": {
       "type": "array",
@@ -47,6 +61,7 @@
           "key_format": {
             "description": "The key type used for cloud communication.",
             "enum": [
+              "PASSWORD",
               "ES256",
               "ES256_X509",
               "RS256",
@@ -59,7 +74,23 @@
         }
       }
     },
+    "updated_time": {
+      "type": "string",
+      "format": "date-time"
+    },
     "last_event_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_state_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_config_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_error_time": {
       "type": "string",
       "format": "date-time"
     },
@@ -72,11 +103,14 @@
     },
     "operation": {
       "enum": [
+        "ERROR",
         "FETCH",
         "CREATE",
         "UPDATE",
         "DELETE",
+        "MODIFY",
         "BIND",
+        "ALLOW",
         "BLOCK"
       ]
     },
@@ -89,6 +123,10 @@
           "type": "string"
         }
       }
+    },
+    "metadata_str": {
+      "type": "string",
+      "description": "Strigified version of the metadata object, used for internal backend processing"
     },
     "device_ids": {
       "description": "If operating on the entire registry, then this manifests as a map of devices not just one device.",

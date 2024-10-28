@@ -1,7 +1,8 @@
 package com.google.bos.iot.core.proxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.daq.mqtt.util.CloudIotManager.UDMI_METADATA;
+import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
+import static com.google.udmi.util.MetadataMapKeys.UDMI_METADATA;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,12 +11,12 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.api.services.cloudiot.v1.model.Device;
 import com.google.cloud.ServiceOptions;
 import com.google.daq.mqtt.util.MessagePublisher;
+import com.google.udmi.util.GeneralUtils;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,9 +134,7 @@ public class ProxyTarget {
   void clearMqttPublisher(String deviceId) {
     info("Publishers remove " + deviceId);
     MessagePublisher publisher = messagePublishers.remove(deviceId);
-    if (publisher != null) {
-      publisher.close();
-    }
+    ifNotNullThen(publisher, publisher::close);
   }
 
   private MessagePublisher newMqttPublisher(String deviceId) {

@@ -1,5 +1,7 @@
 package com.google.bos.udmi.service.messaging.impl;
 
+import static com.google.api.client.util.Preconditions.checkState;
+import static com.google.udmi.util.Common.RAWFOLDER_PROPERTY_KEY;
 import static com.google.udmi.util.Common.SUBFOLDER_PROPERTY_KEY;
 import static com.google.udmi.util.Common.SUBTYPE_PROPERTY_KEY;
 import static com.google.udmi.util.GeneralUtils.catchToElse;
@@ -13,28 +15,38 @@ import static com.google.udmi.util.JsonUtil.convertTo;
 import static com.google.udmi.util.JsonUtil.fromString;
 import static com.google.udmi.util.JsonUtil.parseJson;
 import static com.google.udmi.util.JsonUtil.stringify;
-import static com.google.udmi.util.JsonUtil.toStringMap;
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
+import com.google.bos.udmi.service.messaging.MessageDispatcher;
+import com.google.bos.udmi.service.messaging.MessageDispatcher.RawString;
 import com.google.bos.udmi.service.messaging.MessagePipe;
 import com.google.bos.udmi.service.pod.ContainerBase;
 import com.google.bos.udmi.service.pod.UdmiServicePod;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.AtomicDouble;
+import com.google.udmi.util.JsonUtil;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -52,15 +64,45 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
   public static final String INVALID_ENVELOPE_KEY = "invalid";
   public static final int EXECUTION_THREADS = 4;
   public static final String ERROR_MESSAGE_MARKER = "error-mark";
+  public static final String PUBLISH_STATS = "publish";
+  public static final String RECEIVE_STATS = "receive";
+  public static final double MESSAGE_WARN_THRESHOLD_SEC = 1.0;
+  public static final double QUEUE_THROTTLE_MARK = 0.6;
   static final String TERMINATE_MARKER = "terminate";
   private static final String DEFAULT_NAMESPACE = "default-namespace";
   private static final Set<Object> HANDLED_QUEUES = new HashSet<>();
   private static final long DEFAULT_POLL_TIME_SEC = 1;
   private static final long AWAIT_TERMINATION_SEC = 10;
+  private static final int DEFAULT_CAPACITY = 1000;
+  protected final int queueCapacity;
+  protected final long publishDelaySec;
   private final ExecutorService executor = Executors.newFixedThreadPool(EXECUTION_THREADS);
+  private final Entry<AtomicInteger, AtomicDouble> publishStats = makeEmptyStats();
+  private final Entry<AtomicInteger, AtomicDouble> receiveStats = makeEmptyStats();
+  private final AtomicBoolean subscriptionsThrottled = new AtomicBoolean();
   private BlockingQueue<QueueEntry> sourceQueue;
   private Consumer<Bundle> dispatcher;
   private boolean activated;
+
+  /**
+   * Default message base with basic default parameters.
+   */
+  public MessageBase() {
+    queueCapacity = DEFAULT_CAPACITY;
+    publishDelaySec = 0;
+  }
+
+  /**
+   * Create a configuration based instance.
+   */
+  public MessageBase(EndpointConfiguration configuration) {
+    super(configuration);
+    queueCapacity = ofNullable(configuration.capacity).orElse(DEFAULT_CAPACITY);
+    publishDelaySec = ofNullable(configuration.publish_delay_sec).orElse(0);
+    if (publishDelaySec > 0) {
+      warn("Artificially delaying message publishing by %ds", publishDelaySec);
+    }
+  }
 
   /**
    * Combine two message configurations together (for applying defaults).
@@ -83,9 +125,16 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     return format("%08x", Objects.hash(queue));
   }
 
+  protected double getPublishQueueSize() {
+    // Marker value for undefined.
+    return -1.0;
+  }
+
   protected Bundle makeExceptionBundle(Envelope envelope, Exception exception) {
     Bundle bundle = new Bundle(envelope, exception);
-    bundle.envelope.subType = SubType.EVENT;
+    bundle.envelope.subType = SubType.EVENTS;
+    bundle.envelope.rawFolder =
+        ofNullable(bundle.envelope.subFolder).orElse(SubFolder.INVALID).toString();
     bundle.envelope.subFolder = SubFolder.ERROR;
     return bundle;
   }
@@ -99,12 +148,16 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     return bundle;
   }
 
+  protected abstract void publishRaw(Bundle bundle);
+
   protected void pushQueueEntry(BlockingQueue<QueueEntry> queue, String stringBundle) {
     try {
       requireNonNull(stringBundle, "missing queue bundle");
-      queue.put(new QueueEntry(grabExecutionContext(), stringBundle));
+      throttleQueue();
+      randomlyFail();
+      queue.add(new QueueEntry(grabExecutionContext(), stringBundle));
     } catch (Exception e) {
-      throw new RuntimeException("While pushing queue entry", e);
+      throw new RuntimeException("While adding queue entry", e);
     }
   }
 
@@ -118,37 +171,16 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
 
   protected void receiveMessage(Map<String, String> attributesMap, String messageString) {
     grabExecutionContext();
-
-    final Object messageObject;
+    final Instant start = Instant.now();
     try {
-      messageObject = parseJson(messageString);
-    } catch (Exception e) {
-      receiveException(attributesMap, messageString, e, SubFolder.ERROR);
-      return;
-    }
-    final Envelope envelope;
-
-    try {
-      sanitizeAttributeMap(attributesMap);
-      envelope = convertTo(Envelope.class, attributesMap);
-    } catch (Exception e) {
-      attributesMap.put(INVALID_ENVELOPE_KEY, "true");
-      receiveException(attributesMap, messageString, e, null);
-      return;
-    }
-
-    try {
-      Bundle bundle = new Bundle(envelope, messageObject);
-      debug("Received %s/%s -> %s %s", bundle.envelope.subType, bundle.envelope.subFolder,
-          queueIdentifier(), bundle.envelope.transactionId);
-      receiveBundle(bundle);
-    } catch (Exception e) {
-      receiveException(attributesMap, messageString, e, null);
+      receiveMessageRaw(attributesMap, messageString);
+    } finally {
+      accumulateStats(RECEIVE_STATS, receiveStats, Duration.between(start, Instant.now()));
     }
   }
 
-  protected void receiveMessage(Envelope envelope, Map<?, ?> messageMap) {
-    receiveMessage(toStringMap(envelope), stringify(messageMap));
+  protected void receiveMessage(Map<String, String> envelope, Object object) {
+    receiveMessage(envelope, stringify(object));
   }
 
   protected void setSourceQueue(BlockingQueue<QueueEntry> queueForScope) {
@@ -162,17 +194,63 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     }
   }
 
+  protected void throttleQueue() {
+    double receiveQueueSize = getReceiveQueueSize();
+    double publishQueueSize = getPublishQueueSize();
+
+    boolean blockReceiver = receiveQueueSize > QUEUE_THROTTLE_MARK;
+    boolean blockPublisher = publishQueueSize > QUEUE_THROTTLE_MARK;
+    boolean releaseReceiver = receiveQueueSize < QUEUE_THROTTLE_MARK / 2.0;
+    boolean releasePublisher = publishQueueSize < QUEUE_THROTTLE_MARK / 2.0;
+
+    String message = messageQueueMessage();
+    if (blockReceiver || blockPublisher) {
+      if (!subscriptionsThrottled.getAndSet(true)) {
+        warn(message + ", crossing high-water mark");
+      }
+    } else if (releaseReceiver && releasePublisher) {
+      if (subscriptionsThrottled.getAndSet(false)) {
+        warn(message + ", below high-water mark");
+      }
+    }
+  }
+
+  private synchronized void accumulateStats(String statsBucket,
+      Entry<AtomicInteger, AtomicDouble> stats,
+      Duration duration) {
+    double seconds = duration.getSeconds() + duration.toMillisPart() / 1000.0;
+    stats.getKey().incrementAndGet();
+    stats.getValue().addAndGet(seconds);
+    if (seconds >= MESSAGE_WARN_THRESHOLD_SEC) {
+      warn("Message %s took %.03fs", statsBucket, seconds);
+    }
+  }
+
   private synchronized void ensureSourceQueue() {
     if (sourceQueue == null) {
-      sourceQueue = new LinkedBlockingDeque<>();
+      notice(format("Creating new source queue %s with capacity %s", containerId, queueCapacity));
+      sourceQueue = new LinkedBlockingQueue<>(queueCapacity);
     }
+  }
+
+  private PipeStats extractStat(Entry<AtomicInteger, AtomicDouble> stats, double size) {
+    PipeStats pipeStats = new PipeStats();
+    pipeStats.count = stats.getKey().getAndSet(0);
+    pipeStats.latency = stats.getValue().getAndSet(0);
+    pipeStats.size = size;
+    return pipeStats;
   }
 
   @Nullable
   private String getFromSourceQueue() throws InterruptedException {
     QueueEntry poll = sourceQueue.poll(DEFAULT_POLL_TIME_SEC, TimeUnit.SECONDS);
+    throttleQueue();
     ifNotNullThen(poll, p -> setExecutionContext(p.context));
     return ifNotNullGet(poll, p -> p.message);
+  }
+
+  private double getReceiveQueueSize() {
+    return ofNullable(sourceQueue).map(Collection::size).orElse(0) / (double) queueCapacity;
   }
 
   private void handleDispatchException(Envelope envelope, Exception e) {
@@ -196,6 +274,10 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     }
   }
 
+  private Entry<AtomicInteger, AtomicDouble> makeEmptyStats() {
+    return new SimpleEntry<>(new AtomicInteger(), new AtomicDouble());
+  }
+
   private void messageLoop(String id) {
     info("Starting message loop %s", id);
     while (true) {
@@ -210,20 +292,20 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
           }
           final Instant start = Instant.now();
           long waiting = Duration.between(before, start).getSeconds();
-          debug("Processing waited %ds on message loop %s", waiting, id);
+          trace("Processing waited %ds on message loop %s", waiting, id);
           if (TERMINATE_MARKER.equals(bundle.message)) {
             info("Terminating message loop %s", id);
             return;
           }
           envelope = bundle.envelope;
-          debug("Processing %s %s/%s %s", this, envelope.subType, envelope.subFolder,
+          trace("Processing message loop %s %s/%s %s", id, envelope.subType, envelope.subFolder,
               envelope.transactionId);
           if (ERROR_MESSAGE_MARKER.equals(envelope.transactionId)) {
             throw new RuntimeException("Exception due to test-induced error");
           }
           dispatcher.accept(bundle);
           long seconds = Duration.between(start, Instant.now()).getSeconds();
-          debug("Processing took %ds for message loop %s", seconds, id);
+          trace("Processing took %ds for message loop %s", seconds, id);
         } catch (Exception e) {
           warn("Handling dispatch exception: " + friendlyStackTrace(e));
           handleDispatchException(envelope, e);
@@ -233,6 +315,12 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
         error(stackTraceString(loopException));
       }
     }
+  }
+
+  private String messageQueueMessage() {
+    double receiveQueue = getReceiveQueueSize();
+    double publishQueue = getPublishQueueSize();
+    return format("Message queue %s at %.03f/%.03f", containerId, receiveQueue, publishQueue);
   }
 
   private void receiveBundle(Bundle bundle) {
@@ -255,8 +343,41 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     receiveBundle(stringify(bundle));
   }
 
+  private void receiveMessageRaw(Map<String, String> attributesMap, String messageString) {
+    Object messageObject;
+    try {
+      messageObject = parseJson(messageString);
+    } catch (Exception e) {
+      receiveException(attributesMap, messageString, e, SubFolder.ERROR);
+      messageObject = MessageDispatcher.rawString(messageString);
+    }
+    final Envelope envelope;
+
+    try {
+      sanitizeAttributeMap(attributesMap);
+      envelope = convertTo(Envelope.class, attributesMap);
+    } catch (Exception e) {
+      attributesMap.put(INVALID_ENVELOPE_KEY, friendlyStackTrace(e));
+      receiveException(attributesMap, messageString, e, null);
+      return;
+    }
+
+    try {
+      Bundle bundle = new Bundle(envelope, messageObject);
+      debug("Received %s %s/%s -> %s %s", bundle.envelope.deviceRegistryId,
+          bundle.envelope.subType, bundle.envelope.subFolder, queueIdentifier(),
+          bundle.envelope.transactionId);
+      receiveBundle(bundle);
+    } catch (Exception e) {
+      receiveException(attributesMap, messageString, e, null);
+    }
+  }
+
   private void sanitizeAttributeMap(Map<String, String> attributesMap) {
     String subFolderRaw = attributesMap.get(SUBFOLDER_PROPERTY_KEY);
+    String rawFolder = attributesMap.get(RAWFOLDER_PROPERTY_KEY);
+    checkState(isNull(rawFolder) || "invalid".equals(subFolderRaw),
+        "found unexpected rawFolder " + rawFolder);
     if (subFolderRaw == null) {
       // Do nothing!
     } else if (subFolderRaw.equals("")) {
@@ -265,7 +386,8 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     } else {
       SubFolder subFolder = catchToElse(() -> SubFolder.fromValue(subFolderRaw), SubFolder.INVALID);
       if (!subFolder.value().equals(subFolderRaw)) {
-        debug("Coerced subFolder " + subFolderRaw + " to " + subFolder.value());
+        trace("Coerced subFolder " + subFolderRaw + " to " + subFolder.value());
+        attributesMap.put(RAWFOLDER_PROPERTY_KEY, subFolderRaw);
         attributesMap.put(SUBFOLDER_PROPERTY_KEY, subFolder.value());
       }
     }
@@ -279,7 +401,7 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     } else if (!Strings.isNullOrEmpty(subTypeRaw)) {
       SubType subType = catchToElse(() -> SubType.fromValue(subTypeRaw), SubType.INVALID);
       if (!subType.value().equals(subTypeRaw)) {
-        debug("Coerced subFolder " + subTypeRaw + " to " + subType.value());
+        trace("Coerced subType " + subTypeRaw + " to " + subType.value());
         attributesMap.put(SUBTYPE_PROPERTY_KEY, subType.value());
       }
     }
@@ -292,6 +414,8 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
 
   @Override
   public void activate(Consumer<Bundle> bundleConsumer) {
+    debug("Activating message pipe %s as %s => %s", containerId, queueIdentifier(),
+        Objects.hash(dispatcher));
     dispatcher = bundleConsumer;
     ensureSourceQueue();
     debug("Handling %s", this);
@@ -315,6 +439,18 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
   }
 
   @Override
+  public synchronized Map<String, PipeStats> extractStats() {
+    double receiveQueue = getReceiveQueueSize();
+    double publishQueue = getPublishQueueSize();
+    if (subscriptionsThrottled.get()) {
+      warn(messageQueueMessage() + ", currently paused");
+    }
+    return ImmutableMap.of(
+        RECEIVE_STATS, extractStat(receiveStats, receiveQueue),
+        PUBLISH_STATS, extractStat(publishStats, publishQueue));
+  }
+
+  @Override
   public boolean isActive() {
     return activated;
   }
@@ -334,7 +470,16 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     }
   }
 
-  public abstract void publish(Bundle bundle);
+  @Override
+  public final void publish(Bundle bundle) {
+    Instant start = Instant.now();
+    try {
+      publishRaw(bundle);
+    } finally {
+      Duration between = Duration.between(start, Instant.now());
+      accumulateStats(PUBLISH_STATS, publishStats, between);
+    }
+  }
 
   @Override
   public void shutdown() {
@@ -355,7 +500,7 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
 
   @Override
   public String toString() {
-    return format("MessagePipe %s => %s", queueIdentifier(), Objects.hash(dispatcher));
+    return containerId;
   }
 
   /**
@@ -373,13 +518,35 @@ public abstract class MessageBase extends ContainerBase implements MessagePipe {
     }
 
     public Bundle(Object message) {
-      this.message = message;
+      assignMessage(message);
       this.envelope = new Envelope();
     }
 
     public Bundle(Envelope envelope, Object message) {
       this.envelope = ofNullable(envelope).orElseGet(Envelope::new);
-      this.message = message;
+      assignMessage(message);
+    }
+
+    public Bundle(Map<String, String> attributes, Object message) {
+      this.attributesMap = attributes;
+      assignMessage(message);
+    }
+
+    private void assignMessage(Object checkMessage) {
+      if (checkMessage instanceof RawString rawString) {
+        payload = rawString.rawString;
+      } else {
+        message = checkMessage;
+      }
+    }
+
+    /**
+     * Get the actual send bytes for this bundle, either from raw payload or message object.
+     */
+    public byte[] sendBytes() {
+      checkState(message != null || payload != null, "no message or payload");
+      checkState(message == null || payload == null, "both message and payload");
+      return ofNullable(message).map(JsonUtil::stringifyTerse).orElse(payload).getBytes();
     }
   }
 

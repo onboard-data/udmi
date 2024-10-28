@@ -1,30 +1,45 @@
 {
-  "blobset" : { },
   "discovery" : {
-    "enumerate" : {
-      "families" : true
+    "depths" : {
+      "families" : "entries"
     }
   },
   "localnet" : {
     "families" : {
-      "ether" : {
-        "addr" : "00:50:b6:ed:5f:77"
+      "ether" : { },
+      "ipv4" : { },
+      "ipv6" : { },
+      "vendor" : { }
+    }
+  },
+  "pointset" : {
+    "points" : {
+      "filter_alarm_pressure_status" : {
+        "ref" : "BV11.present_value",
+        "units" : "No-units"
       },
-      "ipv4" : {
-        "addr" : "192.168.2.1"
+      "filter_differential_pressure_sensor" : {
+        "ref" : "AV12.present_value",
+        "units" : "Degrees-Celsius"
+      },
+      "filter_differential_pressure_setpoint" : {
+        "set_value" : 98,
+        "units" : "Bars"
       }
     }
   },
   "system" : {
-    "metrics_rate_sec" : 600,
+    "metrics_rate_sec" : 10,
     "min_loglevel" : 200,
     "operation" : {
-      "last_start" : "2023-11-07T14:28:04Z"
+      "last_start" : "2024-10-09T00:15:34Z"
     },
     "testing" : {
-      "sequence_name" : "family_enumeration"
+      "config_base" : 28,
+      "sequence_name" : "family_enumeration",
+      "transaction_id" : "RC:e9eb26.0013"
     }
   },
-  "timestamp" : "2023-11-07T14:29:14Z",
-  "version" : "1.4.2-40-gdeae740b"
+  "timestamp" : "2024-10-09T00:16:03Z",
+  "version" : "git-a719207"
 }

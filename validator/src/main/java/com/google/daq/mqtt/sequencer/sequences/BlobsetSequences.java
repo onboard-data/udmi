@@ -1,18 +1,17 @@
 package com.google.daq.mqtt.sequencer.sequences;
 
-import static com.google.daq.mqtt.util.TimePeriodConstants.NINETY_SECONDS_MS;
-import static com.google.daq.mqtt.util.TimePeriodConstants.ONE_MINUTE_MS;
 import static com.google.daq.mqtt.util.TimePeriodConstants.THREE_MINUTES_MS;
 import static com.google.daq.mqtt.util.TimePeriodConstants.TWO_MINUTES_MS;
 import static com.google.udmi.util.GeneralUtils.encodeBase64;
 import static com.google.udmi.util.GeneralUtils.sha256;
 import static com.google.udmi.util.JsonUtil.stringify;
+import static java.lang.String.format;
 import static org.junit.Assert.assertNotEquals;
 import static udmi.schema.Bucket.ENDPOINT_CONFIG;
 import static udmi.schema.Bucket.SYSTEM_MODE;
 import static udmi.schema.Category.BLOBSET_BLOB_APPLY;
-import static udmi.schema.FeatureEnumeration.FeatureStage.ALPHA;
-import static udmi.schema.FeatureEnumeration.FeatureStage.PREVIEW;
+import static udmi.schema.FeatureDiscovery.FeatureStage.ALPHA;
+import static udmi.schema.FeatureDiscovery.FeatureStage.PREVIEW;
 
 import com.google.daq.mqtt.sequencer.Feature;
 import com.google.daq.mqtt.sequencer.SequenceBase;
@@ -24,6 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
+import udmi.schema.Auth_provider;
+import udmi.schema.Basic;
 import udmi.schema.BlobBlobsetConfig;
 import udmi.schema.BlobBlobsetConfig.BlobPhase;
 import udmi.schema.BlobBlobsetState;
@@ -31,8 +32,10 @@ import udmi.schema.BlobsetConfig;
 import udmi.schema.BlobsetConfig.SystemBlobsets;
 import udmi.schema.EndpointConfiguration;
 import udmi.schema.EndpointConfiguration.Protocol;
+import udmi.schema.EndpointConfiguration.Transport;
 import udmi.schema.Entry;
 import udmi.schema.Envelope.SubFolder;
+import udmi.schema.IotAccess.IotProvider;
 import udmi.schema.Level;
 import udmi.schema.Operation.SystemMode;
 
@@ -46,9 +49,14 @@ public class BlobsetSequences extends SequenceBase {
   public static final String JSON_MIME_TYPE = "application/json";
   public static final String DATA_URL_FORMAT = "data:%s;base64,%s";
   public static final String IOT_BLOB_KEY = SystemBlobsets.IOT_ENDPOINT_CONFIG.value();
-  private static final String ENDPOINT_CONFIG_CLIENT_ID =
+  private static final String IOT_CORE_CLIENT_ID_FMT =
       "projects/%s/locations/%s/registries/%s/devices/%s";
+  private static final String LOCAL_CLIENT_ID_FMT = "/r/%s/d/%s";
   private static final String BOGUS_ENDPOINT_HOSTNAME = "twiddily.fiddily.fog";
+
+  private static boolean isMqttProvider() {
+    return exeConfig.iot_provider == IotProvider.MQTT;
+  }
 
   @Before
   public void setupExpectedParameters() {
@@ -56,12 +64,8 @@ public class BlobsetSequences extends SequenceBase {
   }
 
   private String generateEndpointConfigClientId(String registryId) {
-    return String.format(
-        ENDPOINT_CONFIG_CLIENT_ID,
-        projectId,
-        cloudRegion,
-        registryId,
-        getDeviceId());
+    return isMqttProvider() ? format(LOCAL_CLIENT_ID_FMT, registryId, getDeviceId())
+        : format(IOT_CORE_CLIENT_ID_FMT, projectId, cloudRegion, registryId, getDeviceId());
   }
 
   private String endpointConfigPayload(String hostname, String registryId) {
@@ -69,6 +73,15 @@ public class BlobsetSequences extends SequenceBase {
     endpointConfiguration.protocol = Protocol.MQTT;
     endpointConfiguration.hostname = hostname;
     endpointConfiguration.client_id = generateEndpointConfigClientId(registryId);
+    if (isMqttProvider()) {
+      endpointConfiguration.topic_prefix = endpointConfiguration.client_id;
+      endpointConfiguration.transport = Transport.SSL;
+      Auth_provider authProvider = new Auth_provider();
+      endpointConfiguration.auth_provider = authProvider;
+      authProvider.basic = new Basic();
+      authProvider.basic.username = endpointConfiguration.client_id;
+      authProvider.basic.password = siteModel.getDevicePassword(getDeviceId());
+    }
     return stringify(endpointConfiguration);
   }
 
@@ -83,7 +96,7 @@ public class BlobsetSequences extends SequenceBase {
     if (blobPhase == BlobPhase.APPLY) {
       mirrorToOtherConfig();
     }
-    untilTrue(String.format("blobset phase is %s and stateStatus is null", blobPhase), () -> {
+    untilTrue(format("blobset phase is %s and stateStatus is null", blobPhase), () -> {
       BlobBlobsetState blobBlobsetState = deviceState.blobset.blobs.get(IOT_BLOB_KEY);
       BlobBlobsetConfig blobBlobsetConfig = deviceConfig.blobset.blobs.get(IOT_BLOB_KEY);
       // Successful reconnect sends a state message with empty Entry.
@@ -131,12 +144,12 @@ public class BlobsetSequences extends SequenceBase {
   }
 
   private String generateEndpointConfigDataUrl(String payload) {
-    return String.format(DATA_URL_FORMAT, JSON_MIME_TYPE, encodeBase64(payload));
+    return format(DATA_URL_FORMAT, JSON_MIME_TYPE, encodeBase64(payload));
   }
 
   @Feature(stage = PREVIEW, bucket = ENDPOINT_CONFIG)
   @Summary("Push endpoint config message to device that results in a connection error.")
-  @Test(timeout = NINETY_SECONDS_MS) // TODO Is this enough? Does a client try X times?
+  @Test(timeout = TWO_MINUTES_MS) // TODO Is this enough? Does a client try X times?
   public void endpoint_connection_error() {
     setDeviceConfigEndpointBlob(BOGUS_ENDPOINT_HOSTNAME, registryId, false);
     untilErrorReported();
@@ -145,7 +158,7 @@ public class BlobsetSequences extends SequenceBase {
 
   @Feature(stage = PREVIEW, bucket = ENDPOINT_CONFIG)
   @Summary("Check repeated endpoint with same information gets retried.")
-  @Test(timeout = NINETY_SECONDS_MS)
+  @Test(timeout = TWO_MINUTES_MS)
   public void endpoint_connection_retry() {
     setDeviceConfigEndpointBlob(BOGUS_ENDPOINT_HOSTNAME, registryId, false);
     final Date savedGeneration = deviceConfig.blobset.blobs.get(IOT_BLOB_KEY).generation;
@@ -162,7 +175,7 @@ public class BlobsetSequences extends SequenceBase {
 
   @Feature(stage = PREVIEW, bucket = ENDPOINT_CONFIG)
   @Summary("Check a successful reconnect to the same endpoint.")
-  @Test(timeout = NINETY_SECONDS_MS)
+  @Test(timeout = TWO_MINUTES_MS)
   public void endpoint_connection_success_reconnect() {
     setDeviceConfigEndpointBlob(getAlternateEndpointHostname(), registryId, false);
     untilSuccessfulRedirect(BlobPhase.FINAL);
@@ -172,7 +185,7 @@ public class BlobsetSequences extends SequenceBase {
   @Feature(stage = ALPHA, bucket = ENDPOINT_CONFIG)
   @Summary("Failed connection because of bad hash.")
   @ValidateSchema(SubFolder.BLOBSET)
-  @Test(timeout = ONE_MINUTE_MS)
+  @Test(timeout = TWO_MINUTES_MS)
   public void endpoint_connection_bad_hash() {
     setDeviceConfigEndpointBlob(getAlternateEndpointHostname(), registryId, true);
     untilTrue("blobset status is ERROR", () -> {
@@ -187,7 +200,7 @@ public class BlobsetSequences extends SequenceBase {
     });
   }
 
-  @Test(timeout = NINETY_SECONDS_MS)
+  @Test(timeout = TWO_MINUTES_MS)
   @Feature(stage = PREVIEW, bucket = ENDPOINT_CONFIG)
   @Summary("Check connection to an alternate project.")
   public void endpoint_connection_success_alternate() {
@@ -211,14 +224,14 @@ public class BlobsetSequences extends SequenceBase {
 
   private void check_endpoint_connection_success(boolean doRestart) {
     // Phase one: initiate connection to alternate registry.
-    untilTrue("initial last_config matches config timestamp", this::lastConfigUpdated);
+    waitFor("initial last_config matches config timestamp", this::lastConfigUpdated);
     setDeviceConfigEndpointBlob(getAlternateEndpointHostname(), altRegistry, false);
     untilSuccessfulRedirect(BlobPhase.APPLY);
 
     withAlternateClient(() -> {
       // Phase two: verify connection to alternate registry.
       untilSuccessfulRedirect(BlobPhase.FINAL);
-      untilTrue("alternate last_config matches config timestamp",
+      waitFor("alternate last_config matches config timestamp",
           this::lastConfigUpdated);
       untilClearedRedirect();
 
@@ -236,7 +249,7 @@ public class BlobsetSequences extends SequenceBase {
     // Phase four: verify restoration of initial registry connection.
     whileDoing("restoring main connection", () -> {
       untilSuccessfulRedirect(BlobPhase.FINAL);
-      untilTrue("restored last_config matches config timestamp", this::lastConfigUpdated);
+      waitFor("restored last_config matches config timestamp", this::lastConfigUpdated);
       untilClearedRedirect();
     });
   }

@@ -1,44 +1,34 @@
 #!/bin/bash -e
 
-ROOT=$(dirname $0)/..
+UDMI_ROOT=$(dirname $0)/..
+source ${UDMI_ROOT}/etc/shell_common.sh
 
-function usage {
-    echo Error: $*
-    echo Usage: $0 target { prep, build, push, apply } [--no-check] [repo]
-    exit 1
-}
-
-function fail {
-    echo Error: $*
-    exit 1
-}
+if [[ $# -lt 2 ]]; then
+    usage target { prep, build, push, apply } [--no-check] [repo]
+fi
 
 target=$1
 cmd=$2
-shift 2 || usage missing arguments
+shift 2
 
-cd ${ROOT}/${target}
+cd ${UDMI_ROOT}/${target}
 
 git_branch=$(git rev-parse --abbrev-ref HEAD)
-git_remote=$(git config --get branch.$git_branch.remote) || fail missing git remote
-git_url=$(git config --get remote.$git_remote.url)
+git_remote=$(git config --get branch.$git_branch.remote) || echo missing git remote
+git_url=$(git config --get remote.$git_remote.url) || git_url=unknown
 git_prefix=${git_url%.*}
 git_prefix=${git_prefix#*.com/}
 git_repo=${git_prefix#*.com:}
 
 GCP_PROJECT=$(gcloud config get project)
 REPOSITORY=ghcr.io/${git_repo}
-TEMPLATES=$(cd etc; ls k8s_*.yaml)
+TEMPLATES=$(cd etc; ls k8s_*.yaml) || true
 
-if [[ $1 == "--no-check" ]]; then
-    NOCHECK=1
-    shift
-fi
+NOCHECK=
+[[ ${1:-} == "--no-check" ]] && NOCHECK=1 && shift
 
-if [[ -n $1 ]]; then
-    PUSH_TAG=$1
-    shift
-fi
+PUSH_TAG=
+[[ -n ${1:-} ]] && PUSH_TAG=$1 && shift
 
 if [[ $# != 0 ]]; then
     echo unknown arguments: $*
@@ -56,11 +46,17 @@ if [[ -z $NOCHECK ]]; then
         echo Kubernetes context $CONTEXT does not match gcloud project $GCP_PROJECT
         false
     fi
-    UDMI_NAMESPACE=${CONTEXT_ARGS[4]}
+    UDMI_NAMESPACE=${CONTEXT_ARGS[4]:-}
 fi
 
 echo Using GCP project $GCP_PROJECT
-echo Using udmi namespace $UDMI_NAMESPACE
+
+if [[ -n ${UDMI_NAMESPACE:-} ]]; then
+    echo Using udmi namespace $UDMI_NAMESPACE
+else
+    echo Using udmi namespace [none]
+    UDMI_NAMESPACE=
+fi
 
 current_user=$USER@$HOSTNAME
 
@@ -74,8 +70,6 @@ if [[ -n $PUSH_TAG ]]; then
 else
     udmi_ref=$REPOSITORY:$udmi_tag
 fi
-
-version=`git describe`
 
 RUNARGS="--rm -ti -v $PWD/var:/udmi -v $HOME/.config:/root/.config --tmpfs /tmp"
 
@@ -97,7 +91,7 @@ if [[ -n $prep ]]; then
     rm -rf var tmp && mkdir -p var tmp
 
     cp -f etc/*.json var/ || true
-    cp -a ../schema tmp/
+    cp -a ../schema build/
 
     bin/build
 
@@ -106,7 +100,7 @@ if [[ -n $prep ]]; then
     build_time=`date --utc -Imin -r $LIBFILE`
     cat <<EOF > var/deployed_version.json
 {
-  "udmi_version": "$version",
+  "udmi_version": "$udmi_version",
   "udmi_ref": "$udmi_ref",
   "built_at": "$build_time",
   "built_by": "$current_user"
@@ -116,6 +110,10 @@ EOF
 fi
 
 if [[ -n $build ]]; then
+    echo Cleaning old images...
+    images=$(docker images | fgrep $REPOSITORY | awk '{print $1":"$2}' | fgrep -v '<none>') || true
+    [[ -n $images ]] && docker rmi $images
+
     echo Building Dockerfile.$target
     docker build -f Dockerfile.$target -t $target .
     docker tag $target $udmi_ref
@@ -123,19 +121,24 @@ fi
 
 if [[ -n $push ]]; then
     docker push $udmi_ref
-    hash=$(docker images --digests ${udmi_ref%:*} | fgrep $udmi_tag | awk '{print $3}')
+    docker images
+    docker images --digests ${udmi_ref%:*} || true
+    hash=$(docker images --digests ${udmi_ref%:*} | fgrep $udmi_tag | awk '{print $3}') || true
     ihash=$udmi_ref@$hash
     for file in $TEMPLATES; do
-        cp etc/$file tmp/$file
-        sed -i tmp/$file \
+        out_file=tmp/$file
+        src_file=etc/$file
+        alt_file=etc/${UDMI_NAMESPACE}~$file
+        [[ -f $alt_file ]] && src_file=$alt_file
+        sed < $src_file > $out_file \
             -e "s^@IMAGE@^$ihash^" \
             -e "s^@TARGET@^$target^" \
             -e "s^@UDMI_NAMESPACE@^$UDMI_NAMESPACE^" \
             -e "s^@GCP_PROJECT@^$GCP_PROJECT^"
-        if diff etc/$file tmp/$file; then
-            rm tmp/$file
+        if diff $src_file $out_file; then
+            rm $out_file
         else
-            echo Customized output in tmp/$file
+            echo Customized output in $out_file from $src_file
         fi
     done
     echo Done with container build.

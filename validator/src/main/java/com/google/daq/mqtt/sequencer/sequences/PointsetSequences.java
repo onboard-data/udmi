@@ -1,46 +1,57 @@
 package com.google.daq.mqtt.sequencer.sequences;
 
-import static com.google.daq.mqtt.util.TimePeriodConstants.ONE_MINUTE_MS;
 import static com.google.daq.mqtt.util.TimePeriodConstants.THREE_MINUTES_MS;
+import static com.google.daq.mqtt.util.TimePeriodConstants.TWO_MINUTES_MS;
+import static com.google.udmi.util.GeneralUtils.CSV_JOINER;
 import static com.google.udmi.util.GeneralUtils.ifNotNullGet;
+import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
+import static com.google.udmi.util.GeneralUtils.ifNotTrueGet;
 import static com.google.udmi.util.GeneralUtils.ifTrueThen;
+import static com.google.udmi.util.GeneralUtils.prefixedDifference;
+import static com.google.udmi.util.JsonUtil.isoConvert;
+import static com.google.udmi.util.JsonUtil.stringifyTerse;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static udmi.schema.Bucket.POINTSET;
 import static udmi.schema.Category.POINTSET_POINT_INVALID;
 import static udmi.schema.Category.POINTSET_POINT_INVALID_VALUE;
-import static udmi.schema.FeatureEnumeration.FeatureStage.BETA;
+import static udmi.schema.FeatureDiscovery.FeatureStage.BETA;
+import static udmi.schema.FeatureDiscovery.FeatureStage.STABLE;
 
+import com.google.common.collect.Sets;
 import com.google.daq.mqtt.sequencer.Feature;
 import com.google.daq.mqtt.sequencer.PointsetBase;
 import com.google.daq.mqtt.sequencer.Summary;
 import com.google.daq.mqtt.sequencer.ValidateSchema;
 import com.google.daq.mqtt.util.SamplingRange;
-import java.time.Instant;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import udmi.schema.Envelope.SubFolder;
 import udmi.schema.Level;
 import udmi.schema.PointPointsetConfig;
-import udmi.schema.PointPointsetEvent;
+import udmi.schema.PointPointsetEvents;
 import udmi.schema.PointPointsetState;
-import udmi.schema.PointsetEvent;
+import udmi.schema.PointsetEvents;
 
 /**
  * Validate pointset related functionality.
  */
 public class PointsetSequences extends PointsetBase {
 
+  private static final Duration EVENT_WAIT_DURATION = Duration.ofMinutes(1);
   private static final String EXTRANEOUS_POINT = "extraneous_point";
-  private static final int DEFAULT_SAMPLE_RATE_SEC = 10;
   private static final String POINTS_MAP_PATH = "pointset.points";
+  private static final int DEFAULT_SAMPLE_RATE_SEC = 10;
 
   @Before
   public void setupExpectedParameters() {
@@ -54,29 +65,53 @@ public class PointsetSequences extends PointsetBase {
 
   private void untilPointsetSanity() {
     whileDoing("checking pointset sanity", () -> {
-      untilTrue("pointset state reports same points as defined in config", () ->
-          deviceState.pointset.points.keySet().equals(deviceConfig.pointset.points.keySet()));
-      untilTrue("pointset event contains correct points with present_value",
-          () -> {
-            List<PointsetEvent> pointsetEvents = popReceivedEvents(PointsetEvent.class);
-            return !pointsetEvents.isEmpty()
-                && pointsetEvents.get(pointsetEvents.size() - 1).points.entrySet().stream()
-                .filter(this::validPointEntry).map(Entry::getKey).collect(Collectors.toSet())
-                .equals(deviceConfig.pointset.points.keySet());
-          }
-      );
+
+      waitFor("pointset state matches config", EVENT_WAIT_DURATION, () -> {
+        Set<String> configPoints = deviceConfig.pointset.points.keySet();
+        Set<String> statePoints = deviceState.pointset.points.keySet();
+        String prefix = format("config %s state %s differences: ",
+            isoConvert(deviceConfig.timestamp), isoConvert(deviceState.timestamp));
+        return prefixedDifference(prefix, configPoints, statePoints);
+      });
+
+      final AtomicReference<String> message = new AtomicReference<>("any received pointset event");
+      waitFor("pointset event contains correct points", EVENT_WAIT_DURATION, () -> {
+        List<PointsetEvents> events = popReceivedEvents(PointsetEvents.class);
+        ifNotNullThen(ifNotTrueGet(events.isEmpty(), () -> events.get(events.size() - 1)),
+            lastEvent -> {
+              debug("last event is " + stringifyTerse(lastEvent));
+              Set<Entry<String, PointPointsetEvents>> lastPoints = lastEvent.points.entrySet();
+              Set<String> eventPoints = lastPoints.stream().filter(this::validPointEntry)
+                  .map(Entry::getKey).collect(Collectors.toSet());
+              Set<String> errorPoints = deviceState.pointset.points.entrySet().stream()
+                  .filter(this::errorPointEntry).map(Entry::getKey).collect(Collectors.toSet());
+              Set<String> receivedPoints = Sets.union(eventPoints, errorPoints);
+              debug(" event points are " + CSV_JOINER.join(eventPoints));
+              String prefix = format("config %s event %s differences: ",
+                  isoConvert(deviceConfig.timestamp), isoConvert(lastEvent.timestamp));
+              Set<String> configPoints = deviceConfig.pointset.points.keySet();
+              debug("config points are " + CSV_JOINER.join(configPoints));
+              message.set(prefixedDifference(prefix, configPoints, receivedPoints));
+            });
+        return message.get();
+      });
     });
   }
 
-  private boolean validPointEntry(Entry<String, PointPointsetEvent> point) {
-    PointPointsetState pointState = deviceState.pointset.points.get(point.getKey());
-    return point.getValue().present_value != null || isErrorState(pointState);
+  private boolean errorPointEntry(Entry<String, PointPointsetState> point) {
+    return isErrorState(point.getValue());
   }
 
-  @Test(timeout = ONE_MINUTE_MS)
+  private boolean validPointEntry(Entry<String, PointPointsetEvents> point) {
+    return point.getValue().present_value != null;
+  }
+
+  @Test(timeout = TWO_MINUTES_MS)
   @Summary("Check error when pointset configuration contains extraneous point")
-  @Feature(stage = BETA, bucket = POINTSET)
+  @Feature(stage = STABLE, bucket = POINTSET)
   public void pointset_request_extraneous() {
+    deviceConfig.pointset.sample_rate_sec = DEFAULT_SAMPLE_RATE_SEC;
+
     untilPointsetSanity();
 
     mapSemanticKey(POINTS_MAP_PATH, EXTRANEOUS_POINT, "extraneous_point", "point configuration");
@@ -84,7 +119,7 @@ public class PointsetSequences extends PointsetBase {
     deviceConfig.pointset.points.put(EXTRANEOUS_POINT, new PointPointsetConfig());
 
     try {
-      untilTrue("pointset status contains extraneous point error",
+      untilTrue("pointset state contains extraneous point error",
           () -> ifNotNullGet(deviceState.pointset.points.get(EXTRANEOUS_POINT),
               state -> state.status.category.equals(POINTSET_POINT_INVALID)
                   && state.status.level.equals(POINTSET_POINT_INVALID_VALUE)));
@@ -93,15 +128,15 @@ public class PointsetSequences extends PointsetBase {
       deviceConfig.pointset.points.remove(EXTRANEOUS_POINT);
     }
 
-    untilTrue("pointset status removes extraneous point error",
+    untilTrue("pointset state removes extraneous point error",
         () -> !deviceState.pointset.points.containsKey(EXTRANEOUS_POINT));
 
     untilPointsetSanity();
   }
 
-  @Test(timeout = ONE_MINUTE_MS)
+  @Test(timeout = THREE_MINUTES_MS)
   @Summary("Check that pointset state does not report an unconfigured point")
-  @Feature(stage = BETA, bucket = POINTSET)
+  @Feature(stage = STABLE, bucket = POINTSET)
   public void pointset_remove_point() {
     untilPointsetSanity();
 
@@ -114,14 +149,14 @@ public class PointsetSequences extends PointsetBase {
     PointPointsetConfig removed = requireNonNull(deviceConfig.pointset.points.remove(name));
 
     try {
-      untilFalse("pointset status does not contain removed point",
+      untilFalse("pointset state does not contain removed point",
           () -> deviceState.pointset.points.containsKey(name));
       untilPointsetSanity();
     } finally {
       deviceConfig.pointset.points.put(name, removed);
     }
 
-    untilFalse("pointset status contains removed point",
+    untilTrue("pointset state contains restored point",
         () -> deviceState.pointset.points.containsKey(name));
 
     untilPointsetSanity();
@@ -130,72 +165,18 @@ public class PointsetSequences extends PointsetBase {
   /**
    * Simple check that device publishes pointset events.
    */
-  @Test(timeout = THREE_MINUTES_MS)
+  @Test(timeout = TWO_MINUTES_MS)
   @Summary("Check that a device publishes pointset events")
-  @Feature(stage = BETA, bucket = POINTSET, nostate = true)
+  @Feature(stage = STABLE, bucket = POINTSET, nostate = true)
   public void pointset_publish() {
     ifNullSkipTest(deviceConfig.pointset, "no pointset found in config");
 
     untilTrue("receive a pointset event",
-        () -> (countReceivedEvents(PointsetEvent.class) > 1));
-  }
-
-  /**
-   * Tests sample_rate_min by measuring the initial interval between the last two messages received,
-   * then setting the config.pointset.sample_rate_min to match half the initial interval and
-   * measuring the final interval between several messages and ensuring it is less than the new
-   * interval (with a tolerance of 1.5s).
-   *
-   * <p>Pass if: final interval < new sample_rate_min + tolerance
-   * Fail if: final interval > new sample_rate_min + tolerance Skip if: initial interval < 5s (too
-   * fast for automated test)
-   */
-  @Test(timeout = THREE_MINUTES_MS)
-  @Feature(stage = BETA, bucket = POINTSET)
-  @Summary("Check that a device publishes pointset events not faster than config sample_rate_sec")
-  public void pointset_sample_rate() {
-    ifNullSkipTest(deviceConfig.pointset, "no pointset found in config");
-
-    // Clear received events because this could contain messages from a previous sample rate test
-    popReceivedEvents(PointsetEvent.class);
-
-    Instant endTime = Instant.now().plusSeconds(DEFAULT_SAMPLE_RATE_SEC * 3);
-    // To pick the test sample rate, either measure the devices
-    // given sampling rate from its last 2 messages and half it or use
-    // a value if long
-    untilTrue("measure initial sample rate",
-        () -> (countReceivedEvents(PointsetEvent.class) > 1
-            || Instant.now().isAfter(endTime))
-    );
-
-    final int testSampleRate;
-    if (countReceivedEvents(PointsetEvent.class) < 2) {
-      // 2 messages not seen, assume interval is longer than wait period, pick a small number
-      testSampleRate = DEFAULT_SAMPLE_RATE_SEC;
-    } else {
-      List<PointsetEvent> receivedEvents = popReceivedEvents(PointsetEvent.class);
-      List<Long> telemetryDelta = intervalFromEvents(receivedEvents);
-      int nominalInterval = telemetryDelta.get(0).intValue();
-      info(format("initial sample rate is %d seconds", nominalInterval));
-
-      ifTrueThen(nominalInterval < 5,
-          () -> skipTest("measured sample rate is too low for automated test"));
-
-      // Use an interval smaller than the devices last interval
-      testSampleRate = Math.floorDiv(nominalInterval, 2);
-    }
-
-    info(format("setting sample rate to %d seconds", testSampleRate));
-    SamplingRange testSampleRange = new SamplingRange(1, testSampleRate, 1.5);
-
-    testPointsetWithSamplingRange(testSampleRange, 5, 2);
+        () -> (countReceivedEvents(PointsetEvents.class) > 1));
   }
 
   /**
    * Generates message for checking the time periods are within the sampling range.
-   *
-   * @param samplingRange sampling range to produce message for
-   * @return message
    */
   private String samplingMessagesCheckMessage(SamplingRange samplingRange) {
     return format("time period between successive pointset events is %s",
@@ -207,8 +188,8 @@ public class PointsetSequences extends PointsetBase {
    * of both parameters, and ensuring telemetry is within this range.
    */
   @Test(timeout = THREE_MINUTES_MS)
-  @Summary("Check handling of sample rate and sample limit sec")
-  @Feature(stage = BETA, bucket = POINTSET, nostate = true)
+  @Summary("Check handling of sample_rate_sec and sample_limit_sec")
+  @Feature(stage = STABLE, bucket = POINTSET, nostate = true)
   @ValidateSchema(SubFolder.POINTSET)
   public void pointset_publish_interval() {
     ifNullSkipTest(deviceConfig.pointset, "no pointset found in config");
@@ -224,11 +205,8 @@ public class PointsetSequences extends PointsetBase {
   /**
    * Given a list of events, sorts these in timestamp order and returns a list of the the intervals
    * between each pair of successive messages based on the in-payload timestamp.
-   *
-   * @param receivedEvents list of PointsetEvents
-   * @return list of the intervals between successive messages
    */
-  private List<Long> intervalFromEvents(List<PointsetEvent> receivedEvents) {
+  private List<Long> intervalFromEvents(List<PointsetEvents> receivedEvents) {
     ArrayList<Long> intervals = new ArrayList<>();
 
     if (receivedEvents.size() < 2) {
@@ -247,10 +225,6 @@ public class PointsetSequences extends PointsetBase {
   /**
    * Updating the sample_limit_sec and sample_rate_sec according to provided SamplingRange and
    * checks if the interval between subsequent pointset events are within this range.
-   *
-   * @param sampleRange       sample range to test with
-   * @param messagesToSample  number of messages to sample (must be greater than 2)
-   * @param intervalsToIgnore number of intervals to ignore at start (to allow system to settle)
    */
   private void testPointsetWithSamplingRange(SamplingRange sampleRange, Integer messagesToSample,
       Integer intervalsToIgnore) {
@@ -263,12 +237,12 @@ public class PointsetSequences extends PointsetBase {
     deviceConfig.pointset.sample_limit_sec = sampleRange.sampleLimit;
     deviceConfig.pointset.sample_rate_sec = sampleRange.sampleRate;
 
-    popReceivedEvents(PointsetEvent.class);
+    popReceivedEvents(PointsetEvents.class);
     untilTrue(format("receive at least %d pointset events", messagesToSample),
-        () -> (countReceivedEvents(PointsetEvent.class) > messagesToSample)
+        () -> (countReceivedEvents(PointsetEvents.class) > messagesToSample)
     );
 
-    List<PointsetEvent> receivedEvents = popReceivedEvents(PointsetEvent.class);
+    List<PointsetEvents> receivedEvents = popReceivedEvents(PointsetEvents.class);
     List<Long> intervals = intervalFromEvents(receivedEvents);
 
     if (intervalsToIgnore > 0) {

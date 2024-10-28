@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Sequence Validation State",
   "description": "Sequence Validation State",
   "type": "object",
@@ -26,6 +26,7 @@
       "title": "Sequence Result",
       "enum": [
         "start",
+        "errr",
         "skip",
         "pass",
         "fail"
@@ -34,11 +35,17 @@
     "status": {
       "$ref": "file:entry.json"
     },
-    "score": {
-      "type": "integer"
-    },
-    "total": {
-      "type": "integer"
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
     }
   }
 }

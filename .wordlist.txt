@@ -18,6 +18,7 @@ breakpoint
 buildingsiot
 centric
 CLA
+ClearBlade
 CLI
 CloudRun
 CoAP
@@ -66,6 +67,7 @@ http
 https
 IAM
 idToken
+integrations
 invoker
 io
 iot
@@ -91,12 +93,14 @@ md
 modbus
 MQTT
 mydomain
+namespace
 niversal
 npm
 nterface
 OIDC
 onboarding
 Onboarding
+OSS
 pagent
 parameterization
 parsers
@@ -106,6 +110,7 @@ postfix
 prem
 Prem
 prepend
+prepended
 programmatically
 provisioner
 proxied
@@ -114,6 +119,7 @@ proxying
 PUBACKs
 pubber
 PubSub
+pubsub
 QoS
 Readme
 repo
@@ -158,6 +164,7 @@ UI
 unconfigured
 underspecified
 uniqs
+unprocessable
 unwriteable
 uplink
 url

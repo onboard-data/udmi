@@ -4,12 +4,14 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.daq.mqtt.sequencer.SequenceBase.getSequencerStateFile;
 import static com.google.udmi.util.GeneralUtils.CSV_JOINER;
 import static com.google.udmi.util.GeneralUtils.friendlyStackTrace;
+import static com.google.udmi.util.GeneralUtils.ifTrueGet;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static udmi.schema.FeatureEnumeration.FeatureStage.ALPHA;
-import static udmi.schema.FeatureEnumeration.FeatureStage.BETA;
+import static udmi.schema.FeatureDiscovery.FeatureStage.ALPHA;
+import static udmi.schema.FeatureDiscovery.FeatureStage.BETA;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.daq.mqtt.WebServerRunner;
 import com.google.daq.mqtt.sequencer.sequences.ConfigSequences;
 import com.google.daq.mqtt.util.ConfigUtil;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +38,9 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import udmi.schema.ExecutionConfiguration;
-import udmi.schema.FeatureEnumeration.FeatureStage;
+import udmi.schema.FeatureDiscovery.FeatureStage;
 import udmi.schema.Level;
 import udmi.schema.Metadata;
 import udmi.schema.SequenceValidationState.SequenceResult;
@@ -54,10 +58,9 @@ public class SequenceRunner {
   private static final int EXIT_STATUS_SUCCESS = 0;
   private static final int EXIST_STATUS_FAILURE = 1;
   private static final String TOOL_ROOT = "..";
-  private static final Set<String> failures = new TreeSet<>();
+  private static final List<String> failures = new ArrayList<>();
   private static final Map<String, SequenceResult> allTestResults = new TreeMap<>();
   private static final List<String> SHARD_LIST = new ArrayList<>();
-  static ExecutionConfiguration exeConfig;
   private final Set<String> sequenceClasses = new TreeSet<>(
       Common.allClassesInPackage(ConfigSequences.class));
   private List<String> targets = List.of();
@@ -78,14 +81,14 @@ public class SequenceRunner {
    * @return status code
    */
   public static int processResult(List<String> targets) {
+    checkState(targets.isEmpty(), "unrecognized command line arguments");
     SequenceRunner sequenceRunner = new SequenceRunner();
-    sequenceRunner.setTargets(targets);
     sequenceRunner.process();
     return sequenceRunner.resultCode();
   }
 
   private static SequenceRunner processConfig(ExecutionConfiguration config) {
-    exeConfig = config;
+    SequenceBase.exeConfig = config;
     SequenceRunner sequenceRunner = new SequenceRunner();
     SequenceBase.setDeviceId(config.device_id);
     sequenceRunner.process();
@@ -104,19 +107,19 @@ public class SequenceRunner {
     final String deviceId = params.remove(WebServerRunner.DEVICE_PARAM);
     final String testMode = params.remove(WebServerRunner.TEST_PARAM);
 
-    SiteModel siteModel = new SiteModel(sitePath);
-    siteModel.initialize();
-
     ExecutionConfiguration config = new ExecutionConfiguration();
     config.project_id = projectId;
     config.site_model = sitePath;
     config.device_id = deviceId;
-    config.key_file = siteModel.validatorKey();
     config.serial_no = Optional.ofNullable(serialNo).orElse(SequenceBase.SERIAL_NO_MISSING);
     config.log_level = Level.INFO.name();
     config.udmi_version = Common.getUdmiVersion();
     config.udmi_root = TOOL_ROOT;
     config.alt_project = testMode; // Sekrit hack for enabling mock components.
+
+    SiteModel siteModel = new SiteModel(sitePath, config);
+    siteModel.initialize();
+    config.key_file = siteModel.validatorKey();
 
     failures.clear();
     allTestResults.clear();
@@ -133,7 +136,7 @@ public class SequenceRunner {
     }
   }
 
-  public static Set<String> getFailures() {
+  public static List<String> getFailures() {
     return failures;
   }
 
@@ -152,21 +155,20 @@ public class SequenceRunner {
 
   @TestOnly
   static boolean processStage(FeatureStage query, FeatureStage config) {
-    boolean exact = ofNullable(exeConfig.min_stage)
+    boolean exact = ofNullable(SequenceBase.exeConfig.min_stage)
         .map(value -> value.startsWith("=")).orElse(false);
     return exact ? query == config : query.compareTo(config) >= 0;
   }
 
   private static FeatureStage getFeatureMinStage() {
-    FeatureStage minStage = ofNullable(exeConfig.min_stage)
+    return ofNullable(SequenceBase.exeConfig.min_stage)
         .map(value -> value.startsWith("=") ? value.substring(1) : value)
         .map(FeatureStage::valueOf).orElse(DEFAULT_MIN_STAGE);
-    return minStage;
   }
 
   static ExecutionConfiguration ensureExecutionConfig() {
-    if (exeConfig != null) {
-      return exeConfig;
+    if (SequenceBase.exeConfig != null) {
+      return SequenceBase.exeConfig;
     }
     if (CONFIG_PATH == null || CONFIG_PATH.equals("")) {
       throw new RuntimeException(CONFIG_ENV + " env not defined.");
@@ -174,24 +176,26 @@ public class SequenceRunner {
     final File configFile = new File(CONFIG_PATH);
     try {
       System.err.println("Reading config file " + configFile.getAbsolutePath());
-      exeConfig = ConfigUtil.readValidatorConfig(configFile);
-      SiteModel model = new SiteModel(exeConfig.site_model);
+      ExecutionConfiguration exeConfig = ConfigUtil.readValidatorConfig(configFile);
+      String udmiNamespace = exeConfig.udmi_namespace;
+      exeConfig.udmi_namespace = null; // Prevent having this processed twice.
+      SiteModel model = new SiteModel(exeConfig.site_model, exeConfig);
       model.initialize();
-      reportLoadingErrors(model);
+      exeConfig.udmi_namespace = udmiNamespace;
+      reportLoadingErrors(model, exeConfig.device_id);
       exeConfig.cloud_region = ofNullable(exeConfig.cloud_region)
           .orElse(model.getCloudRegion());
       exeConfig.registry_id = ofNullable(exeConfig.registry_id)
           .orElse(model.getRegistryId());
       exeConfig.reflect_region = ofNullable(exeConfig.reflect_region)
           .orElse(model.getReflectRegion());
+      return exeConfig;
     } catch (Exception e) {
       throw new RuntimeException("While loading " + configFile, e);
     }
-    return exeConfig;
   }
 
-  private static void reportLoadingErrors(SiteModel model) {
-    String deviceId = exeConfig.device_id;
+  private static void reportLoadingErrors(SiteModel model, String deviceId) {
     checkState(model.allDeviceIds().contains(deviceId),
         format("device_id %s not found in site model", deviceId));
     Metadata metadata = model.getMetadata(deviceId);
@@ -205,7 +209,9 @@ public class SequenceRunner {
     if (failures == null) {
       throw new RuntimeException("Sequences have not been processed");
     }
-    return failures.isEmpty() ? EXIT_STATUS_SUCCESS : EXIST_STATUS_FAILURE;
+    int exitCode = failures.isEmpty() ? EXIT_STATUS_SUCCESS : EXIST_STATUS_FAILURE;
+    System.err.printf("Found %d test failures, exit code %d%n", failures.size(), exitCode);
+    return exitCode;
   }
 
   private void process() {
@@ -223,10 +229,11 @@ public class SequenceRunner {
       throw new RuntimeException("No testing classes found");
     }
     System.err.println("Target sequence classes:\n  " + Joiner.on("\n  ").join(sequenceClasses));
-    ensureExecutionConfig();
+    SequenceBase.exeConfig = ensureExecutionConfig();
+    SequenceBase.initializeValidationState();
+    targets = ofNullable(SequenceBase.exeConfig.sequences).orElseGet(ImmutableList::of);
     boolean enableAllBuckets = shouldExecuteAll() || !targets.isEmpty();
     SequenceBase.enableAllBuckets(enableAllBuckets);
-    String deviceId = exeConfig.device_id;
     Set<String> remainingMethods = new HashSet<>(targets);
     int runCount = 0;
     for (String className : sequenceClasses) {
@@ -245,11 +252,13 @@ public class SequenceRunner {
       }
       for (Request request : requests) {
         Result result = new JUnitCore().run(request);
-        Set<String> failureNames = result.getFailures().stream()
-            .map(failure -> deviceId + "/" + failure.getDescription().getMethodName()).collect(
-                Collectors.toSet());
-        failures.addAll(failureNames);
+        List<Failure> theseFailures = result.getFailures();
+        failures.addAll(summarizeFailures(theseFailures));
         runCount += result.getRunCount();
+        List<String> failures = theseFailures.stream().map(Failure::getException)
+            .filter(failure -> failure instanceof IllegalArgumentException)
+            .map(Throwable::getMessage).toList();
+        checkState(failures.isEmpty(), "Fatal system errors: " + CSV_JOINER.join(failures));
       }
     }
 
@@ -262,6 +271,8 @@ public class SequenceRunner {
     }
 
     System.err.println();
+    System.err.printf("Found %d test execution failures.%n", failures.size());
+    failures.forEach(System.err::println);
     Map<SequenceResult, Long> resultCounts = allTestResults.entrySet().stream()
         .collect(Collectors.groupingBy(Entry::getValue, Collectors.counting()));
     resultCounts.forEach(
@@ -270,7 +281,19 @@ public class SequenceRunner {
     System.err.println("Sequencer state summary in " + stateAbsolutePath);
   }
 
+  private Collection<String> summarizeFailures(List<Failure> failures) {
+    return ifTrueGet(failures.isEmpty(), ImmutableList::of,
+        ImmutableList.of(CSV_JOINER.join(failures.stream().map(this::getFailureMessage).toList())));
+  }
+
+  private String getFailureMessage(Failure failure) {
+    ExecutionConfiguration exeConfig = SequenceBase.exeConfig;
+    String failureKey = exeConfig.device_id + "/" + failure.getDescription().getMethodName();
+    return failureKey + ": " + friendlyStackTrace(failure.getException());
+  }
+
   private boolean shouldShardMethod(String method) {
+    ExecutionConfiguration exeConfig = SequenceBase.exeConfig;
     if (exeConfig.shard_count == null) {
       return true;
     }
@@ -314,9 +337,5 @@ public class SequenceRunner {
     }
     Feature annotation = method.getAnnotation(Feature.class);
     return processStage(annotation == null ? Feature.DEFAULT_STAGE : annotation.stage());
-  }
-
-  public void setTargets(List<String> targets) {
-    this.targets = targets;
   }
 }

@@ -1,32 +1,47 @@
 sites/udmi_site_model/out/devices/AHU-1/config.json
-sites/udmi_site_model/out/devices/AHU-1/event_pointset.json
-sites/udmi_site_model/out/devices/AHU-1/event_system.json
+sites/udmi_site_model/out/devices/AHU-1/events_pointset.json
+sites/udmi_site_model/out/devices/AHU-1/events_system.json
 sites/udmi_site_model/out/devices/AHU-1/persistent_data.json
 sites/udmi_site_model/out/devices/AHU-1/state.json
 sites/udmi_site_model/out/devices/AHU-1/state_localnet.json
 sites/udmi_site_model/out/devices/AHU-1/state_pointset.json
 sites/udmi_site_model/out/devices/AHU-1/state_system.json
-sites/udmi_site_model/out/devices/AHU-22/event_pointset.json
-sites/udmi_site_model/out/devices/AHU-22/event_system.json
-sites/udmi_site_model/out/devices/GAT-123/event_blobset.json
-sites/udmi_site_model/out/devices/GAT-123/event_discovery.json
-sites/udmi_site_model/out/devices/GAT-123/event_error.json
-sites/udmi_site_model/out/devices/GAT-123/event_invalid.json
-sites/udmi_site_model/out/devices/GAT-123/event_pointset.json
-sites/udmi_site_model/out/devices/GAT-123/event_system.json
+sites/udmi_site_model/out/devices/AHU-22/config.json
+sites/udmi_site_model/out/devices/AHU-22/events_pointset.json
+sites/udmi_site_model/out/devices/AHU-22/events_system.json
+sites/udmi_site_model/out/devices/AHU-22/state_gateway.json
+sites/udmi_site_model/out/devices/AHU-22/state.json
+sites/udmi_site_model/out/devices/AHU-22/state_localnet.json
+sites/udmi_site_model/out/devices/AHU-22/state_pointset.json
+sites/udmi_site_model/out/devices/AHU-22/state_system.json
+sites/udmi_site_model/out/devices/GAT-123/config.json
+sites/udmi_site_model/out/devices/GAT-123/events_blobset.json
+sites/udmi_site_model/out/devices/GAT-123/events_discovery.json
+sites/udmi_site_model/out/devices/GAT-123/events_error.json
+sites/udmi_site_model/out/devices/GAT-123/events_gateway.json
+sites/udmi_site_model/out/devices/GAT-123/events_invalid.json
+sites/udmi_site_model/out/devices/GAT-123/events_mapping.json
+sites/udmi_site_model/out/devices/GAT-123/events_pointset.json
+sites/udmi_site_model/out/devices/GAT-123/events_system.json
 sites/udmi_site_model/out/devices/GAT-123/persistent_data.json
+sites/udmi_site_model/out/devices/GAT-123/state_gateway.json
 sites/udmi_site_model/out/devices/GAT-123/state.json
 sites/udmi_site_model/out/devices/GAT-123/state_localnet.json
 sites/udmi_site_model/out/devices/GAT-123/state_pointset.json
 sites/udmi_site_model/out/devices/GAT-123/state_system.json
-sites/udmi_site_model/out/devices/SNS-4/event_pointset.json
-sites/udmi_site_model/out/devices/SNS-4/event_system.json
+sites/udmi_site_model/out/devices/SNS-4/config.json
+sites/udmi_site_model/out/devices/SNS-4/events_pointset.json
+sites/udmi_site_model/out/devices/SNS-4/events_system.json
+sites/udmi_site_model/out/devices/SNS-4/state_gateway.json
+sites/udmi_site_model/out/devices/SNS-4/state.json
+sites/udmi_site_model/out/devices/SNS-4/state_pointset.json
+sites/udmi_site_model/out/devices/SNS-4/state_system.json
 ::::::::::::::
 sites/udmi_site_model/out/devices/AHU-1/config.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "update",
   "sub_type" : "config",
   "status" : {
@@ -38,16 +53,16 @@ sites/udmi_site_model/out/devices/AHU-1/config.out
   "errors" : [ ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/AHU-1/event_pointset.out
+sites/udmi_site_model/out/devices/AHU-1/events_pointset.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
     "message" : "Multiple validation errors",
-    "detail" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold; While converting to json node: 1 schema violations found",
+    "detail" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold; While converting to json node: 1 schema violations found",
     "category" : "validation.device.multiple",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -57,37 +72,60 @@ sites/udmi_site_model/out/devices/AHU-1/event_pointset.out
     "extra" : [ ]
   },
   "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "event_pointset: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "events_pointset: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   }, {
     "message" : "While converting to json node: 1 schema violations found",
-    "detail" : "event_pointset: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object instance has properties which are not allowed by the schema: [\"extraField\"]",
+    "detail" : "events_pointset: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object instance has properties which are not allowed by the schema: [\"extraField\"]",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/AHU-1/event_system.out
+sites/udmi_site_model/out/devices/AHU-1/events_system.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "system",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "event_system: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "events_system: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "event_system: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "events_system: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-1/state_localnet.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "localnet",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_localnet: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "errors" : [ {
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_localnet: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -98,19 +136,19 @@ sites/udmi_site_model/out/devices/AHU-1/state.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "update",
   "sub_type" : "state",
   "status" : {
     "message" : "Multiple validation errors",
-    "detail" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold; While converting to json node: 1 schema violations found",
+    "detail" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold; While converting to json node: 1 schema violations found",
     "category" : "validation.device.multiple",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_update: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_update: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -123,39 +161,16 @@ sites/udmi_site_model/out/devices/AHU-1/state.out
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/AHU-1/state_localnet.out
-::::::::::::::
-{
-  "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "localnet",
-  "sub_type" : "state",
-  "status" : {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_localnet: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  },
-  "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_localnet: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  } ]
-}
-::::::::::::::
 sites/udmi_site_model/out/devices/AHU-1/state_pointset.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
   "sub_type" : "state",
   "status" : {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_pointset: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_pointset: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -165,8 +180,8 @@ sites/udmi_site_model/out/devices/AHU-1/state_pointset.out
     "extra" : [ ]
   },
   "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_pointset: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_pointset: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -177,65 +192,243 @@ sites/udmi_site_model/out/devices/AHU-1/state_system.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "system",
   "sub_type" : "state",
   "status" : {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_system: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_system: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "errors" : [ {
-    "message" : "Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
-    "detail" : "state_system: Timestamp jitter REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
+    "message" : "Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold",
+    "detail" : "state_system: Timestamp skew REDACTED_DURATION (REDACTED_TIMESTAMP to REDACTED_TIMESTAMP) exceeds REDACTED_DURATION threshold REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/AHU-22/event_pointset.out
+sites/udmi_site_model/out/devices/AHU-22/config.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
+  "sub_type" : "config",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/events_pointset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
-  "sub_type" : "event",
+  "sub_type" : "events",
+  "status" : {
+    "message" : "Device has extra points: llama",
+    "detail" : "events_pointset: Device has extra points: llama",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "pointset" : {
+    "missing" : [ ],
+    "extra" : [ "llama" ]
+  },
+  "errors" : [ {
+    "message" : "Device has extra points: llama",
+    "detail" : "events_pointset: Device has extra points: llama",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/events_system.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "system",
+  "sub_type" : "events",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/state_gateway.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "gateway",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/state_localnet.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "localnet",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/state.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/state_pointset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "pointset",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "pointset" : {
+    "missing" : [ ],
+    "extra" : [ ]
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/AHU-22/state_system.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "system",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/GAT-123/config.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
+  "sub_type" : "config",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/GAT-123/events_blobset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "blobset",
+  "sub_type" : "events",
   "status" : {
     "message" : "Multiple validation errors",
-    "detail" : "While converting to json node: 3 schema violations found; Device has extra points: llama",
+    "detail" : "Unknown schema subFolder 'events_blobset' for GAT-123; Raw string message for GAT-123 events_blobset",
     "category" : "validation.device.multiple",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
-  "pointset" : {
-    "missing" : [ ],
-    "extra" : [ "llama" ]
-  },
   "errors" : [ {
-    "message" : "While converting to json node: 3 schema violations found",
-    "detail" : "event_pointset: While converting to json node: 3 schema violations found REDACTED_ERROR; 3 schema violations found; /points/filter_alarm_pressure_status: object has missing required properties ([\"present_value\"]); /points/filter_differential_pressure: object has missing required properties ([\"present_value\"]); /points/filter_differential_pressure_sensor: object has missing required properties ([\"present_value\"])",
+    "message" : "Unknown schema subFolder 'events_blobset' for GAT-123",
+    "detail" : "events_blobset: Unknown schema subFolder 'events_blobset' for GAT-123 REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   }, {
-    "message" : "Device has extra points: llama",
-    "detail" : "event_pointset: Device has extra points: llama",
+    "message" : "Raw string message for GAT-123 events_blobset",
+    "detail" : "events_blobset: Raw string message for GAT-123 events_blobset REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/AHU-22/event_system.out
+sites/udmi_site_model/out/devices/GAT-123/events_discovery.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "system",
-  "sub_type" : "event",
+  "version" : "1.5.2",
+  "sub_folder" : "discovery",
+  "sub_type" : "events",
+  "status" : {
+    "message" : "While converting to json node: 1 schema violations found",
+    "detail" : "events_discovery: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object has missing required properties ([\"generation\"])",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "errors" : [ {
+    "message" : "While converting to json node: 1 schema violations found",
+    "detail" : "events_discovery: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object has missing required properties ([\"generation\"])",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/GAT-123/events_error.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "error",
+  "sub_type" : "events",
   "status" : {
     "message" : "Successful validation",
     "category" : "validation.device.receive",
@@ -245,108 +438,91 @@ sites/udmi_site_model/out/devices/AHU-22/event_system.out
   "errors" : [ ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_blobset.out
+sites/udmi_site_model/out/devices/GAT-123/events_gateway.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "blobset",
-  "sub_type" : "event",
+  "version" : "1.5.2",
+  "sub_folder" : "gateway",
+  "sub_type" : "events",
   "status" : {
-    "message" : "While converting to java.util.TreeMap",
-    "detail" : "event_blobset: While converting to java.util.TreeMap; Cannot coerce empty String (\"\") to element of `java.util.TreeMap<java.lang.Object,java.lang.Object>` (but could if coercion was enabled using `CoercionConfig`)\n at [Source: (String)\"\"\"\"; line: 1, column: 1]",
-    "category" : "validation.device.schema",
+    "message" : "Multiple validation errors",
+    "detail" : "Unknown schema subFolder 'events_gateway' for GAT-123; Raw string message for GAT-123 events_gateway",
+    "category" : "validation.device.multiple",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "errors" : [ {
-    "message" : "While converting to java.util.TreeMap",
-    "detail" : "event_blobset: While converting to java.util.TreeMap; Cannot coerce empty String (\"\") to element of `java.util.TreeMap<java.lang.Object,java.lang.Object>` (but could if coercion was enabled using `CoercionConfig`)\n at [Source: (String)\"\"\"\"; line: 1, column: 1]",
+    "message" : "Unknown schema subFolder 'events_gateway' for GAT-123",
+    "detail" : "events_gateway: Unknown schema subFolder 'events_gateway' for GAT-123 REDACTED_ERROR",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  }, {
+    "message" : "Raw string message for GAT-123 events_gateway",
+    "detail" : "events_gateway: Raw string message for GAT-123 events_gateway REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_discovery.out
+sites/udmi_site_model/out/devices/GAT-123/events_invalid.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "discovery",
-  "sub_type" : "event",
-  "status" : {
-    "message" : "While converting to json node: 1 schema violations found",
-    "detail" : "event_discovery: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object has missing required properties ([\"generation\"])",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  },
-  "errors" : [ {
-    "message" : "While converting to json node: 1 schema violations found",
-    "detail" : "event_discovery: While converting to json node: 1 schema violations found REDACTED_ERROR; 1 schema violations found; object has missing required properties ([\"generation\"])",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  } ]
-}
-::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_error.out
-::::::::::::::
-{
-  "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "error",
-  "sub_type" : "event",
-  "status" : {
-    "message" : "Error in message pipeline: While parsing json object, Unexpected character ('N' (code 78)): was expecting double-quote to start field name  at [Source: (String)\"{ NOT VALID JSON!\"; line: 1, column: 4]",
-    "detail" : "event_error: Error in message pipeline: While parsing json object, Unexpected character ('N' (code 78)): was expecting double-quote to start field name  at [Source: (String)\"{ NOT VALID JSON!\"; line: 1, column: 4] REDACTED_ERROR",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  },
-  "errors" : [ {
-    "message" : "Error in message pipeline: While parsing json object, Unexpected character ('N' (code 78)): was expecting double-quote to start field name  at [Source: (String)\"{ NOT VALID JSON!\"; line: 1, column: 4]",
-    "detail" : "event_error: Error in message pipeline: While parsing json object, Unexpected character ('N' (code 78)): was expecting double-quote to start field name  at [Source: (String)\"{ NOT VALID JSON!\"; line: 1, column: 4] REDACTED_ERROR",
-    "category" : "validation.device.schema",
-    "timestamp" : "REDACTED_TIMESTAMP",
-    "level" : 500
-  } ]
-}
-::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_invalid.out
-::::::::::::::
-{
-  "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "invalid",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
-    "message" : "Unknown schema subFolder 'event_invalid' for GAT-123",
-    "detail" : "event_invalid: Unknown schema subFolder 'event_invalid' for GAT-123 REDACTED_ERROR",
+    "message" : "Unknown schema subFolder 'events_invalid' for GAT-123",
+    "detail" : "events_invalid: Unknown schema subFolder 'events_invalid' for GAT-123 REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "errors" : [ {
-    "message" : "Unknown schema subFolder 'event_invalid' for GAT-123",
-    "detail" : "event_invalid: Unknown schema subFolder 'event_invalid' for GAT-123 REDACTED_ERROR",
+    "message" : "Unknown schema subFolder 'events_invalid' for GAT-123",
+    "detail" : "events_invalid: Unknown schema subFolder 'events_invalid' for GAT-123 REDACTED_ERROR",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_pointset.out
+sites/udmi_site_model/out/devices/GAT-123/events_mapping.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
+  "sub_folder" : "mapping",
+  "sub_type" : "events",
+  "status" : {
+    "message" : "Raw string message for GAT-123 events_mapping",
+    "detail" : "events_mapping: Raw string message for GAT-123 events_mapping REDACTED_ERROR",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "errors" : [ {
+    "message" : "Raw string message for GAT-123 events_mapping",
+    "detail" : "events_mapping: Raw string message for GAT-123 events_mapping REDACTED_ERROR",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/GAT-123/events_pointset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
     "message" : "Device has extra points: llama",
-    "detail" : "event_pointset: Device has extra points: llama",
+    "detail" : "events_pointset: Device has extra points: llama",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
@@ -357,20 +533,20 @@ sites/udmi_site_model/out/devices/GAT-123/event_pointset.out
   },
   "errors" : [ {
     "message" : "Device has extra points: llama",
-    "detail" : "event_pointset: Device has extra points: llama",
+    "detail" : "events_pointset: Device has extra points: llama",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/event_system.out
+sites/udmi_site_model/out/devices/GAT-123/events_system.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "system",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
     "message" : "Successful validation",
     "category" : "validation.device.receive",
@@ -380,12 +556,12 @@ sites/udmi_site_model/out/devices/GAT-123/event_system.out
   "errors" : [ ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/GAT-123/state.out
+sites/udmi_site_model/out/devices/GAT-123/state_gateway.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
-  "sub_folder" : "update",
+  "version" : "1.5.2",
+  "sub_folder" : "gateway",
   "sub_type" : "state",
   "status" : {
     "message" : "Successful validation",
@@ -400,8 +576,24 @@ sites/udmi_site_model/out/devices/GAT-123/state_localnet.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "localnet",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/GAT-123/state.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
   "sub_type" : "state",
   "status" : {
     "message" : "Successful validation",
@@ -416,7 +608,7 @@ sites/udmi_site_model/out/devices/GAT-123/state_pointset.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
   "sub_type" : "state",
   "status" : {
@@ -436,7 +628,7 @@ sites/udmi_site_model/out/devices/GAT-123/state_system.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "system",
   "sub_type" : "state",
   "status" : {
@@ -448,46 +640,144 @@ sites/udmi_site_model/out/devices/GAT-123/state_system.out
   "errors" : [ ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/SNS-4/event_pointset.out
+sites/udmi_site_model/out/devices/SNS-4/config.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
+  "sub_type" : "config",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/SNS-4/events_pointset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
   "sub_folder" : "pointset",
-  "sub_type" : "event",
+  "sub_type" : "events",
   "status" : {
     "message" : "Multiple validation errors",
-    "detail" : "While converting to json node: 2 schema violations found; Device has extra points: llama",
+    "detail" : "Device has missing points: split_threshold, triangulating_axis; Device has extra points: llama",
     "category" : "validation.device.multiple",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   },
   "pointset" : {
-    "missing" : [ ],
+    "missing" : [ "split_threshold", "triangulating_axis" ],
     "extra" : [ "llama" ]
   },
   "errors" : [ {
-    "message" : "While converting to json node: 2 schema violations found",
-    "detail" : "event_pointset: While converting to json node: 2 schema violations found REDACTED_ERROR; 2 schema violations found; /points/split_threshold: object has missing required properties ([\"present_value\"]); /points/triangulating_axis: object has missing required properties ([\"present_value\"])",
+    "message" : "Device has missing points: split_threshold, triangulating_axis",
+    "detail" : "events_pointset: Device has missing points: split_threshold, triangulating_axis",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   }, {
     "message" : "Device has extra points: llama",
-    "detail" : "event_pointset: Device has extra points: llama",
+    "detail" : "events_pointset: Device has extra points: llama",
     "category" : "validation.device.schema",
     "timestamp" : "REDACTED_TIMESTAMP",
     "level" : 500
   } ]
 }
 ::::::::::::::
-sites/udmi_site_model/out/devices/SNS-4/event_system.out
+sites/udmi_site_model/out/devices/SNS-4/events_system.out
 ::::::::::::::
 {
   "timestamp" : "REDACTED_TIMESTAMP",
-  "version" : "1.4.2",
+  "version" : "1.5.2",
   "sub_folder" : "system",
-  "sub_type" : "event",
+  "sub_type" : "events",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/SNS-4/state_gateway.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "gateway",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Successful validation",
+    "category" : "validation.device.receive",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 200
+  },
+  "errors" : [ ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/SNS-4/state.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "update",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Device has missing points: split_threshold, triangulating_axis",
+    "detail" : "state_update: Device has missing points: split_threshold, triangulating_axis",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "errors" : [ {
+    "message" : "Device has missing points: split_threshold, triangulating_axis",
+    "detail" : "state_update: Device has missing points: split_threshold, triangulating_axis",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/SNS-4/state_pointset.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "pointset",
+  "sub_type" : "state",
+  "status" : {
+    "message" : "Device has missing points: split_threshold, triangulating_axis",
+    "detail" : "state_pointset: Device has missing points: split_threshold, triangulating_axis",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  },
+  "pointset" : {
+    "missing" : [ "split_threshold", "triangulating_axis" ],
+    "extra" : [ ]
+  },
+  "errors" : [ {
+    "message" : "Device has missing points: split_threshold, triangulating_axis",
+    "detail" : "state_pointset: Device has missing points: split_threshold, triangulating_axis",
+    "category" : "validation.device.schema",
+    "timestamp" : "REDACTED_TIMESTAMP",
+    "level" : 500
+  } ]
+}
+::::::::::::::
+sites/udmi_site_model/out/devices/SNS-4/state_system.out
+::::::::::::::
+{
+  "timestamp" : "REDACTED_TIMESTAMP",
+  "version" : "1.5.2",
+  "sub_folder" : "system",
+  "sub_type" : "state",
   "status" : {
     "message" : "Successful validation",
     "category" : "validation.device.receive",

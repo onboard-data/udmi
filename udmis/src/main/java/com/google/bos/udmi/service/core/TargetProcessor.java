@@ -7,10 +7,14 @@ import static com.google.udmi.util.GeneralUtils.ifNotNullThen;
 import static com.google.udmi.util.JsonUtil.stringify;
 import static com.google.udmi.util.JsonUtil.stringifyTerse;
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 
 import com.google.bos.udmi.service.messaging.MessageContinuation;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import udmi.schema.EndpointConfiguration;
 import udmi.schema.Envelope;
 import udmi.schema.Envelope.SubFolder;
 import udmi.schema.Envelope.SubType;
@@ -22,6 +26,12 @@ import udmi.schema.Envelope.SubType;
  */
 @ComponentName("target")
 public class TargetProcessor extends ProcessorBase {
+
+  Map<String, Instant> lastSeen = new ConcurrentHashMap<>();
+
+  public TargetProcessor(EndpointConfiguration config) {
+    super(config);
+  }
 
   @Override
   protected void defaultHandler(Object defaultedMessage) {
@@ -42,13 +52,15 @@ public class TargetProcessor extends ProcessorBase {
     }
 
     if (envelope.subType == null) {
-      envelope.subType = SubType.EVENT;
+      envelope.subType = SubType.EVENTS;
     }
     SubType subType = envelope.subType;
-    if (subType != SubType.EVENT) {
+    if (subType != SubType.EVENTS) {
       debug("Dropping non-event type " + subType);
       return;
     }
+
+    updateLastSeen(envelope);
 
     String message = stringify(defaultedMessage);
     debug(format("Reflecting target message %s %s %s %s %s %s", deviceRegistryId, deviceId, subType,
@@ -58,7 +70,7 @@ public class TargetProcessor extends ProcessorBase {
 
   @Override
   protected SubType getExceptionSubType() {
-    return SubType.EVENT;
+    return SubType.EVENTS;
   }
 
   private void defaultFields(Object defaultedMessage) {
@@ -85,11 +97,22 @@ public class TargetProcessor extends ProcessorBase {
             field.set(defaultedMessage, defaultValue);
           }
         } catch (IllegalAccessException iae) {
-          debug("No timestamp field access for " + defaultedMessage.getClass().getName());
+          debug("No field access for %s:%s", defaultedMessage.getClass().getName(), fieldName);
         }
       });
     } catch (NoSuchFieldException nfe) {
       debug(format("Skipping default timestamp for " + defaultedMessage.getClass().getName()));
     }
+  }
+
+  private void updateLastSeen(Envelope envelope) {
+    Instant timestamp =
+        ofNullable(envelope.publishTime).map(Date::toInstant).orElseGet(Instant::now);
+    lastSeen.compute(envelope.deviceRegistryId,
+        (id, was) -> (was == null || was.isBefore(timestamp)) ? timestamp : was);
+  }
+
+  public Instant getLastSeen(String registryId) {
+    return lastSeen.get(registryId);
   }
 }

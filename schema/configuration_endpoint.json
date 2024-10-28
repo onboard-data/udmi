@@ -1,5 +1,5 @@
 {
-  "$udmi_version": "1.5.0",
+  "$udmi_version": "1.5.2",
   "title": "Endpoint Configuration",
   "description": "Parameters to define a message endpoint",
   "$section": "Blobs",
@@ -7,6 +7,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
+    "name": {
+      "description": "Friendly name for this flow (debugging and diagnostics)",
+      "type": "string"
+    },
     "protocol": {
       "enum": [
         "local",
@@ -25,13 +29,16 @@
     "hostname": {
       "type": "string"
     },
+    "payload": {
+      "description": "Simple payload template for simple injection use cases",
+      "type": "string"
+    },
     "error": {
       "description": "Error message container for capturing errors during parsing/handling",
       "type": "string"
     },
     "port": {
-      "type": "integer",
-      "default": 8883
+      "type": "integer"
     },
     "config_sync_sec": {
       "description": "Delay waiting for config message on start, 0 for default, <0 to disable",
@@ -40,8 +47,8 @@
     "client_id": {
       "type": "string"
     },
-    "msg_prefix": {
-      "description": "Prefix for message topics/addresses",
+    "topic_prefix": {
+      "description": "Prefix for message topics",
       "type": "string",
       "pattern": "^[-_/a-zA-Z0-9]+$"
     },
@@ -55,10 +62,42 @@
       "type": "string",
       "pattern": "^[-_/a-zA-Z0-9#]+$"
     },
-    "distributor": {
-      "description": "processor designation for a distributor channel",
+    "side_id": {
+      "description": "Id for a side-car message channel",
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+      "pattern": "^[-_/a-zA-Z0-9#]+$"
+    },
+    "gatewayId": {
+      "type": "string"
+    },
+    "deviceId": {
+      "type": "string"
+    },
+    "enabled": {
+      "description": "Indicator if this endpoint should be active (null or non-empty)",
+      "type": "string"
+    },
+    "noConfigAck": {
+      "description": "True if config messages should not be acked (lower QOS)",
+      "type": "boolean"
+    },
+    "capacity": {
+      "description": "Queue capacity for limiting pipes",
+      "type": "integer"
+    },
+    "publish_delay_sec": {
+      "description": "Artifical publish delay for testing",
+      "type": "integer"
+    },
+    "periodic_sec": {
+      "description": "Rate for periodic task execution",
+      "type": "integer"
+    },
+    "keyBytes": {
+      "note": "Should be type byte[], which is not supported, so fall-back to generic default object"
+    },
+    "algorithm": {
+      "type": "string"
     },
     "auth_provider": {
       "type": "object",

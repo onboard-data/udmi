@@ -3,7 +3,6 @@ package udmi.schema;
 
 import java.util.Date;
 import java.util.HashMap;
-import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -19,10 +18,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "generation",
-    "enumerate",
+    "depths",
     "families"
 })
-@Generated("jsonschema2pojo")
 public class DiscoveryConfig {
 
     /**
@@ -32,21 +30,26 @@ public class DiscoveryConfig {
     @JsonProperty("generation")
     @JsonPropertyDescription("Generational marker for controlling enumeration")
     public Date generation;
-    @JsonProperty("enumerate")
-    public Enumerate enumerate;
     /**
-     * Address family config for a scan. Not included for device enumeration messages.
+     * Indicates which discovery sub-categories to activate
+     * 
+     */
+    @JsonProperty("depths")
+    @JsonPropertyDescription("Indicates which discovery sub-categories to activate")
+    public Depths depths;
+    /**
+     * Address family config for a scan.
      * 
      */
     @JsonProperty("families")
-    @JsonPropertyDescription("Address family config for a scan. Not included for device enumeration messages.")
+    @JsonPropertyDescription("Address family config for a scan.")
     public HashMap<String, FamilyDiscoveryConfig> families;
 
     @Override
     public int hashCode() {
         int result = 1;
         result = ((result* 31)+((this.generation == null)? 0 :this.generation.hashCode()));
-        result = ((result* 31)+((this.enumerate == null)? 0 :this.enumerate.hashCode()));
+        result = ((result* 31)+((this.depths == null)? 0 :this.depths.hashCode()));
         result = ((result* 31)+((this.families == null)? 0 :this.families.hashCode()));
         return result;
     }
@@ -60,7 +63,7 @@ public class DiscoveryConfig {
             return false;
         }
         DiscoveryConfig rhs = ((DiscoveryConfig) other);
-        return ((((this.generation == rhs.generation)||((this.generation!= null)&&this.generation.equals(rhs.generation)))&&((this.enumerate == rhs.enumerate)||((this.enumerate!= null)&&this.enumerate.equals(rhs.enumerate))))&&((this.families == rhs.families)||((this.families!= null)&&this.families.equals(rhs.families))));
+        return ((((this.generation == rhs.generation)||((this.generation!= null)&&this.generation.equals(rhs.generation)))&&((this.depths == rhs.depths)||((this.depths!= null)&&this.depths.equals(rhs.depths))))&&((this.families == rhs.families)||((this.families!= null)&&this.families.equals(rhs.families))));
     }
 
 }

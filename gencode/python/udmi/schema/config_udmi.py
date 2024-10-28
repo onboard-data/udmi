@@ -1,4 +1,5 @@
 """Generated class for config_udmi.json"""
+from .state_udmi import SetupUdmiState
 
 
 class SetupUdmiConfig:
@@ -9,6 +10,7 @@ class SetupUdmiConfig:
     self.functions_min = None
     self.functions_max = None
     self.udmi_version = None
+    self.udmi_commit = None
     self.udmi_ref = None
     self.udmi_timever = None
     self.built_at = None
@@ -25,6 +27,7 @@ class SetupUdmiConfig:
     result.functions_min = source.get('functions_min')
     result.functions_max = source.get('functions_max')
     result.udmi_version = source.get('udmi_version')
+    result.udmi_commit = source.get('udmi_commit')
     result.udmi_ref = source.get('udmi_ref')
     result.udmi_timever = source.get('udmi_timever')
     result.built_at = source.get('built_at')
@@ -59,6 +62,8 @@ class SetupUdmiConfig:
       result['functions_max'] = self.functions_max # 5
     if self.udmi_version:
       result['udmi_version'] = self.udmi_version # 5
+    if self.udmi_commit:
+      result['udmi_commit'] = self.udmi_commit # 5
     if self.udmi_ref:
       result['udmi_ref'] = self.udmi_ref # 5
     if self.udmi_timever:
@@ -78,7 +83,10 @@ class UdmiConfig:
   """Generated schema class"""
 
   def __init__(self):
+    self.timestamp = None
+    self.version = None
     self.last_state = None
+    self.reply = None
     self.setup = None
 
   @staticmethod
@@ -86,7 +94,10 @@ class UdmiConfig:
     if not source:
       return None
     result = UdmiConfig()
+    result.timestamp = source.get('timestamp')
+    result.version = source.get('version')
     result.last_state = source.get('last_state')
+    result.reply = SetupUdmiState.from_dict(source.get('reply'))
     result.setup = SetupUdmiConfig.from_dict(source.get('setup'))
     return result
 
@@ -108,8 +119,14 @@ class UdmiConfig:
 
   def to_dict(self):
     result = {}
+    if self.timestamp:
+      result['timestamp'] = self.timestamp # 5
+    if self.version:
+      result['version'] = self.version # 5
     if self.last_state:
       result['last_state'] = self.last_state # 5
+    if self.reply:
+      result['reply'] = self.reply.to_dict() # 4
     if self.setup:
       result['setup'] = self.setup.to_dict() # 4
     return result
